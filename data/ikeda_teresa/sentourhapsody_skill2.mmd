@@ -1,0 +1,18 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c2{"②:このスキル発動前、<br/>自身がバフ・アゲ効果状態か"}:::cond
+    c2 -->|"Yes"| e2["①の倍率と固定値倍率が1.5倍に"]:::effect --> c3
+    c2 -->|"No"| c3{"③:対象の残りHP割合が<br/>50%以上か"}:::cond
+    c3 -->|"Yes"| e3["①の倍率と固定値倍率が2倍に"]:::effect --> a1
+    c3 -->|"No"| a1["①実行:<br/>残りHP割合が最も低いライバルへ<br/>基本400%+固定値 自身の最大アピール×20%"]:::action
+    a1 --> lc{"①の対象<br/>4名すべて完了?"}:::cond
+    lc -->|"No、次の対象へ"| c3
+    lc -->|"Yes"| c4{"④:①のアピールでリタイアした<br/>ライバルが1名以下か<br/>(かつ再実行がまだの場合)"}:::cond
+    c4 -->|"Yes(再実行は最大1回まで)"| c3
+    c4 -->|"No"| c5{"⑤:①のアピールで<br/>ライバルがリタイアしなかったか<br/>(かつ再実行がまだの場合)"}:::cond
+    c5 -->|"Yes(固定値倍率2倍にして再実行、最大1回まで)"| c3
+    c5 -->|"No"| finish(("終了")):::startend

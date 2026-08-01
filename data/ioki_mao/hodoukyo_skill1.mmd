@@ -1,0 +1,18 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> e1["①:自身を2ターンの間<br/>「倍音」状態にする"]:::effect
+    e1 --> c3{"③:自身のエフォートが<br/>②の対象のエフォート以上か"}:::cond
+    c3 -->|"Yes"| e3["②の倍率と固定値倍率が2倍に"]:::effect --> a2
+    c3 -->|"No"| a2["②実行:<br/>残りHP割合が最も高いライバルへ<br/>(バフ・アゲ状態を優先選択)<br/>バフ・アゲ効果を1つ解除+基本850%<br/>固定値 エフォート×4"]:::action
+    a2 --> c4{"④:②で<br/>バフ・アゲ解除に成功したか"}:::cond
+    c4 -->|"Yes"| a4["対象へ追加で1700%のアピール<br/>(固定値 エフォート×8)"]:::action --> lc
+    c4 -->|"No"| lc{"②の対象<br/>4名すべて完了?"}:::cond
+    lc -->|"No、次の対象へ"| c3
+    lc -->|"Yes"| c6{"⑥:②でバフ・アゲ解除に<br/>成功した回数が2回以上か"}:::cond
+    c6 -->|"Yes"| e6["「声援」の<br/>アピール低下倍率が1.5倍に"]:::effect --> e5
+    c6 -->|"No"| e5["⑤:自身のHPを<br/>このスキルの合計アピールの25%分回復<br/>3ターンの間「声援」状態にする"]:::effect
+    e5 --> finish(("終了")):::startend

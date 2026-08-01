@@ -1,0 +1,19 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c2{"②:ライブ中に自身のスキル1が<br/>2回以上発動済みか"}:::cond
+    c2 -->|"Yes"| e2["①の「決心」効果倍率が1.5倍に"]:::effect --> e1
+    c2 -->|"No"| e1["①:自身を2ターンの間<br/>「決心」状態にする"]:::effect
+    e1 --> c4{"④:自身のHP上限が<br/>③の対象のHP上限以上か"}:::cond
+    c4 -->|"Yes"| e4["対象のバフ・アゲ効果を<br/>1つ解除"]:::effect --> c5
+    c4 -->|"No"| c5{"⑤:自身の残りHP割合が<br/>50%以上か"}:::cond
+    c5 -->|"Yes"| e5["③の倍率と固定値倍率が2倍に"]:::effect --> a3
+    c5 -->|"No"| a3["③実行:<br/>ライバルへ基本500%+<br/>固定値 自身のスマイル×2.5"]:::action
+    a3 --> lc{"③のアピール<br/>4回すべて完了?"}:::cond
+    lc -->|"No、次の対象へ"| c4
+    lc -->|"Yes"| c6{"⑥:ライバルチームのフロント人数が<br/>4名以上か"}:::cond
+    c6 -->|"Yes"| e6["自身を2ターンの間「円陣」状態にし、<br/>HPをHP上限の50%分回復"]:::effect --> finish
+    c6 -->|"No"| finish(("終了")):::startend

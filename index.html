@@ -1,0 +1,789 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>スキルフローチャート図鑑</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg-0: #0d0a14;
+        --bg-1: #161022;
+        --card: #1c1630;
+        --card-line: #3a2d55;
+        --spotlight: #e8c468;
+        --spotlight-soft: rgba(232, 196, 104, 0.16);
+        --accent: #c77dff;
+        --accent-dim: #7a5aa8;
+        --ink: #efe9f7;
+        --ink-dim: #a99cc4;
+        --serif: "Shippori Mincho", serif;
+        --sans: "Zen Kaku Gothic New", sans-serif;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background:
+          radial-gradient(
+            ellipse 900px 500px at 50% -10%,
+            rgba(199, 125, 255, 0.15),
+            transparent 60%
+          ),
+          linear-gradient(180deg, var(--bg-1), var(--bg-0) 40%);
+        color: var(--ink);
+        font-family: var(--sans);
+        -webkit-font-smoothing: antialiased;
+      }
+
+      header {
+        text-align: center;
+        padding: 64px 24px 40px;
+      }
+      header .eyebrow {
+        font-size: 12px;
+        letter-spacing: 0.35em;
+        color: var(--spotlight);
+        text-transform: uppercase;
+      }
+      header h1 {
+        font-family: var(--serif);
+        font-weight: 700;
+        font-size: clamp(28px, 5vw, 44px);
+        margin: 12px 0 8px;
+        letter-spacing: 0.04em;
+      }
+      header p {
+        color: var(--ink-dim);
+        font-size: 14px;
+        max-width: 520px;
+        margin: 0 auto;
+        line-height: 1.8;
+      }
+
+      .search-bar {
+        max-width: 600px;
+        margin: 0 auto 32px;
+        padding: 0 24px;
+        display: flex;
+        gap: 12px;
+        align-items: center;
+      }
+      .search-bar input[type="text"] {
+        flex: 1;
+        background: var(--card);
+        border: 1px solid var(--card-line);
+        border-radius: 999px;
+        padding: 10px 18px;
+        color: var(--ink);
+        font-family: inherit;
+        font-size: 14px;
+        outline: none;
+        transition: border-color 0.2s ease;
+      }
+      .search-bar input[type="text"]:focus {
+        border-color: var(--accent);
+      }
+      .search-bar input[type="text"]::placeholder {
+        color: var(--ink-dim);
+      }
+      .regex-toggle {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        color: var(--ink-dim);
+        white-space: nowrap;
+        cursor: pointer;
+      }
+      .no-results {
+        grid-column: 1/-1;
+        text-align: center;
+        color: var(--ink-dim);
+        font-size: 13px;
+        padding: 40px 0;
+      }
+
+      .stage {
+        max-width: 1040px;
+        margin: 0 auto;
+        padding: 0 24px 96px;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 20px;
+      }
+
+      .card {
+        position: relative;
+        background: var(--card);
+        border: 1px solid var(--card-line);
+        border-radius: 14px;
+        padding: 22px 20px 20px;
+        cursor: pointer;
+        text-align: left;
+        color: inherit;
+        font-family: inherit;
+        overflow: hidden;
+        transition:
+          transform 0.25s ease,
+          border-color 0.25s ease,
+          box-shadow 0.25s ease;
+      }
+      .card::before {
+        content: "";
+        position: absolute;
+        inset: -40% -40% auto auto;
+        width: 160px;
+        height: 160px;
+        background: radial-gradient(
+          circle,
+          var(--spotlight-soft),
+          transparent 70%
+        );
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        pointer-events: none;
+      }
+      .card:hover,
+      .card:focus-visible {
+        transform: translateY(-4px);
+        border-color: var(--accent-dim);
+        box-shadow: 0 18px 40px -20px rgba(199, 125, 255, 0.45);
+      }
+      .card:hover::before,
+      .card:focus-visible::before {
+        opacity: 1;
+      }
+
+      .tier {
+        display: inline-block;
+        font-size: 11px;
+        letter-spacing: 0.12em;
+        font-weight: 700;
+        color: #1a1220;
+        background: var(--spotlight);
+        padding: 3px 9px;
+        border-radius: 999px;
+        margin-bottom: 14px;
+      }
+      .card h2 {
+        font-family: var(--serif);
+        font-size: 20px;
+        margin: 0 0 4px;
+      }
+      .card .subtitle {
+        font-size: 13px;
+        color: var(--accent);
+        margin: 0 0 12px;
+      }
+      .card .meta {
+        font-size: 12px;
+        color: var(--ink-dim);
+        line-height: 1.7;
+      }
+
+      /* Viewer */
+      .viewer {
+        position: fixed;
+        inset: 0;
+        background: rgba(8, 6, 13, 0.88);
+        backdrop-filter: blur(6px);
+        display: none;
+        align-items: flex-start;
+        justify-content: center;
+        padding: 5vh 16px;
+        z-index: 50;
+        overflow-y: auto;
+      }
+      .viewer.open {
+        display: flex;
+      }
+      .viewer-panel {
+        background: var(--bg-1);
+        border: 1px solid var(--card-line);
+        border-radius: 16px;
+        max-width: 960px;
+        width: 100%;
+        padding: 28px;
+        position: relative;
+      }
+      .viewer-panel h2 {
+        font-family: var(--serif);
+        margin: 0 0 4px;
+        font-size: 22px;
+      }
+      .viewer-panel .subtitle {
+        color: var(--accent);
+        font-size: 13px;
+        margin: 0 0 20px;
+      }
+      .viewer-close {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: none;
+        border: 1px solid var(--card-line);
+        color: var(--ink);
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 16px;
+        line-height: 1;
+      }
+      .viewer-close:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+
+      .tabs {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 16px;
+      }
+      .tab-btn {
+        font-family: inherit;
+        font-size: 12.5px;
+        color: var(--ink-dim);
+        background: transparent;
+        border: 1px solid var(--card-line);
+        border-radius: 999px;
+        padding: 6px 14px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+      .tab-btn:hover {
+        color: var(--ink);
+        border-color: var(--accent-dim);
+      }
+      .tab-btn.active {
+        color: #1a1220;
+        background: var(--accent);
+        border-color: var(--accent);
+        font-weight: 700;
+      }
+
+      .zoom-bar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 12px;
+      }
+      .zoom-btn {
+        width: 30px;
+        height: 30px;
+        border-radius: 8px;
+        border: 1px solid var(--card-line);
+        background: transparent;
+        color: var(--ink);
+        font-size: 15px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .zoom-btn:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+      .zoom-label {
+        font-size: 12px;
+        color: var(--ink-dim);
+        min-width: 44px;
+        text-align: center;
+      }
+
+      .diagram-wrap {
+        background: #100c1a;
+        border: 1px solid var(--card-line);
+        border-radius: 12px;
+        padding: 20px;
+        overflow: auto;
+        max-height: 70vh;
+      }
+      .diagram-wrap svg {
+        display: block;
+      }
+      .loading,
+      .error {
+        color: var(--ink-dim);
+        font-size: 13px;
+        padding: 40px 0;
+        text-align: center;
+      }
+      .error {
+        color: #ff8a8a;
+      }
+
+      /* Passive table */
+      .passive-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+      }
+      .passive-table th {
+        text-align: left;
+        color: var(--spotlight);
+        font-weight: 700;
+        font-size: 11px;
+        letter-spacing: 0.06em;
+        padding: 10px 12px;
+        border-bottom: 1px solid var(--card-line);
+        white-space: nowrap;
+      }
+      .passive-table td {
+        padding: 12px;
+        border-bottom: 1px solid var(--card-line);
+        vertical-align: top;
+        line-height: 1.7;
+      }
+      .passive-table td.cond {
+        color: var(--accent);
+        white-space: nowrap;
+        font-size: 12px;
+      }
+      .passive-table tr:last-child td {
+        border-bottom: none;
+      }
+      .effect-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      .effect-list li {
+        position: relative;
+        padding-left: 14px;
+      }
+      .effect-list li::before {
+        content: "・";
+        position: absolute;
+        left: 0;
+        color: var(--accent);
+      }
+      .effect-list li + li {
+        margin-top: 4px;
+      }
+
+      /* Original text toggle */
+      .original-text {
+        margin-top: 14px;
+        border: 1px solid var(--card-line);
+        border-radius: 10px;
+        overflow: hidden;
+      }
+      .original-text summary {
+        cursor: pointer;
+        padding: 10px 14px;
+        font-size: 12.5px;
+        color: var(--ink-dim);
+        list-style: none;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .original-text summary::-webkit-details-marker {
+        display: none;
+      }
+      .original-text summary::before {
+        content: "▸";
+        color: var(--accent);
+      }
+      .original-text[open] summary::before {
+        content: "▾";
+      }
+      .original-text .original-text-body {
+        padding: 2px 16px 16px;
+        font-size: 12.5px;
+        line-height: 1.9;
+        color: var(--ink-dim);
+        white-space: pre-wrap;
+        border-top: 1px solid var(--card-line);
+      }
+
+      footer {
+        text-align: center;
+        padding: 32px 24px 64px;
+        color: var(--ink-dim);
+        font-size: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="eyebrow">Skill Flowchart Archive</div>
+      <h1>スキルフローチャート図鑑</h1>
+      <p>
+        キャラクターを選ぶと、スキル説明を整合性チェック済みのフローチャートで確認できます。
+      </p>
+    </header>
+
+    <div class="search-bar">
+      <input
+        type="text"
+        id="searchInput"
+        placeholder="キャラ名・衣装名・スキル内容で検索"
+        autocomplete="off"
+      />
+      <label class="regex-toggle">
+        <input type="checkbox" id="regexToggle" />
+        <span>正規表現</span>
+      </label>
+    </div>
+
+    <main class="stage" id="stage">
+      <!-- カードはJSでcharacters.jsonから生成 -->
+    </main>
+
+    <div class="viewer" id="viewer">
+      <div class="viewer-panel">
+        <button class="viewer-close" id="viewerClose" aria-label="閉じる">
+          ✕
+        </button>
+        <h2 id="viewerTitle"></h2>
+        <p class="subtitle" id="viewerSubtitle"></p>
+        <div class="tabs" id="viewerTabs"></div>
+        <div class="zoom-bar" id="zoomBar">
+          <button class="zoom-btn" id="zoomOut" aria-label="縮小">−</button>
+          <span class="zoom-label" id="zoomLabel">100%</span>
+          <button class="zoom-btn" id="zoomIn" aria-label="拡大">＋</button>
+          <button
+            class="zoom-btn"
+            id="zoomReset"
+            aria-label="幅に合わせる"
+            style="width: auto; padding: 0 10px; font-size: 12px"
+          >
+            幅に合わせる
+          </button>
+        </div>
+        <div class="diagram-wrap" id="diagramWrap">
+          <div id="diagramTarget" class="loading">読み込み中...</div>
+        </div>
+        <details class="original-text" id="originalText" style="display: none">
+          <summary>原文を見る</summary>
+          <div class="original-text-body" id="originalTextBody"></div>
+        </details>
+      </div>
+    </div>
+
+    <footer>
+      個人制作・非公式のファン向けアーカイブです。<br />
+      各フローチャートはAIによる画像読み取り・生成のため、誤りが含まれる可能性があります。気になる場合は原文と併せてご確認ください。
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js"></script>
+    <script>
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: "base",
+        themeVariables: {
+          background: "#100c1a",
+          primaryColor: "#1c1630",
+          primaryTextColor: "#efe9f7",
+          primaryBorderColor: "#c77dff",
+          lineColor: "#a99cc4",
+          fontFamily: "Zen Kaku Gothic New, sans-serif",
+          fontSize: "14px",
+          clusterBkg: "#211a35",
+          clusterBorder: "#3a2d55",
+          titleColor: "#efe9f7",
+        },
+        flowchart: { curve: "basis" },
+      });
+
+      const stage = document.getElementById("stage");
+      const viewer = document.getElementById("viewer");
+      const viewerTitle = document.getElementById("viewerTitle");
+      const viewerSubtitle = document.getElementById("viewerSubtitle");
+      const viewerTabs = document.getElementById("viewerTabs");
+      const diagramTarget = document.getElementById("diagramTarget");
+      const viewerClose = document.getElementById("viewerClose");
+
+      const zoomBar = document.getElementById("zoomBar");
+      const diagramWrap = document.getElementById("diagramWrap");
+      const zoomIn = document.getElementById("zoomIn");
+      const zoomOut = document.getElementById("zoomOut");
+      const zoomReset = document.getElementById("zoomReset");
+      const zoomLabel = document.getElementById("zoomLabel");
+      const originalText = document.getElementById("originalText");
+      const originalTextBody = document.getElementById("originalTextBody");
+
+      let renderCount = 0;
+      let zoomPct = 100; // 100 = 幅に合わせる(svg width:100%)
+
+      function applyZoom() {
+        const svg = diagramTarget.querySelector("svg");
+        if (!svg) return;
+        svg.style.width = zoomPct + "%";
+        svg.style.height = "auto";
+        zoomLabel.textContent = zoomPct + "%";
+      }
+      zoomIn.addEventListener("click", () => {
+        zoomPct = Math.min(400, zoomPct + 25);
+        applyZoom();
+      });
+      zoomOut.addEventListener("click", () => {
+        zoomPct = Math.max(50, zoomPct - 25);
+        applyZoom();
+      });
+      zoomReset.addEventListener("click", () => {
+        zoomPct = 100;
+        applyZoom();
+      });
+
+      function escapeHtml(str) {
+        return String(str).replace(
+          /[&<>"']/g,
+          (m) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+            })[m],
+        );
+      }
+
+      async function renderActiveTab(tab) {
+        diagramWrap.style.display = "";
+        zoomBar.style.display = "flex";
+        diagramTarget.className = "loading";
+        diagramTarget.textContent = "読み込み中...";
+        zoomPct = 100;
+
+        if (tab.text) {
+          originalText.style.display = "";
+          originalTextBody.textContent = tab.text;
+          originalText.open = false;
+        } else {
+          originalText.style.display = "none";
+        }
+
+        try {
+          const res = await fetch(tab.file);
+          if (!res.ok) throw new Error("file not found");
+          const mmdText = await res.text();
+          const id = "mmd-" + renderCount++;
+          const { svg } = await mermaid.render(id, mmdText);
+          diagramTarget.className = "";
+          diagramTarget.innerHTML = svg;
+          applyZoom();
+        } catch (e) {
+          diagramTarget.className = "error";
+          diagramTarget.textContent =
+            "フローチャートの読み込みに失敗しました: " + e.message;
+        }
+      }
+
+      function renderPassiveTab(tab) {
+        zoomBar.style.display = "none";
+        originalText.style.display = "none";
+        diagramWrap.style.display = "";
+        diagramTarget.className = "";
+
+        const rows = tab.data || [];
+        if (rows.length === 0) {
+          diagramTarget.innerHTML =
+            '<p class="loading">パッシブスキルの情報はまだありません。</p>';
+          return;
+        }
+        diagramTarget.innerHTML = `
+      <table class="passive-table">
+        <thead>
+          <tr><th>習得条件</th><th>効果内容</th></tr>
+        </thead>
+        <tbody>
+          ${rows
+            .map((r) => {
+              const items = Array.isArray(r.effect) ? r.effect : [r.effect];
+              return `
+            <tr>
+              <td class="cond">${escapeHtml(r.condition || "")}</td>
+              <td><ul class="effect-list">${items
+                .filter(Boolean)
+                .map((i) => `<li>${escapeHtml(i)}</li>`)
+                .join("")}</ul></td>
+            </tr>
+          `;
+            })
+            .join("")}
+        </tbody>
+      </table>
+    `;
+      }
+
+      function renderTab(tab) {
+        if (tab.type === "passive") {
+          renderPassiveTab(tab);
+        } else {
+          renderActiveTab(tab);
+        }
+      }
+
+      function openViewer(chara) {
+        viewerTitle.textContent = chara.name;
+        viewerSubtitle.textContent = chara.title || "";
+
+        const tabs = [...(chara.skills || [])];
+        if (chara.passive && chara.passive.length > 0) {
+          tabs.push({
+            type: "passive",
+            label: "パッシブ",
+            data: chara.passive,
+          });
+        }
+
+        if (tabs.length > 1) {
+          viewerTabs.style.display = "flex";
+          viewerTabs.innerHTML = tabs
+            .map(
+              (t, i) =>
+                `<button class="tab-btn${i === 0 ? " active" : ""}" data-index="${i}">${t.label}</button>`,
+            )
+            .join("");
+          viewerTabs.querySelectorAll(".tab-btn").forEach((btn) => {
+            btn.addEventListener("click", () => {
+              viewerTabs
+                .querySelectorAll(".tab-btn")
+                .forEach((b) => b.classList.remove("active"));
+              btn.classList.add("active");
+              renderTab(tabs[Number(btn.dataset.index)]);
+            });
+          });
+        } else {
+          viewerTabs.style.display = "none";
+          viewerTabs.innerHTML = "";
+        }
+
+        viewer.classList.add("open");
+        if (tabs[0]) renderTab(tabs[0]);
+      }
+
+      function closeViewer() {
+        viewer.classList.remove("open");
+      }
+      viewerClose.addEventListener("click", closeViewer);
+      viewer.addEventListener("click", (e) => {
+        if (e.target === viewer) closeViewer();
+      });
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeViewer();
+      });
+
+      const searchInput = document.getElementById("searchInput");
+      const regexToggle = document.getElementById("regexToggle");
+      let allCharacters = [];
+
+      function buildSearchBlob(c) {
+        const parts = [c.name, c.costume, c.title];
+        (c.skills || []).forEach((s) => {
+          parts.push(s.label);
+          if (s.text) parts.push(s.text);
+        });
+        (c.passive || []).forEach((p) => {
+          parts.push(p.condition);
+          parts.push(...(Array.isArray(p.effect) ? p.effect : [p.effect]));
+        });
+        return parts.filter(Boolean).join(" ");
+      }
+
+      function sortCharacters(list) {
+        return [...list].sort((a, b) => {
+          const n = (a.nameReading || a.name).localeCompare(
+            b.nameReading || b.name,
+            "ja",
+          );
+          if (n !== 0) return n;
+          return (a.costumeReading || a.costume || "").localeCompare(
+            b.costumeReading || b.costume || "",
+            "ja",
+          );
+        });
+      }
+
+      function renderCards(list) {
+        if (list.length === 0) {
+          stage.innerHTML =
+            '<p class="no-results">該当するキャラクターが見つかりませんでした。</p>';
+          return;
+        }
+        stage.innerHTML = list
+          .map(
+            (c) => `
+      <button class="card" data-key="${escapeHtml(c._key)}">
+        <span class="tier">${escapeHtml(c.tier || "SKILL")}</span>
+        <h2>${escapeHtml(c.name)}</h2>
+        <p class="subtitle">${escapeHtml(c.title || "")}</p>
+      </button>
+    `,
+          )
+          .join("");
+
+        stage.querySelectorAll(".card").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const c = allCharacters.find((x) => x._key === btn.dataset.key);
+            if (c) openViewer(c);
+          });
+        });
+      }
+
+      function applyFilter() {
+        const query = searchInput.value.trim();
+        let filtered;
+        if (query === "") {
+          filtered = allCharacters;
+        } else if (regexToggle.checked) {
+          let re;
+          try {
+            re = new RegExp(query, "i");
+          } catch (e) {
+            // 不正な正規表現の間は絞り込まずそのまま全件表示(壊れた入力途中の状態を許容)
+            filtered = allCharacters;
+            renderCards(sortCharacters(filtered));
+            return;
+          }
+          filtered = allCharacters.filter((c) => re.test(c._blob));
+        } else {
+          const q = query.toLowerCase();
+          filtered = allCharacters.filter((c) =>
+            c._blob.toLowerCase().includes(q),
+          );
+        }
+        renderCards(sortCharacters(filtered));
+      }
+
+      searchInput.addEventListener("input", applyFilter);
+      regexToggle.addEventListener("change", applyFilter);
+
+      async function init() {
+        try {
+          const res = await fetch("data/characters.json");
+          if (!res.ok) throw new Error("HTTP " + res.status);
+          const characters = await res.json();
+
+          allCharacters = characters.map((c, i) => ({
+            ...c,
+            _key: c.name + "__" + (c.costume || c.title || i),
+            _blob: buildSearchBlob(c),
+          }));
+
+          renderCards(sortCharacters(allCharacters));
+        } catch (e) {
+          stage.innerHTML = `<p class="error" style="grid-column:1/-1;">
+        キャラクター一覧の読み込みに失敗しました(${e.message})。<br>
+        index.htmlをfile://で直接開いていませんか? ローカルサーバー経由(例: python3 -m http.server)で開いてください。
+      </p>`;
+        }
+      }
+
+      init();
+    </script>
+  </body>
+</html>

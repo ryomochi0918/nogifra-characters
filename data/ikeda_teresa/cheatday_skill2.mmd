@@ -1,0 +1,16 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c2{"②:ライブ中に自身のスキル1が<br/>2回以上発動済みか"}:::cond
+    c2 -->|"Yes"| e2["①のアピールに<br/>自身の残りHPの75%を固定値上乗せ"]:::effect --> a1
+    c2 -->|"No"| a1["①実行:<br/>ライバル2名へ2000%のアピール"]:::action
+    a1 --> e3["③:自身のHPをHP上限の30%分回復し、<br/>2ターンの間「反響」状態にする"]:::effect
+    e3 --> c5{"⑤:自身のHP上限が<br/>④の対象のHP上限以上か"}:::cond
+    c5 -->|"Yes"| e5["対象のデバフ・サゲ効果を1つ解除し、<br/>2ターンの間「反響」状態にする"]:::effect --> e4
+    c5 -->|"No"| e4["④実行:<br/>自身以外の味方1名のHPを<br/>HP上限の30%分回復"]:::effect
+    e4 --> lc{"④の対象<br/>5名すべて完了?"}:::cond
+    lc -->|"No、次の対象へ"| c5
+    lc -->|"Yes"| finish(("終了")):::startend

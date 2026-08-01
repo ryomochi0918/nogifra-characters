@@ -1,0 +1,19 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c2{"②:自身の残りHP割合が<br/>50%以上か"}:::cond
+    c2 -->|"Yes"| e2["①の倍率と固定値倍率が1.5倍に"]:::effect --> a1
+    c2 -->|"No"| a1["①実行:<br/>残りHP割合が最も低いライバルへ<br/>基本480%+固定値 自身のスマイル×3"]:::action
+    a1 --> c3{"③:自身の残りHP割合が<br/>50%未満か"}:::cond
+    c3 -->|"Yes"| e3["自身のHPを直前のアピールの<br/>30%分回復"]:::effect --> lc
+    c3 -->|"No"| lc{"①のアピール<br/>5回すべて完了?"}:::cond
+    lc -->|"No、次の回へ"| c2
+    lc -->|"Yes"| a4["④実行:<br/>残りHP割合が最も高いライバル1名へ<br/>①の合計アピール50%<br/>(Def・Mental無視)"]:::action
+    a4 --> c5{"⑤:ライバルチームのフロントメンバーが<br/>2人以上か(かつ再実行がまだの場合)"}:::cond
+    c5 -->|"Yes(再実行は最大1回まで)"| a4
+    c5 -->|"No"| c6{"⑥:自身の「翻弄」状態のターン数が<br/>3ターン以上か"}:::cond
+    c6 -->|"Yes"| e6["自身を3ターンの間<br/>「神気」状態にする"]:::effect --> finish
+    c6 -->|"No"| finish(("終了")):::startend

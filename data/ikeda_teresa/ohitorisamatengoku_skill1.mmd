@@ -1,0 +1,10 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> a1["①実行:<br/>最大アピールが最も高い味方4名のHPを<br/>自身のアピール力180%分回復<br/>(会心率に応じ会心回復)、<br/>2ターンの間「軽快」と「勇気」状態にする"]:::action
+    a1 --> c2{"②:自身が「勇気」<br/>状態か"}:::cond
+    c2 -->|"Yes(③)"| a3["残りHP割合が最も高いライバル1名を<br/>100%の確率で3ターンの間<br/>「執着」状態にする"]:::action --> finish
+    c2 -->|"No(④)"| e4["自身を2ターンの間<br/>「勇気」状態にする"]:::effect --> finish(("終了")):::startend

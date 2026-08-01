@@ -1,0 +1,15 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> e1["①:このスキル中、<br/>自身の命中率を+30%する"]:::effect
+    e1 --> c3{"③:自身の残りHP割合が<br/>50%以上か"}:::cond
+    c3 -->|"Yes"| e3["②のアピール倍率が2倍に"]:::effect --> a2
+    c3 -->|"No"| a2["②実行:<br/>残りHP割合が最も低いライバルへ<br/>400%のアピール"]:::action
+    a2 --> lc{"②のアピール<br/>6回すべて完了?"}:::cond
+    lc -->|"No、次の回へ"| c3
+    lc -->|"Yes"| c4{"④:②でリタイアした<br/>ライバルがいたか<br/>(かつ再実行がまだの場合)"}:::cond
+    c4 -->|"Yes(再実行は最大1回まで)"| e4["アピール倍率を2倍にして<br/>再度②を実行"]:::effect --> c3
+    c4 -->|"No"| finish(("終了")):::startend

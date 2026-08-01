@@ -1,0 +1,34 @@
+flowchart TD
+    start(("開始")):::startend
+    n1["①: 自身を3ターンの間<br/>「音響」状態にする<br/>(リフレクト+60%、リフレクト耐性+50%)"]:::effect
+
+    subgraph loop2 ["②: 最大アピールが最も高いライバルへ<br/>合計4回実行 (基本400%+固定値 エフォート×4)"]
+        direction TB
+        c3{"③: 自身のエフォート ≥<br/>②の対象のエフォート?"}:::cond
+        e3y["②の倍率が2倍に<br/>アピール800%<br/>固定値 エフォート×8"]:::effect
+        e3n["通常倍率のまま<br/>アピール400%<br/>固定値 エフォート×4"]:::effect
+        a2["②実行:<br/>対象へアピール"]:::action
+        c4{"④: 対象のバフ・アゲ効果が<br/>2種類以上?"}:::cond
+        e4y["追加アピール実行<br/>1000%+固定値 エフォート×10"]:::action
+        c5{"⑤: 対象が特殊状態?"}:::cond
+        e5y["追加アピール実行<br/>エフォート×12分<br/>(ディフェンス・フィジカル無視)"]:::action
+        loopEnd["この回の処理終了"]
+
+        c3 -->|"Yes"| e3y --> a2
+        c3 -->|"No"| e3n --> a2
+        a2 --> c4
+        c4 -->|"Yes"| e4y --> c5
+        c4 -->|"No"| c5
+        c5 -->|"Yes"| e5y --> loopEnd
+        c5 -->|"No"| loopEnd
+    end
+
+    start --> n1 --> c3
+    loopEnd --> lc{"②のアピール<br/>4回すべて完了?"}:::cond
+    lc -->|"No、次の回へ"| c3
+    lc -->|"Yes"| finish(("終了")):::startend
+
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;

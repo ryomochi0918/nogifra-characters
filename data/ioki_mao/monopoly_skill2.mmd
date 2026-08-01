@@ -1,0 +1,17 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c1{"①:自身が「残響」<br/>状態か"}:::cond
+    c1 -->|"Yes"| e1["自身を3ターンの間<br/>「奏響」状態にする"]:::effect --> c3
+    c1 -->|"No"| c3{"③:自身の残りHP割合が<br/>70%以上か"}:::cond
+    c3 -->|"Yes"| e3["②の倍率と固定値倍率が2倍に"]:::effect --> a2
+    c3 -->|"No"| a2["②実行:<br/>最大アピールが最も高いライバルへ<br/>基本600%+固定値 自身の最大アピール×35%"]:::action
+    a2 --> e4["④:自身のHPを<br/>直前のアピールの25%分回復"]:::effect
+    e4 --> lc{"②のアピール<br/>5回すべて完了?"}:::cond
+    lc -->|"No、次の回へ"| c3
+    lc -->|"Yes"| c5{"⑤:自身が「残響」状態でない、<br/>または「残響」のターン数が5以上か<br/>(かつ再実行がまだの場合)"}:::cond
+    c5 -->|"Yes(再実行は最大1回まで)"| e5["自身を3ターンの間<br/>「旋回」状態にする"]:::effect --> c3
+    c5 -->|"No"| finish(("終了")):::startend
