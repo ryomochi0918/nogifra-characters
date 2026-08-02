@@ -1,12 +1,10 @@
 # スキルフローチャート図鑑
 
-キャラクターを選ぶと、`skill-flowchart` Skillで作った整合性チェック済みのMermaidフローチャートを
-その場でブラウザ描画して見られる、完全に静的なサイトです。サーバーは不要です。
+一覧画面からキャラクターを選ぶと、`skill-flowchart` Skillで作った整合性チェック済みのMermaidフローチャートを見られるサイトです。
 
 ## ローカルで確認する
 
-`fetch()` でJSONと.mmdファイルを読み込む都合上、`index.html` を直接ダブルクリックでは動きません
-(ブラウザのCORS制限)。簡易サーバーを立てて確認してください。
+`fetch()` でJSONと.mmdファイルを読み込む都合上、`index.html` を直接ダブルクリックでは動かないため(ブラウザのCORS制限)、以下のように簡易サーバーを立てて確認してください。
 
 ```bash
 cd site
@@ -73,11 +71,11 @@ python3 -m http.server 8000
 
 ```
 site/
-├── index.html                 スポットライト演出のカード一覧+ビューア(1ファイル完結)
+├── index.html                            # スポットライト演出のカード一覧+ビューア(1ファイル完結)
 ├── data/
-│   ├── characters.json        キャラ一覧のメタデータ
-│   ├── nogizaka46_members_reading.json  現役メンバーの読み仮名・期データ
-│   └── {キャラslug}/          キャラごとのMermaidフローチャート(例: ioki_mao/, ikeda_teresa/)
+│   ├── characters.json                  # キャラ一覧のメタデータ
+│   ├── nogizaka46_members_reading.json  # 現役メンバーの読み仮名・期データ
+│   └── {キャラslug}/                    # キャラごとのMermaidフローチャート(例: ioki_mao/, ikeda_teresa/)
 │       └── *.mmd
 └── README.md
 ```

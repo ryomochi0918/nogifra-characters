@@ -1,0 +1,16 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> e1["①:このスキル中、<br/>自身の命中率を+20%する"]:::effect
+    e1 --> c4{"④:自身が受けているバフ・アゲ効果・<br/>特殊状態の合計種類数が、②の対象の<br/>合計種類数以上か"}:::cond
+    c4 -->|"Yes"| e4["①の命中率の増加割合と<br/>②の固定値倍率が2倍になる"]:::effect --> c3
+    c4 -->|"No"| c3{"③:②のアピール対象の<br/>残りHP割合が50%以上か"}:::cond
+    c3 -->|"Yes"| e3["②のアピール対象の<br/>バフ・アゲ効果を1つ解除する"]:::effect --> a2
+    c3 -->|"No"| a2["②実行:<br/>残りHP割合が最も高いライバルへ、<br/>アピール対象の残りHPの0.7%を固定値として<br/>上乗せした440%のアピール"]:::action
+    a2 --> lc{"②のアピール<br/>5回すべて完了?"}:::cond
+    lc -->|"No、次の対象へ"| c4
+    lc -->|"Yes"| e5["⑤実行:<br/>自身と最大アピールが最も高い味方2名を<br/>②の合計アピールの30%分回復し、<br/>3ターンの間「静謐」状態にする"]:::effect
+    e5 --> finish(("終了")):::startend

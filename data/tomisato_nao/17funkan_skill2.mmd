@@ -1,0 +1,17 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c2{"②:自身が<br/>バフ・アゲ効果状態か"}:::cond
+    c2 -->|"Yes"| e2["①の各アピール中のみ<br/>自身の命中率を+25%し、<br/>①のアピール倍率が2倍になる"]:::effect --> c3
+    c2 -->|"No"| c3{"③:自身のスマイルが①の<br/>アピール対象のスマイル以上か"}:::cond
+    c3 -->|"Yes"| e3["①のアピール倍率が<br/>2倍になる"]:::effect --> a1
+    c3 -->|"No"| a1["①実行:<br/>ライバルへ、100%の確率で2ターンの間<br/>「フィジカルダウン」と「メンタルダウン」状態にし、<br/>520%のアピール(未ダウンの対象を優先)"]:::action
+    a1 --> lc{"①のアピール<br/>5回すべて完了?"}:::cond
+    lc -->|"No、次の対象へ"| c2
+    lc -->|"Yes"| c5{"⑤:④の効果対象が<br/>バフ・アゲ効果状態か"}:::cond
+    c5 -->|"Yes"| e5["④の効果対象の<br/>デバフ・サゲ効果を1つ解除する"]:::effect --> e4
+    c5 -->|"No"| e4["④実行:<br/>味方6名のHPを①で行った<br/>合計アピールの10%分回復する"]:::effect
+    e4 --> finish(("終了")):::startend

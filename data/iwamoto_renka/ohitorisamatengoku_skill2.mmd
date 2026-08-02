@@ -1,0 +1,15 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c2{"②:①のアピール対象の残りHP割合が50%以下、<br/>またはライバルチームのフロント人数が<br/>2名以上か"}:::cond
+    c2 -->|"Yes"| e2["①のアピール倍率を2倍にする"]:::effect --> c3
+    c2 -->|"No"| c3{"③:自身の残りHP割合が50%以上、<br/>または自身がバフ・アゲ効果状態か"}:::cond
+    c3 -->|"Yes"| e3["①のアピール倍率をさらに2倍にする"]:::effect --> a1
+    c3 -->|"No"| a1["①実行:<br/>残りHP割合が最も低いライバルへ、<br/>450~900%のアピール<br/>(自身の残りHP割合が高いほど倍率が高い)"]:::action --> c4{"④:①のアピールで<br/>ライバルがリタイアしたか"}:::cond
+    c4 -->|"Yes"| e4["①のアピール回数を1回増加する<br/>(追加回数は最大4回まで)"]:::effect --> lc1
+    c4 -->|"No"| lc1{"①のアピール6回<br/>(追加分を含む)すべて完了?"}:::cond
+    lc1 -->|"No、次の対象へ"| c2
+    lc1 -->|"Yes"| finish(("終了")):::startend

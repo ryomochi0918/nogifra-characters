@@ -1,0 +1,13 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c2{"②:自身の残りHP割合が①の<br/>アピール対象の残りHP割合以上か、<br/>またはライバルチームのフロント人数が<br/>4名以上か"}:::cond
+    c2 -->|"Yes"| e2["①のアピール対象の<br/>バフ・アゲ効果を1つ解除する"]:::effect --> c3
+    c2 -->|"No"| c3{"③:①のアピール対象が<br/>バフ・アゲ効果状態ではないか"}:::cond
+    c3 -->|"Yes"| e3["①のアピール倍率と<br/>固定値倍率を2倍にする"]:::effect --> a1
+    c3 -->|"No"| a1["①実行:<br/>残りHP割合が最も高いライバル1名の<br/>バフ・アゲ効果を1つ解除し、<br/>自身の最大アピールの50%を固定値として<br/>上乗せした2200%のアピール"]:::action --> c4{"④:このスキルでリタイアした人数が1名以下、<br/>かつ①の再実行回数が3回未満か"}:::cond
+    c4 -->|"Yes"| e4["④⑤:自身を3ターンの間「興奮」状態にする<br/>(効果倍率は再実行回数に応じて<br/>1回目:1.5倍、2回目以降:2倍)"]:::effect --> c2
+    c4 -->|"No"| a6["⑥実行:<br/>残りHP割合が最も低いライバル1名へ、<br/>このスキルで行った合計アピールの40%分の<br/>アピール(ディフェンス、フィジカルを無視)"]:::action --> finish(("終了")):::startend

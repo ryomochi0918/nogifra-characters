@@ -1,6 +1,7 @@
 {
   "source": "https://ngzk46seek.jp/members_list.php (2026年7月時点、現役34名のうち期別データが確認できた33名)",
   "note": "nameReading はソート用のひらがな表記。衣装名(costumeReading)は曲名由来のものが多いが例外もあるため、都度確認すること。",
+  "generation_remark":"新4期生は4期と同列で扱われる; 6期は春組と夏組とに関わらず同列で扱われる",
   "members": [
     { "name": "伊藤理々杏", "reading": "いとうりりあ", "generation": "3期" },
     { "name": "岩本蓮加", "reading": "いわもとれんか", "generation": "3期" },

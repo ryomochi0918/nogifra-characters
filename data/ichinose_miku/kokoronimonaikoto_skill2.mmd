@@ -1,0 +1,16 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c2{"②:①のアピール対象の<br/>残りHP割合が50%以上か"}:::cond
+    c2 -->|"Yes"| e2["①のバフ・アゲ効果の<br/>解除数が1つ増加する"]:::effect --> c3
+    c2 -->|"No"| c3{"③:①の各アピール対象が<br/>バフ・アゲ効果状態ではないか"}:::cond
+    c3 -->|"Yes"| e3["①のアピール倍率と<br/>SPの上乗せ倍率が2倍になる"]:::effect --> a1
+    c3 -->|"No"| a1["①実行:<br/>ライバル6名のバフ・アゲ効果を1つ解除し、<br/>自身の残りSPの120倍を上乗せした570%のアピール"]:::action
+    a1 --> c4{"④:①のアピールで<br/>ライバルがリタイアしたか"}:::cond
+    c4 -->|"Yes(再実行は最大1回まで)"| a1
+    c4 -->|"No"| c5{"⑤:自身が<br/>「勇気」状態か"}:::cond
+    c5 -->|"Yes"| e5["自身を3ターンの間<br/>「柔軟」状態にする"]:::effect --> finish(("終了")):::startend
+    c5 -->|"No"| finish

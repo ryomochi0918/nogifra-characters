@@ -1,0 +1,13 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> e1["①:このスキル中、<br/>自身のデバフ耐性貫通を+20%する"]:::effect
+    e1 --> a2["②実行:<br/>ライバル4名のバフ・アゲ効果を1つ解除し、<br/>100%の確率で2ターンの間「フィジカルダウン」と<br/>「メンタルダウン」状態にし、400%のアピール"]:::action
+    a2 --> c4{"④:自身の残りHP割合が<br/>50%以上か"}:::cond
+    c4 -->|"Yes"| e4["③のアピールは<br/>必ず命中する"]:::effect --> a3
+    c4 -->|"No"| a3["③実行:<br/>残りHP割合が最も高いライバル1名へ、<br/>味方3名の最大アピールの合計45%分の固定値を<br/>上乗せした1000%のアピール"]:::action
+    a3 --> e5["⑤実行:<br/>残りHP割合が最も低い味方2名のHPを<br/>このスキルで行った合計アピールの50%分回復する"]:::effect
+    e5 --> finish(("終了")):::startend

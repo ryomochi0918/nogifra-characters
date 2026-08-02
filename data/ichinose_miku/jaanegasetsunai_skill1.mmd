@@ -1,0 +1,14 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> e1["①:味方5名を2ターンの間<br/>「アピールブースト(感謝)」状態にする"]:::effect
+    e1 --> c3{"③:②の効果対象の<br/>残りHP割合が50%以上か"}:::cond
+    c3 -->|"Yes"| e3["②による「アピール力アップ」状態の<br/>アピール力増加倍率が1.5倍になる"]:::effect --> e2
+    c3 -->|"No"| e2["②実行:<br/>最大アピールが最も高い味方2名を<br/>2ターンの間「アピール力アップ」状態にする"]:::effect
+    e2 --> c4{"④:②の効果対象の<br/>残りHP割合が50%未満か"}:::cond
+    c4 -->|"Yes"| e4["②の効果対象のHPを<br/>自身のアピール力の80%分回復する<br/>(会心率に応じて会心回復が発生)"]:::effect --> e5
+    c4 -->|"No"| e5["⑤実行:<br/>最大アピールが最も高い味方1名が受けている<br/>バフ・アゲ効果状態の種類数を対象人数として<br/>ライバルのバフ・アゲ効果を1つ解除する<br/>(最大で6名まで)"]:::effect
+    e5 --> finish(("終了")):::startend

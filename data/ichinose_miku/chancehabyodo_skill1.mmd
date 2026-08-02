@@ -1,0 +1,16 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> e1["①:自身を2ターンの間<br/>「倍音」状態にする"]:::effect
+    e1 --> c3{"③:自身のエフォートが<br/>②のアピール対象のエフォート<br/>以上か"}:::cond
+    c3 -->|"Yes"| e3["②の倍率と固定値倍率を2倍にし、<br/>②のアピール中のみ<br/>デバフ耐性貫通を+20%する"]:::effect --> c4
+    c3 -->|"No"| c4{"④:②のアピール対象が<br/>「ディフェンスダウン」状態か"}:::cond
+    c4 -->|"Yes"| e4["②による「ディフェンスダウン」<br/>状態の効果倍率が1.5倍になる"]:::effect --> a2
+    c4 -->|"No"| a2["②実行:<br/>ライバル2名へ、100%の確率で<br/>2ターン「ディフェンスダウン」状態にし、<br/>自身のエフォートの2倍を固定値として<br/>上乗せした400%のアピール<br/>(2回目以降は対象を選び直す)"]:::action
+    a2 --> lc{"②のアピール<br/>3回すべて完了?"}:::cond
+    lc -->|"No、次の対象へ"| c3
+    lc -->|"Yes"| a5["⑤実行:<br/>残りHP割合が最も低いライバルへ4回、<br/>②の合計アピールの30%分<br/>(ディフェンス・フィジカル無視)"]:::action
+    a5 --> finish(("終了")):::startend

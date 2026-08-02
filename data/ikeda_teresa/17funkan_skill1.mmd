@@ -1,0 +1,11 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c2{"②:①の効果対象が<br/>「空腹」状態か"}:::cond
+    c2 -->|"Yes"| e2["①による「空腹」状態の<br/>効果倍率が1.5倍になる"]:::effect --> a1
+    c2 -->|"No"| a1["①実行:<br/>最大アピールが最も高いライバル4名の<br/>バフ・アゲ効果を1つ解除し、100%の確率で<br/>3ターンの間「空腹」状態にし、800%のアピール"]:::action
+    a1 --> a3["③実行:<br/>最大アピールが最も低いライバル1名へ<br/>①で行った合計アピールの50%分<br/>(ディフェンス・メンタル無視)"]:::action
+    a3 --> finish(("終了")):::startend

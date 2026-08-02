@@ -24,9 +24,11 @@
         --serif: "Shippori Mincho", serif;
         --sans: "Zen Kaku Gothic New", sans-serif;
       }
+
       * {
         box-sizing: border-box;
       }
+
       body {
         margin: 0;
         min-height: 100vh;
@@ -46,12 +48,14 @@
         text-align: center;
         padding: 64px 24px 40px;
       }
+
       header .eyebrow {
         font-size: 12px;
         letter-spacing: 0.35em;
         color: var(--spotlight);
         text-transform: uppercase;
       }
+
       header h1 {
         font-family: var(--serif);
         font-weight: 700;
@@ -59,6 +63,7 @@
         margin: 12px 0 8px;
         letter-spacing: 0.04em;
       }
+
       header p {
         color: var(--ink-dim);
         font-size: 14px;
@@ -75,6 +80,7 @@
         gap: 12px;
         align-items: center;
       }
+
       .search-bar input[type="text"] {
         flex: 1;
         background: var(--card);
@@ -87,12 +93,15 @@
         outline: none;
         transition: border-color 0.2s ease;
       }
+
       .search-bar input[type="text"]:focus {
         border-color: var(--accent);
       }
+
       .search-bar input[type="text"]::placeholder {
         color: var(--ink-dim);
       }
+
       .regex-toggle {
         display: flex;
         align-items: center;
@@ -102,6 +111,7 @@
         white-space: nowrap;
         cursor: pointer;
       }
+
       .no-results {
         grid-column: 1/-1;
         text-align: center;
@@ -135,6 +145,7 @@
           border-color 0.25s ease,
           box-shadow 0.25s ease;
       }
+
       .card::before {
         content: "";
         position: absolute;
@@ -150,12 +161,14 @@
         transition: opacity 0.3s ease;
         pointer-events: none;
       }
+
       .card:hover,
       .card:focus-visible {
         transform: translateY(-4px);
         border-color: var(--accent-dim);
         box-shadow: 0 18px 40px -20px rgba(199, 125, 255, 0.45);
       }
+
       .card:hover::before,
       .card:focus-visible::before {
         opacity: 1;
@@ -172,16 +185,19 @@
         border-radius: 999px;
         margin-bottom: 14px;
       }
+
       .card h2 {
         font-family: var(--serif);
         font-size: 20px;
         margin: 0 0 4px;
       }
+
       .card .subtitle {
         font-size: 13px;
         color: var(--accent);
         margin: 0 0 12px;
       }
+
       .card .meta {
         font-size: 12px;
         color: var(--ink-dim);
@@ -201,9 +217,11 @@
         z-index: 50;
         overflow-y: auto;
       }
+
       .viewer.open {
         display: flex;
       }
+
       .viewer-panel {
         background: var(--bg-1);
         border: 1px solid var(--card-line);
@@ -213,16 +231,19 @@
         padding: 28px;
         position: relative;
       }
+
       .viewer-panel h2 {
         font-family: var(--serif);
         margin: 0 0 4px;
         font-size: 22px;
       }
+
       .viewer-panel .subtitle {
         color: var(--accent);
         font-size: 13px;
         margin: 0 0 20px;
       }
+
       .viewer-close {
         position: absolute;
         top: 20px;
@@ -237,6 +258,7 @@
         font-size: 16px;
         line-height: 1;
       }
+
       .viewer-close:hover {
         border-color: var(--accent);
         color: var(--accent);
@@ -248,6 +270,7 @@
         flex-wrap: wrap;
         margin-bottom: 16px;
       }
+
       .tab-btn {
         font-family: inherit;
         font-size: 12.5px;
@@ -259,10 +282,12 @@
         cursor: pointer;
         transition: all 0.2s ease;
       }
+
       .tab-btn:hover {
         color: var(--ink);
         border-color: var(--accent-dim);
       }
+
       .tab-btn.active {
         color: #1a1220;
         background: var(--accent);
@@ -276,6 +301,7 @@
         gap: 8px;
         margin-bottom: 12px;
       }
+
       .zoom-btn {
         width: 30px;
         height: 30px;
@@ -289,10 +315,12 @@
         align-items: center;
         justify-content: center;
       }
+
       .zoom-btn:hover {
         border-color: var(--accent);
         color: var(--accent);
       }
+
       .zoom-label {
         font-size: 12px;
         color: var(--ink-dim);
@@ -308,9 +336,11 @@
         overflow: auto;
         max-height: 70vh;
       }
+
       .diagram-wrap svg {
         display: block;
       }
+
       .loading,
       .error {
         color: var(--ink-dim);
@@ -318,6 +348,7 @@
         padding: 40px 0;
         text-align: center;
       }
+
       .error {
         color: #ff8a8a;
       }
@@ -328,6 +359,7 @@
         border-collapse: collapse;
         font-size: 13px;
       }
+
       .passive-table th {
         text-align: left;
         color: var(--spotlight);
@@ -338,35 +370,42 @@
         border-bottom: 1px solid var(--card-line);
         white-space: nowrap;
       }
+
       .passive-table td {
         padding: 12px;
         border-bottom: 1px solid var(--card-line);
         vertical-align: top;
         line-height: 1.7;
       }
+
       .passive-table td.cond {
         color: var(--accent);
         white-space: nowrap;
         font-size: 12px;
       }
+
       .passive-table tr:last-child td {
         border-bottom: none;
       }
+
       .effect-list {
         list-style: none;
         margin: 0;
         padding: 0;
       }
+
       .effect-list li {
         position: relative;
         padding-left: 14px;
       }
+
       .effect-list li::before {
         content: "・";
         position: absolute;
         left: 0;
         color: var(--accent);
       }
+
       .effect-list li + li {
         margin-top: 4px;
       }
@@ -378,6 +417,7 @@
         border-radius: 10px;
         overflow: hidden;
       }
+
       .original-text summary {
         cursor: pointer;
         padding: 10px 14px;
@@ -388,16 +428,20 @@
         align-items: center;
         gap: 6px;
       }
+
       .original-text summary::-webkit-details-marker {
         display: none;
       }
+
       .original-text summary::before {
         content: "▸";
         color: var(--accent);
       }
+
       .original-text[open] summary::before {
         content: "▾";
       }
+
       .original-text .original-text-body {
         padding: 2px 16px 16px;
         font-size: 12.5px;
@@ -415,10 +459,11 @@
       }
     </style>
   </head>
+
   <body>
     <header>
       <div class="eyebrow">Skill Flowchart Archive</div>
-      <h1>スキルフローチャート図鑑</h1>
+      <h1>乃木フラスキル<br />フローチャート</h1>
       <p>
         キャラクターを選ぶと、スキル説明を整合性チェック済みのフローチャートで確認できます。
       </p>
@@ -443,23 +488,33 @@
 
     <div class="viewer" id="viewer">
       <div class="viewer-panel">
-        <button class="viewer-close" id="viewerClose" aria-label="閉じる">
+        <button
+          type="button"
+          class="viewer-close"
+          id="viewerClose"
+          aria-label="閉じる"
+        >
           ✕
         </button>
         <h2 id="viewerTitle"></h2>
         <p class="subtitle" id="viewerSubtitle"></p>
         <div class="tabs" id="viewerTabs"></div>
         <div class="zoom-bar" id="zoomBar">
-          <button class="zoom-btn" id="zoomOut" aria-label="縮小">−</button>
+          <button type="button" class="zoom-btn" id="zoomOut" aria-label="縮小">
+            −
+          </button>
           <span class="zoom-label" id="zoomLabel">100%</span>
-          <button class="zoom-btn" id="zoomIn" aria-label="拡大">＋</button>
+          <button type="button" class="zoom-btn" id="zoomIn" aria-label="拡大">
+            ＋
+          </button>
           <button
+            type="button"
             class="zoom-btn"
             id="zoomReset"
-            aria-label="幅に合わせる"
+            aria-label="リセット"
             style="width: auto; padding: 0 10px; font-size: 12px"
           >
-            幅に合わせる
+            リセット
           </button>
         </div>
         <div class="diagram-wrap" id="diagramWrap">
@@ -515,7 +570,7 @@
       const originalTextBody = document.getElementById("originalTextBody");
 
       let renderCount = 0;
-      let zoomPct = 100; // 100 = 幅に合わせる(svg width:100%)
+      let zoomPct = 100; // 100 = リセット(svg width:100%)
 
       function applyZoom() {
         const svg = diagramTarget.querySelector("svg");

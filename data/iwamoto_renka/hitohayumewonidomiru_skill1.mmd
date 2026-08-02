@@ -1,0 +1,11 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> e1["①:自身のHPを自身のHP上限の30%分回復し、<br/>自身を4ターンの間「円陣」と<br/>「魅了」状態にする"]:::effect --> c3{"③:自身のサンクスが<br/>②のアピール対象のサンクス以上か"}:::cond
+    c3 -->|"Yes"| e3["②の固定値倍率とアピール倍率を<br/>2倍にする"]:::effect --> a2
+    c3 -->|"No"| a2["②実行:<br/>残りHP割合が最も低いライバルへ、<br/>自身のサンクスの2倍を固定値で<br/>上乗せした450%のアピール"]:::action --> lc2{"②のアピール5回すべて完了?"}:::cond
+    lc2 -->|"No、次のアピールへ"| c3
+    lc2 -->|"Yes"| a4["④実行:<br/>ライバル1名へ、②でリタイアさせた回数分、<br/>自身のサンクスの6倍を固定値として<br/>上乗せした1200%のアピール"]:::action --> e5["⑤:味方6名のデバフ・サゲ効果を<br/>2つ解除する"]:::effect --> finish(("終了")):::startend

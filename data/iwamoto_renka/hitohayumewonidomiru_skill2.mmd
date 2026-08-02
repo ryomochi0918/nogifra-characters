@@ -1,0 +1,12 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c2{"②:自身の残りHP割合が<br/>50%以上か"}:::cond
+    c2 -->|"Yes"| e1a["①:このスキル中、自身の会心率を+50%、<br/>命中率を+30%する<br/>(②により効果倍率2倍)"]:::effect --> a3
+    c2 -->|"No"| e1b["①:このスキル中、自身の会心率を+25%、<br/>命中率を+15%する"]:::effect --> a3
+    a3["③実行:<br/>ライバルへ、アピール対象のHP減少分の8%を<br/>固定値として上乗せした400%のアピール<br/>(固定値上乗せは自身の最大アピールの500%まで)"]:::action --> lc3{"③のアピール4回すべて完了?"}:::cond
+    lc3 -->|"No、次の対象へ"| a3
+    lc3 -->|"Yes"| a4["④実行:<br/>残りHP割合が最も高いライバル1名へ、<br/>③で会心アピールが発生した回数×800%の<br/>倍率を上乗せした2000%のアピール"]:::action --> e5["⑤:自身のデバフ・サゲ効果を全て解除し、<br/>HPを自身のHP上限の50%分回復する"]:::effect --> finish(("終了")):::startend
