@@ -1,0 +1,19 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c2{"②:自身の残りHP割合が<br/>対象の残りHP割合以上か"}:::cond
+    c2 -->|"Yes"| e2["①のアピール倍率を2倍にする"]:::effect --> c4
+    c2 -->|"No"| c4{"④:対象が受けている<br/>デバフ・サゲ効果の種類数が<br/>3種類以上か"}:::cond
+    c4 -->|"Yes"| e4["①のアピールを<br/>必ず会心アピールにする"]:::effect --> a1
+    c4 -->|"No"| a1["①実行:残りHP割合が最も高い<br/>ライバルへ、バフ・アゲ効果を<br/>1つ解除し500%のアピール"]:::action --> c5{"⑤:対象がバフ・アゲ<br/>効果状態ではないか"}:::cond
+    c5 -->|"Yes"| e5["対象を100%の確率で<br/>4ターンの間「心労」状態にする"]:::effect --> loop1
+    c5 -->|"No"| loop1{"6回すべて<br/>完了?"}:::cond
+    loop1 -->|"No、次の回へ"| c2
+    loop1 -->|"Yes"| c4b{"④:対象が受けている<br/>デバフ・サゲ効果の種類数が<br/>3種類以上か"}:::cond
+    c4b -->|"Yes"| e4b["③のアピールを<br/>必ず会心アピールにする"]:::effect --> a3
+    c4b -->|"No"| a3["③実行:最大アピールが最も高い<br/>ライバル1名にこのスキルで行った<br/>合計アピールの40%分のアピール<br/>(ディフェンス、フィジカルを無視)"]:::action --> c5b{"⑤:対象がバフ・アゲ<br/>効果状態ではないか"}:::cond
+    c5b -->|"Yes"| e5b["対象を100%の確率で<br/>4ターンの間「心労」状態にする"]:::effect --> finish(("終了")):::startend
+    c5b -->|"No"| finish

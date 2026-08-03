@@ -1,0 +1,11 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> e1["①効果:このスキル中、自身の<br/>サゲ効果耐性貫通を+20%する"]:::effect --> a2["②実行:ライバル4名へ<br/>840%のアピール"]:::action --> c4{"④:ライバルチームの<br/>フロント人数が3名以下か"}:::cond
+    c4 -->|"Yes"| e4["③の「雑音」付与確率を+20%、<br/>①のサゲ効果耐性貫通の<br/>増加倍率を40%にする"]:::effect --> a3
+    c4 -->|"No"| a3["③実行:②の各アピール前に自身の<br/>スマイルが対象のスマイル以上だった<br/>回数を対象人数として、最大アピールが<br/>最も高いライバルを80%の確率で<br/>2ターンの間「雑音」状態にする"]:::action --> c6{"⑥:⑤の効果対象の<br/>残りHP割合が50%以上か"}:::cond
+    c6 -->|"Yes"| e6["⑤の効果対象のバフ・アゲ効果を<br/>全て解除する"]:::effect --> a5
+    c6 -->|"No"| a5["⑤実行:最大アピールが最も高い<br/>ライバル1名を100%の確率で<br/>2ターンの間「執着」状態にする<br/>(③の条件を満たさない場合でも発動)"]:::action --> finish(("終了")):::startend
