@@ -1,0 +1,17 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c2{"②:①の対象がデバフ・<br/>サゲ効果状態か"}:::cond
+    c2 -->|"Yes"| e2["①の対象のバフ・アゲ効果を<br/>1つ解除する"]:::effect --> a1
+    c2 -->|"No"| a1["①実行:ライバル2名を100%の確率で<br/>2ターンの間「回避率ダウン」状態にし、<br/>1500%のアピール"]:::action --> lc{"①のアピール対象<br/>すべて完了?"}:::cond
+    lc -->|"No、次の対象へ"| c2
+    lc -->|"Yes"| c3{"③:②のバフ・アゲ効果解除が<br/>1度も発生しなかったか"}:::cond
+    c3 -->|"Yes"| e3["①のアピール対象が1名増加する<br/>(増加人数は最大1名まで)"]:::effect --> c4
+    c3 -->|"No"| c4{"④:①のアピールでライバルが<br/>リタイアしなかったか"}:::cond
+    c4 -->|"Yes"| lc2{"①の再実行、<br/>2回まで到達したか"}:::cond
+    lc2 -->|"No、再実行"| a1
+    lc2 -->|"Yes、上限到達"| finish(("終了")):::startend
+    c4 -->|"No"| finish

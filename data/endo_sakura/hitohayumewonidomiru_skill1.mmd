@@ -1,0 +1,16 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c1{"①:自身の残りHP割合が<br/>50%以上か"}:::cond
+    c1 -->|"Yes(50%以上)"| e2["②:自身を4ターンの間<br/>「集音」状態にする"]:::effect --> c5
+    c1 -->|"No(50%未満)"| e3["③:自身を4ターンの間<br/>「静音」状態にする"]:::effect --> c5
+    c5{"⑤:自身のサンクスが<br/>④のアピール対象のサンクス以上か"}:::cond
+    c5 -->|"Yes"| e5["④のアピール倍率と<br/>固定値倍率が2倍になる"]:::effect --> c6
+    c5 -->|"No"| c6{"⑥:ライバルチームのフロント人数が<br/>4名以上か"}:::cond
+    c6 -->|"Yes"| e6["④のアピール対象のバフ・アゲ効果を1つ解除し、<br/>④の各アピール中のみ自身の命中率を+20%する"]:::effect --> a4
+    c6 -->|"No"| a4["④実行:最大アピールが最も高いライバルへ、<br/>自身のサンクスの4倍を固定値として<br/>上乗せした850%のアピール"]:::action --> lc{"④のアピール4回<br/>すべて完了?"}:::cond
+    lc -->|"No、次の回へ"| c5
+    lc -->|"Yes"| e7["自身のHPを④で行った<br/>合計アピールの30%分回復する"]:::effect --> finish(("終了")):::startend

@@ -1,0 +1,11 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> a1["①実行:最大アピールが最も高いライバル4名へ、<br/>「対象のデバフ・サゲ効果状態種類数+1」×<br/>自身の残りHPの10%を固定値として上乗せした<br/>800%のアピール"]:::action --> a2["②実行:自身と自身以外の残りHP割合が<br/>最も低い味方1名を3ターンの間<br/>「聖域」状態にする"]:::action --> c4{"④:自身のスマイルが③の対象の<br/>スマイル以上か"}:::cond
+    c4 -->|"Yes"| e4["③のアピール倍率と<br/>固定値倍率が2倍になる"]:::effect --> a3
+    c4 -->|"No"| a3["③実行:残りHP割合が最も低いライバルへ、<br/>「自身が受けているバフ・アゲ効果・特殊状態<br/>種類数+1」×自身の残りHPの10%を固定値として<br/>上乗せした800%のアピール"]:::action --> e5["⑤:自身のHPを直前のアピールの<br/>30%分回復する"]:::effect --> lc3{"③のアピール4回<br/>すべて完了?"}:::cond
+    lc3 -->|"No、次の回へ"| c4
+    lc3 -->|"Yes"| finish(("終了")):::startend

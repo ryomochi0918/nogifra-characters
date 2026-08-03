@@ -1,0 +1,11 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c2{"②:自身のバイタリティが①の対象の<br/>バイタリティ以上か"}:::cond
+    c2 -->|"Yes"| e2["①のアピール中のみ①の対象の<br/>ディフェンスとフィジカルを-40%する"]:::effect --> c3
+    c2 -->|"No"| c3{"③:自身の残りHP割合が①の対象の<br/>残りHP割合以上か"}:::cond
+    c3 -->|"Yes"| e3["①のアピールは必ず命中する"]:::effect --> a1
+    c3 -->|"No"| a1["①実行:ライバル1名を100%の確率で<br/>3ターンの間「執着」状態にし、<br/>1000%+発動回数×2000%<br/>(初回発動時は3000%)のアピール"]:::action --> e4["④:自身と自身以外の残りHP割合が<br/>最も低い味方2名のHPを①の合計アピールの<br/>25%分回復する"]:::effect --> finish(("終了")):::startend
