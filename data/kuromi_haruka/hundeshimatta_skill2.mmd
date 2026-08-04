@@ -1,0 +1,15 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> e1["①効果:このスキル中、自身の<br/>命中率を+30%する"]:::effect --> c3
+    c3{"③:②のアピール対象の残りHP割合が<br/>50%以上か"}:::cond
+    c3 -->|"Yes"| e3["②のアピール倍率が3倍になる"]:::effect --> c4
+    c3 -->|"No"| c4{"④:自身の残りHP割合が②の<br/>アピール対象の残りHP割合以上か"}:::cond
+    c4 -->|"Yes"| e4["②の各アピール中のみ対象の<br/>ディフェンスとフィジカルを<br/>-50%する"]:::effect --> a2
+    c4 -->|"No"| a2["②実行:残りHP割合が最も低い<br/>ライバルへ400%のアピール"]:::action --> lc1
+    lc1{"②のアピール8回<br/>すべて完了?"}:::cond
+    lc1 -->|"No、次の回へ"| c3
+    lc1 -->|"Yes"| finish(("終了")):::startend

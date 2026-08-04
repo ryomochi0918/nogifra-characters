@@ -1,0 +1,17 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> e1["①効果:このスキル中、自身の<br/>リフレクト耐性を+25%する"]:::effect --> c3
+    c3{"③:自身の「光輝」状態のターン数が<br/>5ターン以上か"}:::cond
+    c3 -->|"Yes"| e3["②のアピール倍率と固定値倍率が<br/>2倍になる"]:::effect --> a2
+    c3 -->|"No"| a2["②実行:ライバルへ、自身の最大アピールの<br/>25%を固定値として上乗せした<br/>500%のアピール"]:::action --> e4["自身のHPを②の直前のアピールの<br/>50%分回復する"]:::effect --> lc1
+    lc1{"②のアピール5回<br/>すべて完了?"}:::cond
+    lc1 -->|"No、次の回へ"| c3
+    lc1 -->|"Yes"| c5{"⑤:味方フロントの「光輝」状態のターン数が<br/>9ターン以上、または②のアピールで<br/>ライバルがリタイアしなかったか"}:::cond
+    c5 -->|"Yes"| c6{"⑥:自身のエフォートが⑤の各アピール<br/>対象のエフォート以上か(対象ごとに判定)"}:::cond
+    c6 -->|"Yes"| e6["該当対象への⑤のアピール倍率が2倍になり、<br/>そのバフ・アゲ効果を1つ解除する"]:::effect --> a5
+    c6 -->|"No"| a5["⑤実行:ライバル6名へ、②で行った<br/>合計アピールの20%分のアピール<br/>(ディフェンス、フィジカルを無視)"]:::action --> finish(("終了")):::startend
+    c5 -->|"No"| finish

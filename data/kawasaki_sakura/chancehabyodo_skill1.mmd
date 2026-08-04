@@ -1,0 +1,14 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c23
+    c23{"②/③:自身の最大アピールが①の<br/>アピール対象の最大アピール以上か"}:::cond
+    c23 -->|"Yes(②)"| e2["①のアピールに自身の最大アピールの<br/>40%を固定値として上乗せする"]:::effect --> a1
+    c23 -->|"No(③)"| e3["①のアピールに自身の残りHPの<br/>20%を固定値として上乗せする"]:::effect --> a1
+    a1["①実行:最大アピールが最も高い<br/>ライバルへ610%のアピール"]:::action --> e4["自身のHPを①の直前のアピールの<br/>30%分回復する"]:::effect --> lc1
+    lc1{"①のアピール4回<br/>すべて完了?"}:::cond
+    lc1 -->|"No、次の回へ"| c23
+    lc1 -->|"Yes"| a5["⑤実行:自身を4ターンの間<br/>「翻弄」状態にする"]:::action --> finish(("終了")):::startend

@@ -1,0 +1,15 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> e1["①効果:このスキル中、自身の<br/>命中率を+20%する"]:::effect --> a2["②実行:ライバル4名へ2回、<br/>600%のアピール<br/>(2回目以降は対象を選び直す)"]:::action --> c4
+    c4{"④:自身のサンクスが③のアピール<br/>対象のサンクス以上か"}:::cond
+    c4 -->|"Yes"| e4["③のアピール倍率が3倍になる"]:::effect --> a3
+    c4 -->|"No"| a3["③実行:ライバルへ2回、<br/>1300%のアピール"]:::action --> c5
+    c5{"⑤:③のアピール対象が<br/>リタイアしなかったか"}:::cond
+    c5 -->|"Yes"| e5["③のアピール回数が1回増加する<br/>(追加回数は最大2回まで)"]:::effect --> lc1
+    c5 -->|"No"| lc1{"③のアピールが全て完了?<br/>(基本2回、⑤で最大+2回)"}:::cond
+    lc1 -->|"No、次の回へ"| c4
+    lc1 -->|"Yes"| a6["⑥実行:自身のHPをこのスキルで<br/>行った合計アピールの30%分<br/>回復する"]:::action --> finish(("終了")):::startend

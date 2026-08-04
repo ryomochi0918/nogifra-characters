@@ -1,0 +1,15 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> a1["①実行:自身と自身以外の最大アピールが<br/>最も高い味方1名を3ターンの間<br/>「堅忍」状態にする"]:::action --> c3
+    c3{"③:自身の残りHP割合が<br/>50%以上か"}:::cond
+    c3 -->|"Yes"| e3["②のアピール倍率と固定値倍率が<br/>2倍になる"]:::effect --> a2
+    c3 -->|"No"| a2["②実行:最大アピールが最も高い<br/>ライバルへ、バフ・アゲ効果を1つ解除し、<br/>自身の残りHPの22%を固定値として<br/>上乗せした670%のアピール"]:::action --> e4["自身のHPを直前のアピールの<br/>30%分回復する"]:::effect --> lc1
+    lc1{"②のアピール4回<br/>すべて完了?"}:::cond
+    lc1 -->|"No、次の回へ"| c3
+    lc1 -->|"Yes"| c6{"⑥:②のアピールでライバルが<br/>リタイアしたか"}:::cond
+    c6 -->|"Yes"| e6["⑤のデバフ・サゲ効果解除数が<br/>全てに変更される"]:::effect --> a5
+    c6 -->|"No"| a5["⑤実行:自身のデバフ・サゲ効果を1つ<br/>解除(⑥成立時は全て)し、2ターンの間<br/>「魅了」状態にする"]:::action --> finish(("終了")):::startend

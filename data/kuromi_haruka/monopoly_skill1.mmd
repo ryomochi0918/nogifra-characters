@@ -1,0 +1,13 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> e1["①効果:このスキル中、自身の<br/>命中率と会心率を+25%する"]:::effect --> c3
+    c3{"③:②のアピール対象が<br/>「混乱」状態か"}:::cond
+    c3 -->|"Yes"| e3["②のアピール倍率が3倍になる"]:::effect --> a2
+    c3 -->|"No"| a2["②実行:ライバルへ<br/>320%のアピール"]:::action --> e4["②のアピール対象を100%の確率で<br/>4ターンの間「混乱」状態にする"]:::effect --> lc1
+    lc1{"②のアピール6回<br/>すべて完了?"}:::cond
+    lc1 -->|"No、次の回へ"| c3
+    lc1 -->|"Yes"| a5["⑤実行:このスキルで会心アピールが<br/>発生した回数分の味方(残りHP割合が<br/>低い順)のデバフ・サゲ効果を1つ解除し、<br/>HPをこのスキルで行った合計アピールの<br/>30%分回復する"]:::action --> finish(("終了")):::startend

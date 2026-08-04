@@ -1,0 +1,17 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> e1["①効果:自身を4ターンの間<br/>「倍音」状態にする"]:::effect --> c3
+    c3{"③:自身のサンクスが②のアピール<br/>対象のサンクス以上か"}:::cond
+    c3 -->|"Yes"| e3["②のアピール倍率と固定値倍率が<br/>2倍になる"]:::effect --> c4
+    c3 -->|"No"| c4{"④:ライブ中に自身のスキル2「好きの<br/>グラデーション」が1回も発動して<br/>いないか"}:::cond
+    c4 -->|"Yes"| e4["②のアピール倍率と固定値倍率が<br/>2倍になる"]:::effect --> a2
+    c4 -->|"No"| a2["②実行:ライバル4名へ、自身の<br/>サンクスの4倍を固定値として<br/>上乗せした600%のアピール"]:::action --> a5["⑤実行:残りHP割合が最も低い<br/>ライバルへ2回、自身の最大アピールの<br/>40%を固定値として上乗せした<br/>1600%のアピール"]:::action --> c6
+    c6{"⑥:⑤のアピール対象が<br/>リタイアしたか"}:::cond
+    c6 -->|"Yes"| e6["⑤のアピール回数が1回増加する<br/>(追加回数は最大2回まで)"]:::effect --> c7
+    c6 -->|"No"| c7{"⑦:このスキルでライバルがリタイアせず、<br/>かつライバルチームのフロント人数が<br/>4名以下か"}:::cond
+    c7 -->|"Yes"| a7["残りHP割合が最も低いライバル1名へ、<br/>このスキルで行った合計アピールの<br/>30%分のアピール<br/>(ディフェンス、フィジカルを無視)"]:::action --> a8["⑧実行:自身を2ターンの間<br/>「機敏」状態にする"]:::action --> finish(("終了")):::startend
+    c7 -->|"No"| finish

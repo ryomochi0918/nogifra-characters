@@ -1,0 +1,18 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> e1["①効果:自身を4ターンの間「アピール<br/>ブースト(笑顔)」状態にする"]:::effect --> c3
+    c3{"③:②の対象の残りHP割合が50%以上、<br/>または自身の残りHP割合が②の対象の<br/>残りHP割合以上か"}:::cond
+    c3 -->|"Yes"| e3["②のアピール対象のバフ・アゲ効果を<br/>1つ解除し、②のアピール倍率と<br/>固定値倍率が2倍になる"]:::effect --> a2
+    c3 -->|"No"| a2["②実行:ライバルへ、自身のエフォートの<br/>2.5倍を固定値として上乗せした<br/>380%のアピール"]:::action --> c4
+    c4{"④:②のアピールで<br/>ライバルがリタイアしたか"}:::cond
+    c4 -->|"Yes"| e4["自身を2ターンの間<br/>「熱血」状態にする"]:::effect --> lc1
+    c4 -->|"No"| lc1{"②のアピール7回<br/>すべて完了?"}:::cond
+    lc1 -->|"No、次の回へ"| c3
+    lc1 -->|"Yes"| a5["⑤実行:自身を2ターンの間<br/>「熱血」状態にする"]:::action --> c6
+    c6{"⑥:②のアピールでライバルが<br/>リタイアしなかったか"}:::cond
+    c6 -->|"Yes"| a6["残りHP割合が最も低いライバルへ2回、<br/>自身のエフォートの5.5倍を固定値として<br/>上乗せした760%のアピール"]:::action --> finish(("終了")):::startend
+    c6 -->|"No"| finish

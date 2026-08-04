@@ -1,0 +1,15 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> e1["①効果:このスキル中、自身の<br/>会心率を+40%する"]:::effect --> c3
+    c3{"③:自身のサンクスが②のアピール<br/>対象のサンクス以上か"}:::cond
+    c3 -->|"Yes"| e3["②のアピール対象のバフ・アゲ効果を<br/>1つ解除する"]:::effect --> a2
+    c3 -->|"No"| a2["②実行:ライバルへ、自身のサンクスの<br/>2.5倍を固定値として上乗せした<br/>300%のアピール"]:::action --> c4
+    c4{"④:②のアピールで<br/>会心アピールが発生したか"}:::cond
+    c4 -->|"Yes"| e4["②のアピール回数が1回増加する<br/>(追加回数は最大10回まで)"]:::effect --> lc1
+    c4 -->|"No"| lc1{"②のアピール5回<br/>すべて完了?"}:::cond
+    lc1 -->|"No、次の回へ"| c3
+    lc1 -->|"Yes"| a5["⑤実行:自身のHPを②で行った<br/>合計アピールの40%分回復する"]:::action --> finish(("終了")):::startend

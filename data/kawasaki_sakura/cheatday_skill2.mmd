@@ -1,0 +1,15 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> e1["①効果:このスキル中、自身の<br/>会心率を+25%する"]:::effect --> c3
+    c3{"③:②のアピール対象の残りHP割合が<br/>50%未満、または自身の残りHP割合が<br/>②の対象の残りHP割合以上か"}:::cond
+    c3 -->|"Yes"| e3["②の各アピール中のみ対象の<br/>ディフェンスとフィジカルを-50%する"]:::effect --> a2
+    c3 -->|"No"| a2["②実行:残りHP割合が最も低い<br/>ライバルへ、自身の最大アピールの<br/>20%を固定値として上乗せした<br/>460%のアピール(対象固定、リタイア<br/>回復時も対象維持)"]:::action --> e4["自身のHPを②の直前のアピールの<br/>30%分回復する"]:::effect --> c5
+    c5{"⑤:②のアピールで会心アピールが発生、<br/>または②の対象の特殊状態の合計<br/>ターン数が6ターン以上か"}:::cond
+    c5 -->|"Yes"| e5["②のアピール回数が1回増加する<br/>(追加回数は最大8回まで)"]:::effect --> lc1
+    c5 -->|"No"| lc1{"②のアピールが全て完了?<br/>(基本4回、⑤で最大+8回)"}:::cond
+    lc1 -->|"No、次の回へ"| c3
+    lc1 -->|"Yes"| finish(("終了")):::startend

@@ -1,0 +1,15 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c2
+    c2{"②:自身がバフ・アゲ効果<br/>状態か"}:::cond
+    c2 -->|"Yes"| e2["①のアピール倍率が2倍になる"]:::effect --> a1
+    c2 -->|"No"| a1
+    a1["①実行:ライバル4名へ2回、450%の<br/>アピール(2回目以降は対象を選び直す)"]:::action --> a3
+    a3["③実行:残りHP割合が最も高いライバル<br/>1名へ①の合計アピールの50%分の<br/>アピール(ディフェンス、フィジカルを無視)"]:::action --> c4
+    c4{"④:このスキルでライバルが<br/>1名以上リタイアしたか"}:::cond
+    c4 -->|"Yes"| a4["再度③を実行(再実行は最大1回まで)"]:::action --> finish(("終了")):::startend
+    c4 -->|"No"| finish

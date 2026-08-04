@@ -1,0 +1,15 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c2
+    c2{"②:自身が受けているバフ・アゲ効果・<br/>特殊状態の合計種類数が3種類以上か"}:::cond
+    c2 -->|"Yes"| e2["①の命中率の増加倍率が<br/>2倍になる"]:::effect --> e1
+    c2 -->|"No"| e1["①効果:このスキル中、自身の<br/>命中率を+20%する(②成立時は2倍)"]:::effect --> a3["③実行:残りHP割合が最も高い<br/>ライバル4名へ500%のアピール"]:::action --> c4
+    c4{"④:③のアピール対象が受けている<br/>デバフ・サゲ効果状態の種類数が<br/>2種類以上か(対象ごとに判定)"}:::cond
+    c4 -->|"Yes"| a4["同じ対象へ追加で<br/>500%のアピール"]:::action --> c5
+    c4 -->|"No"| c5{"⑤:ライバルチームのフロント<br/>人数が3名以上か"}:::cond
+    c5 -->|"Yes"| a5["残りHP割合が最も低いライバルへ3回、<br/>自身の最大アピールの80%を固定値として<br/>上乗せした1000%のアピール"]:::action --> finish(("終了")):::startend
+    c5 -->|"No"| finish
