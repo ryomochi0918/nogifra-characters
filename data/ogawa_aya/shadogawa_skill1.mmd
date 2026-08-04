@@ -1,0 +1,21 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> e1["①効果:このスキル中、自身の<br/>サゲ効果耐性貫通を+25%する"]:::effect --> c3
+    c3{"③:自身のスマイルが<br/>対象のスマイル以上か"}:::cond
+    c3 -->|"Yes"| e3["②のアピール倍率が<br/>3倍になる"]:::effect --> c4
+    c3 -->|"No"| c4
+    c4{"④:対象が受けているデバフ・<br/>サゲ効果状態の種類数が<br/>2種類以上か"}:::cond
+    c4 -->|"Yes"| e4["②の各アピールに対象の<br/>残りHPの2%分を<br/>固定値として上乗せする"]:::effect --> a2
+    c4 -->|"No"| a2["②実行:残りHP割合が最も高い<br/>ライバル4名を100%の確率で3ターンの間<br/>「衰弱」状態にし、自身のスマイルの3倍を<br/>固定値として上乗せした600%のアピール"]:::action --> loop1
+    loop1{"4名すべて完了?"}:::cond
+    loop1 -->|"No、次の対象へ"| c3
+    loop1 -->|"Yes"| c6{"⑥:自身の「光輝」状態の<br/>ターン数が6ターン以上か"}:::cond
+    c6 -->|"Yes"| e6["⑤の固定値倍率が<br/>3倍になる"]:::effect --> a5
+    c6 -->|"No"| a5["⑤実行:ライバルへ4回、自身の<br/>スマイルを固定値として<br/>上乗せした400%のアピール"]:::action --> loop2
+    loop2{"4回すべて完了?"}:::cond
+    loop2 -->|"No、次の対象へ"| c6
+    loop2 -->|"Yes"| finish(("終了")):::startend
