@@ -1,0 +1,16 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> a0["①実行:味方6名を2ターンの間<br/>「アピールブースト(感謝)」<br/>状態にする"]:::effect --> c1{"③:自身の残りHP割合が<br/>50%以上か"}:::cond
+    c1 -->|"Yes"| a1["②実行(強化):自身を2ターンの間<br/>「保護」状態にする<br/>(会心アピール耐性の効果倍率<br/>1.5倍)"]:::effect --> c2
+    c1 -->|"No"| a2["②実行(通常):自身を2ターンの間<br/>「保護」状態にする"]:::effect --> c2
+    c2{"⑤:対象の残りHP割合が<br/>50%以上か"}:::cond
+    c2 -->|"Yes"| a3["④実行(強化):自身の残りHPの<br/>12%を固定値として上乗せした<br/>500%のアピールを行い、<br/>対象のバフ・アゲ効果を<br/>2つ解除する"]:::action --> loop1{"3回<br/>すべて完了?"}:::cond
+    c2 -->|"No"| a4["④実行(通常):自身の残りHPの<br/>12%を固定値として上乗せした<br/>500%のアピールを行う"]:::action --> loop1
+    loop1 -->|"No、次の回へ"| c2
+    loop1 -->|"Yes"| c3{"⑥:ライバルチームの<br/>フロント人数が4名以上か"}:::cond
+    c3 -->|"Yes"| a5["自身を3ターンの間「決心」<br/>状態にし、HPを④で行った<br/>合計アピールの30%分回復する"]:::action --> finish(("終了")):::startend
+    c3 -->|"No"| finish
