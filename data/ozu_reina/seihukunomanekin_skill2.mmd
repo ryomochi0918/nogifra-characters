@@ -1,0 +1,24 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c2a
+    c2a{"②:ライブ中の自身のスキル1、2の<br/>会心アピール発生回数は6回以上か"}:::cond
+    c2a -->|"Yes"| e2a["①のアピールに自身の<br/>最大アピールの20%を<br/>固定値として上乗せする"]:::effect --> c2b
+    c2a -->|"No"| a1
+    c2b{"②:会心アピール発生回数は<br/>10回以上か"}:::cond
+    c2b -->|"Yes"| e2b["①の固定値倍率が<br/>2倍になる"]:::effect --> c2c
+    c2b -->|"No"| a1
+    c2c{"②:会心アピール発生回数は<br/>14回以上か"}:::cond
+    c2c -->|"Yes"| e2c["自身以外の味方2名を2ターンの間<br/>「聡明」状態にする"]:::effect --> a1
+    c2c -->|"No"| a1
+    a1["①実行:ライバルへライブ中に発動した<br/>自身のスキル2「あ!小津じゃん!!!」の<br/>回数×450%の倍率を上乗せした<br/>250%のアピール(初回発動時の<br/>倍率は700%となる)"]:::action --> e3
+    e3["③効果:①のアピールが成功する度に、<br/>次に行う①のアピール倍率が2倍になる<br/>(最大4000%のアピール、③によって<br/>①の上乗せ倍率は変化しない)"]:::effect --> loop1
+    loop1{"①を6回実行したか"}:::cond
+    loop1 -->|"No、次の回へ"| c2a
+    loop1 -->|"Yes"| c4
+    c4{"④:①のアピールでライバルが<br/>リタイアしなかったか"}:::cond
+    c4 -->|"Yes"| e4["自身のHPを①で行った<br/>合計アピールの30%分回復する"]:::effect --> finish(("終了")):::startend
+    c4 -->|"No"| finish

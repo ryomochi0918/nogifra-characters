@@ -1,0 +1,16 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c2
+    c2{"②:自身のエフォートが<br/>対象のエフォート以上か"}:::cond
+    c2 -->|"No"| a1["①実行:最大アピールが最も高い<br/>ライバル3名へ2回、600%のアピール<br/>(2回目以降は対象を選び直す)"]:::action --> loop1
+    c2 -->|"Yes"| c3
+    c3{"③:対象が「緊張」<br/>状態か"}:::cond
+    c3 -->|"Yes"| e3["②の「緊張」状態の<br/>効果倍率が1.5倍になる"]:::effect --> e2
+    c3 -->|"No"| e2["対象を100%の確率で<br/>3ターンの間「緊張」状態にする"]:::effect --> a1
+    loop1{"①を対象3名×2回<br/>実行したか"}:::cond
+    loop1 -->|"No、次の回へ"| c2
+    loop1 -->|"Yes"| e4["④効果:自身のHPをこのスキルで<br/>行った合計アピールの<br/>50%分回復する"]:::effect --> finish(("終了")):::startend

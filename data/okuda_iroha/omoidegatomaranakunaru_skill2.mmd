@@ -1,0 +1,19 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c2
+    c2{"②:自身の残りHP割合が50%<br/>以上、または自身の残りHP割合が<br/>対象の残りHP割合以上か"}:::cond
+    c2 -->|"Yes"| e2["①のアピール倍率と<br/>固定値倍率を2倍にする"]:::effect --> c3
+    c2 -->|"No"| c3
+    c3{"③:①の対象がバフ・アゲ<br/>効果・特殊状態か"}:::cond
+    c3 -->|"Yes"| e3["①のアピール倍率と<br/>固定値倍率を2倍にする"]:::effect --> a1
+    c3 -->|"No"| a1["①実行:最大アピールが最も高い<br/>ライバル2名へ2回、自身の最大アピールの<br/>20%を固定値として上乗せした<br/>400%のアピール"]:::action --> loop1
+    loop1{"①を対象2名×2回<br/>実行したか"}:::cond
+    loop1 -->|"No、次の回へ"| c2
+    loop1 -->|"Yes"| c4
+    c4{"④:①の対象に特殊状態の<br/>メンバーが居たか"}:::cond
+    c4 -->|"Yes(①の回数を1回増加させ再実行、<br/>追加回数・再実行は最大1回)"| c2
+    c4 -->|"No"| finish(("終了")):::startend

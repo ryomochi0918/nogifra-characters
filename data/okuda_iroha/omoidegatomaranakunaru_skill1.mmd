@@ -1,0 +1,18 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> e1["①効果:自身を2ターンの間<br/>「倍音」状態にする"]:::effect --> c2
+    c2{"②:対象の状態は?"}:::cond
+    c2 -->|"バフ・アゲ効果状態(③)"| a3["対象に2回、自身のスマイルの<br/>10倍を固定値として上乗せした<br/>1000%のアピール"]:::action --> loop1
+    c2 -->|"デバフ・サゲ効果状態(④)"| a4["対象に2回、対象のバフ・アゲ効果を<br/>1つ解除し、自身の最大アピールの<br/>50%を固定値として上乗せした<br/>1000%のアピール"]:::action --> loop1
+    c2 -->|"特殊状態(⑤)"| a5["対象に2回、自身のスマイルの<br/>12倍を固定値として上乗せした<br/>1000%のアピール"]:::action --> loop1
+    c2 -->|"いずれでもない"| loop1
+    loop1{"②を対象2名分<br/>実行したか"}:::cond
+    loop1 -->|"No、次の対象へ"| c2
+    loop1 -->|"Yes"| c6
+    c6{"⑥:③④⑤のいずれも<br/>発生しなかったか"}:::cond
+    c6 -->|"Yes"| a6["最大アピールが最も高い<br/>ライバル2名へ3回、自身のスマイルの<br/>12倍を固定値として上乗せした<br/>1000%のアピール"]:::action --> finish(("終了")):::startend
+    c6 -->|"No"| finish

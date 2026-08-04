@@ -1,0 +1,11 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> a1["①実行:ライバル4名へ<br/>500%のアピール"]:::action --> e2["②効果:対象を100%の確率で<br/>3ターンの間「アピールカダウン」<br/>状態にする"]:::effect --> loop1
+    loop1{"①を4名分実行したか"}:::cond
+    loop1 -->|"No、次の対象へ"| a1
+    loop1 -->|"Yes"| e3["③実行:残りHP割合が最も低い<br/>味方4名のデバフ・サゲ効果状態を1つ<br/>解除し、HPをこのスキルで行った合計<br/>アピールの50%分回復し、2ターンの間<br/>「ディフェンスアップ」状態にする"]:::effect --> e4
+    e4["④効果:味方6名を2ターンの間<br/>「アピールガード(笑顔)」状態にする"]:::effect --> finish(("終了")):::startend

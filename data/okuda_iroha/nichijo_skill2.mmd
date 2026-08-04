@@ -1,0 +1,11 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> e1["①効果:味方6名のHPを<br/>自身のHP上限の40%分回復する"]:::effect --> e3
+    e3["③効果:②の対象を100%の<br/>確率で4ターンの間<br/>「ディフェンスダウン」状態にする"]:::effect --> a2["②実行:ライバル4名へ自身のサンクスの<br/>3倍を固定値として上乗せした<br/>600%のアピール"]:::action --> c4
+    c4{"④:ライブ中に自身のスキル2<br/>「いろはーと」が2回以上<br/>発動したか"}:::cond
+    c4 -->|"Yes(②を再実行、最大1回)"| e3
+    c4 -->|"No"| finish(("終了")):::startend

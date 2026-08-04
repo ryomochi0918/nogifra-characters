@@ -1,0 +1,19 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c2
+    c2{"②:自身のバイタリティが<br/>対象のバイタリティ以上か"}:::cond
+    c2 -->|"Yes"| e2["①のアピール中のみ自身の<br/>サゲ効果耐性貫通を+40%する"]:::effect --> c3
+    c2 -->|"No"| c3
+    c3{"③:対象の残りHP割合が<br/>50%以上か"}:::cond
+    c3 -->|"Yes"| e3["①のアピールに自身の<br/>バイタリティの3倍を<br/>固定値として上乗せする"]:::effect --> a1
+    c3 -->|"No"| a1["①実行:ライバル3名を100%の<br/>確率で3ターンの間「嫉妬」状態にし、<br/>1200%のアピール"]:::action --> loop1
+    loop1{"①を3名分実行したか"}:::cond
+    loop1 -->|"No、次の対象へ"| c2
+    loop1 -->|"Yes"| c4
+    c4{"④:①のアピールでライバルが<br/>リタイアしなかったか"}:::cond
+    c4 -->|"Yes(①を再実行、最大1回)"| c2
+    c4 -->|"No"| e5["⑤実行:自身と最大アピールが<br/>最も高い味方1名のHPを①の合計<br/>アピールの30%分回復し、3ターンの間<br/>「反響」状態にする"]:::effect --> finish(("終了")):::startend

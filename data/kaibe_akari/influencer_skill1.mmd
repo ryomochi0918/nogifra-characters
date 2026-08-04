@@ -1,0 +1,18 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> e1["①効果:自身を3ターンの間<br/>「倍音」状態にする"]:::effect --> c3
+    c3{"③:自身のスマイルが<br/>対象のスマイル以上か"}:::cond
+    c3 -->|"Yes"| e3["対象のバフ・アゲ効果を<br/>1つ解除する"]:::effect --> a2
+    c3 -->|"No"| a2["②実行:残りHP割合が最も低い<br/>ライバルへ自身の最大アピールの40%を<br/>固定値として上乗せした580%のアピール"]:::action --> e4a
+    e4a["④効果:自身のHPを直前の<br/>アピールの30%分回復する"]:::effect --> a5["⑤実行:残りHP割合が最も高い<br/>ライバル1名へ合計アピールの35%を<br/>固定値(上限は最大アピールの120%)<br/>として上乗せした290%のアピール"]:::action --> e4b
+    e4b["④効果:自身のHPを直前の<br/>アピールの30%分回復する"]:::effect --> loop1
+    loop1{"②を4回実行したか"}:::cond
+    loop1 -->|"No、次の回へ"| c3
+    loop1 -->|"Yes"| c6
+    c6{"⑥:このスキルでライバルが<br/>リタイアしたか"}:::cond
+    c6 -->|"Yes"| e6["自身を3ターンの間<br/>「反響」状態にする"]:::effect --> finish
+    c6 -->|"No"| finish(("終了")):::startend

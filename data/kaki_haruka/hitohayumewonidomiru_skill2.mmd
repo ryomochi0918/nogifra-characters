@@ -1,0 +1,23 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c1
+    c1{"①:味方フロントの「光輝」状態の<br/>合計ターン数が7ターン以上か<br/>(このスキル開始時)"}:::cond
+    c1 -->|"Yes"| e1["このスキル中、自身の命中率と<br/>会心率を+25%する"]:::effect --> c3
+    c1 -->|"No"| c3
+    c3{"③:対象が「心労」状態、または<br/>味方フロントの「光輝」状態の<br/>合計ターン数が12ターン以上か"}:::cond
+    c3 -->|"Yes"| e3["②のアピール倍率と<br/>固定値倍率が3倍になる"]:::effect --> a2
+    c3 -->|"No"| a2["②実行:残りHP割合が最も低い<br/>ライバルへ自身のエフォートの2倍を<br/>固定値として上乗せした<br/>540%のアピール"]:::action --> c5a
+    c5a{"⑤:自身の「光輝」状態の<br/>ターン数が9ターン以上か"}:::cond
+    c5a -->|"Yes"| e5a["自身のHPを直前の<br/>アピールの30%分回復する"]:::effect --> loop1
+    c5a -->|"No"| loop1
+    loop1{"②を4回実行したか"}:::cond
+    loop1 -->|"No、次の回へ"| c3
+    loop1 -->|"Yes"| a4
+    a4["④実行:②で会心アピールが発生した<br/>回数をアピール回数として、ライバル1名へ<br/>②の合計アピールの20%分のアピール<br/>(ディフェンス、フィジカルを無視する)"]:::action --> c5b
+    c5b{"⑤:自身の「光輝」状態の<br/>ターン数が9ターン以上か"}:::cond
+    c5b -->|"Yes"| e5b["自身のHPを直前の<br/>アピールの30%分回復する"]:::effect --> finish(("終了")):::startend
+    c5b -->|"No"| finish

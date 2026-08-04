@@ -1,0 +1,20 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c2
+    c2{"②/③:対象の残りHP割合が<br/>50%未満か"}:::cond
+    c2 -->|"Yes(②)"| e2["①のアピール倍率が<br/>2倍になる"]:::effect --> a1
+    c2 -->|"No(③)"| e3["①のアピール中のみ<br/>必ず会心アピールになる"]:::effect --> a1
+    a1["①実行:残りHP割合が最も高い<br/>ライバルへ1400%のアピール"]:::action --> c4
+    c4{"④:①のアピールで失敗、<br/>またはアピールが0だったか"}:::cond
+    c4 -->|"Yes"| e4["このスキルによる残りの<br/>アピールは必ず命中する"]:::effect --> c5
+    c4 -->|"No"| c5
+    c5{"⑤:①のアピールで<br/>ライバルをリタイアさせたか"}:::cond
+    c5 -->|"Yes"| e5["①のアピール回数が1回増加し、<br/>残りのアピールに自身の最大アピールを<br/>固定値として上乗せする<br/>(追加回数は最大4回、<br/>固定値倍率は最大400%まで)"]:::effect --> loop1
+    c5 -->|"No"| loop1
+    loop1{"①を(基本)3回<br/>実行したか"}:::cond
+    loop1 -->|"No、次の回へ"| c2
+    loop1 -->|"Yes"| finish(("終了")):::startend
