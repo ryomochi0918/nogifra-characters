@@ -1,0 +1,15 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c2
+    c2{"②:①のアピール対象が「空腹」状態<br/>ではない、かつ「嫉妬」状態ではないか<br/>(対象ごとに判定)"}:::cond
+    c2 -->|"Yes"| e2["該当対象を100%の確率で2ターンの間<br/>「空腹」と「嫉妬」状態にする"]:::effect --> a1
+    c2 -->|"No"| a1["①実行:残りHP割合が最も低い<br/>ライバル4名へ、自身のサンクスの4倍を<br/>固定値として上乗せした<br/>800%のアピール"]:::action --> c3
+    c3{"③:①の対象の残りHP割合が30%以下、<br/>または自身のサンクスが対象の<br/>サンクス以上か(対象ごとに判定)"}:::cond
+    c3 -->|"Yes"| a3["同じアピール対象へ<br/>2800%のアピール"]:::action --> c4
+    c3 -->|"No"| c4{"④:このスキルでライバルが<br/>リタイアしなかったか"}:::cond
+    c4 -->|"Yes"| a4["再度①を実行(再実行は最大1回まで)"]:::action --> finish(("終了")):::startend
+    c4 -->|"No"| finish

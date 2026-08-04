@@ -1,0 +1,15 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c2
+    c2{"②:自身のスマイルが①のアピール<br/>対象のスマイル以上か"}:::cond
+    c2 -->|"Yes"| e2["①のアピール倍率と固定値倍率が<br/>2倍になる"]:::effect --> a1
+    c2 -->|"No"| a1["①実行:ライバルへ、自身の残りSPの<br/>20倍を固定値として上乗せした<br/>450%のアピール"]:::action --> c3
+    c3{"③:①のアピールでライバルが<br/>リタイアしたか"}:::cond
+    c3 -->|"Yes"| e3["残りHP割合が最も低い味方1名の<br/>デバフ・サゲ効果を2つ解除する"]:::effect --> lc1
+    c3 -->|"No"| lc1{"①のアピール5回<br/>すべて完了?"}:::cond
+    lc1 -->|"No、次の回へ"| c2
+    lc1 -->|"Yes"| a4["④実行:最大アピールが最も高い<br/>味方2名のデバフ・サゲ効果を全て解除し、<br/>3ターンの間「夢中」状態にし、HPを<br/>①で行った合計アピールの40%分<br/>回復する"]:::action --> finish(("終了")):::startend

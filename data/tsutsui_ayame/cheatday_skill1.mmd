@@ -1,0 +1,12 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c2
+    c2{"②:①の効果対象の残りHP割合が<br/>50%以上か(対象ごとに判定)"}:::cond
+    c2 -->|"Yes"| e2["該当対象への①の「機敏」状態の<br/>アピール力増加倍率が1.5倍、<br/>命中率増加倍率が2倍になる"]:::effect --> c3
+    c2 -->|"No"| c3{"③:①の効果対象がデバフ・サゲ<br/>効果状態ではないか(対象ごとに判定)"}:::cond
+    c3 -->|"Yes"| e3["該当対象を3ターンの間<br/>「集中」状態にする"]:::effect --> a1
+    c3 -->|"No"| a1["①実行:最大アピールが最も高い<br/>味方2名を3ターンの間<br/>「機敏」状態にする"]:::action --> a4["④実行:残りHP割合が最も低い<br/>味方3名のデバフ・サゲ効果を1つ解除し、<br/>HPを自身のHP上限の30%分<br/>回復する"]:::action --> a5["⑤実行:④の効果対象を3ターンの間<br/>「勇気」状態にする"]:::action --> finish(("終了")):::startend

@@ -1,0 +1,15 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c2
+    c2{"②:自身の「声援」状態のターン数が<br/>4ターン以上か"}:::cond
+    c2 -->|"Yes"| e2["①の各アピール中のみ自身の<br/>会心率を+40%する"]:::effect --> a1
+    c2 -->|"No"| a1["①実行:ライバルへ、自身の<br/>エフォートの3.5倍を固定値として<br/>上乗せした480%のアピール"]:::action --> c3
+    c3{"③:①のアピールで<br/>会心アピールが発生したか"}:::cond
+    c3 -->|"Yes"| e3["①のアピール回数を1回増加する<br/>(追加回数は最大3回まで)"]:::effect --> lc1
+    c3 -->|"No"| lc1{"①のアピールが全て完了?<br/>(基本6回、③で最大+3回)"}:::cond
+    lc1 -->|"No、次の回へ"| c2
+    lc1 -->|"Yes"| a4["④実行:自身のデバフ・サゲ効果を<br/>3つ解除し、HPをこのスキルで<br/>行った合計アピールの30%分<br/>回復する"]:::action --> finish(("終了")):::startend

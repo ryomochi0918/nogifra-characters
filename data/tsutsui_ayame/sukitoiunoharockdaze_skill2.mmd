@@ -1,0 +1,10 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c2
+    c2{"②:①の効果対象の残りHP割合が<br/>50%未満か(対象ごとに判定)"}:::cond
+    c2 -->|"Yes"| e2["該当対象への①の回復倍率が1.5倍に<br/>なり、①の「聖域」状態のターン数が<br/>4ターンになる"]:::effect --> a1
+    c2 -->|"No"| a1["①実行:自身と自身以外の残りHP割合が<br/>最も低い味方2名のHPを自身のHP上限の<br/>50%分回復し、3ターンの間<br/>「聖域」状態にする"]:::action --> a3["③実行:残りHP割合が80%以上の<br/>味方を4ターンの間「興奮」状態にする<br/>(効果人数は最大6名)"]:::action --> finish(("終了")):::startend

@@ -1,0 +1,14 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> e1["①効果:このスキル中、自身の<br/>命中率と会心率を+25%する"]:::effect --> c4
+    c4{"④:②のアピール対象がバフ・アゲ<br/>効果状態ではないか"}:::cond
+    c4 -->|"Yes"| e4["②のアピール倍率と固定値倍率が<br/>2倍になる"]:::effect --> a3
+    c4 -->|"No"| a3["③実行:②のアピール対象の<br/>バフ・アゲ効果を2つ解除する"]:::action --> a2
+    a2["②実行:ライバルへ、アピール対象の<br/>HP減少分の8%を固定値として<br/>上乗せした550%のアピール<br/>(固定値上限は自身の最大<br/>アピールの500%)"]:::action --> lc1
+    lc1{"②のアピール5回<br/>すべて完了?"}:::cond
+    lc1 -->|"No、次の回へ"| c4
+    lc1 -->|"Yes"| finish(("終了")):::startend

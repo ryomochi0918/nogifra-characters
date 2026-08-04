@@ -1,0 +1,11 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> a1["①実行:ライバル2名へ、自身の<br/>スマイルの6倍を固定値として<br/>上乗せした1600%のアピール"]:::action --> c34
+    c34{"③/④:最大アピールが最も高い味方<br/>1名の残りHP割合が50%以上、または<br/>ライバルチームのフロント人数が<br/>3人未満か"}:::cond
+    c34 -->|"Yes(③)"| a3["最大アピールが最も高い味方2名を<br/>3ターンの間「全開」状態にする<br/>(アピール力の増加倍率100%)"]:::action --> a5
+    c34 -->|"No(④)"| a4["最大アピールが最も高い味方1名を<br/>3ターンの間「全開」状態にする<br/>(アピール力の増加倍率150%)"]:::action --> a5
+    a5["⑤実行:自身と最大アピールが<br/>最も高い味方1名を2ターンの間<br/>「勇気」状態にし、HPを自身の<br/>アピール力の120%分回復する<br/>(会心率に応じて会心回復が発生)"]:::action --> finish(("終了")):::startend
