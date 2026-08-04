@@ -33,7 +33,7 @@ python3 -m http.server 8000
   "nameReading": "きゃらめいのひらがな(50音順ソート用、必須)",
   "costume": "衣装名やカードの通称",
   "costumeReading": "いしょうめいのひらがな(同キャラ内でのソート用、必須)",
-  "title": "スキル名やカードの通称(表示用、tier付きでも可)",
+  "title": "スキル名やカードの通称(表示用)",
   "tier": "LR",
   "addedDate": "2026-08-01",
   "generation": "5期(スキル画面では確認できないので nogizaka46_members_reading.json 等を参照)",
