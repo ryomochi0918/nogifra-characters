@@ -1,0 +1,20 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> a0["①実行:このスキル中、<br/>自身の命中率を+30%する"]:::effect --> c1{"③:自身の残りHP割合が<br/>50%以上か"}:::cond
+    c1 -->|"Yes"| c2a{"④:味方フロントの「躍動」<br/>状態のターン数が3ターン以上、<br/>または対象が特殊状態か"}:::cond
+    c1 -->|"No"| c2b{"④:味方フロントの「躍動」<br/>状態のターン数が3ターン以上、<br/>または対象が特殊状態か"}:::cond
+    c2a -->|"Yes"| a1["②実行(強化+④):自身の最大<br/>アピールの20%を固定値として<br/>上乗せした550%のアピール<br/>(倍率2倍、このアピール中<br/>会心率+30%)"]:::action --> c3
+    c2a -->|"No"| a2["②実行(強化):自身の最大<br/>アピールの20%を固定値として<br/>上乗せした550%のアピール<br/>(倍率2倍)"]:::action --> c3
+    c2b -->|"Yes"| a3["②実行(通常+④):自身の最大<br/>アピールの20%を固定値として<br/>上乗せした550%のアピール<br/>(このアピール中会心率+30%)"]:::action --> c3
+    c2b -->|"No"| a4["②実行(通常):自身の最大<br/>アピールの20%を固定値として<br/>上乗せした550%のアピールを<br/>行う"]:::action --> c3
+    c3{"⑤:このアピールで<br/>会心アピールが発生したか"}:::cond
+    c3 -->|"Yes"| a5["アピール回数を+1する<br/>(追加は最大3回まで)"]:::effect --> loop1{"6回(+追加分)<br/>すべて完了?"}:::cond
+    c3 -->|"No"| loop1
+    loop1 -->|"No、次の回へ"| c1
+    loop1 -->|"Yes"| c4{"⑥:②のアピールでリタイア<br/>したライバルが1名以下か"}:::cond
+    c4 -->|"Yes"| a6["残りHP割合が最も低い<br/>ライバル1名に、②で行った<br/>合計アピールの30%分のアピールを<br/>行う(ディフェンス、<br/>フィジカルを無視)"]:::action --> finish(("終了")):::startend
+    c4 -->|"No"| finish

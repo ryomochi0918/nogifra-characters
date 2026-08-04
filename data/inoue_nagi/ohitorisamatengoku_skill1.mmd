@@ -1,0 +1,16 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c0{"①②:自身が<br/>「アピール力アップ」状態か"}:::cond
+    c0 -->|"No"| a0["①実行:自身を3ターンの間<br/>「アピール力アップ」状態にする"]:::effect --> c1
+    c0 -->|"Yes"| a0b["②実行:自身を3ターンの間<br/>「円陣」状態にする"]:::effect --> c1
+    c1{"④:対象の残りHP割合が<br/>50%以上か"}:::cond
+    c1 -->|"Yes"| a1["③実行(強化):350%の<br/>アピールを行う(倍率2倍)"]:::action --> loop1{"4回<br/>すべて完了?"}:::cond
+    c1 -->|"No"| a2["③実行(通常):350%の<br/>アピールを行う"]:::action --> loop1
+    loop1 -->|"No、次の回へ"| c1
+    loop1 -->|"Yes"| c2{"⑤:③のアピールで<br/>ライバルがリタイア<br/>しなかったか"}:::cond
+    c2 -->|"Yes"| a3["残りHP割合が最も高い<br/>ライバル4名に、自身の最大<br/>アピールの30%を固定値として<br/>上乗せした870%のアピールを<br/>行う"]:::action --> finish(("終了")):::startend
+    c2 -->|"No"| finish
