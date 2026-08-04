@@ -1,0 +1,12 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c2
+    c2{"②:①のアピール対象が<br/>「心労」状態ではないか"}:::cond
+    c2 -->|"Yes"| e2["①のアピール倍率と固定値倍率が<br/>2倍になる"]:::effect --> c3
+    c2 -->|"No"| c3{"③:①の対象が「心労」状態、または<br/>スキル発動前の自身の「光輝」状態の<br/>合計ターン数が9ターン以上か"}:::cond
+    c3 -->|"Yes"| e3["①の対象を100%の確率で<br/>1ターンの間「落胆」状態にする"]:::effect --> a1
+    c3 -->|"No"| a1["①実行:ライバル4名へ、自身の<br/>最大アピールの40%を固定値として<br/>上乗せした850%のアピール"]:::action --> finish(("終了")):::startend

@@ -1,0 +1,17 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> a1["①実行:自身を1ターンの間<br/>「アピール力アップ」状態にする"]:::action --> a2["②実行:残りHP割合が最も低い<br/>ライバルへ4回、自身のスマイルの4倍を<br/>固定値として上乗せした<br/>500%のアピール"]:::action --> c4
+    c4{"④:自身のスマイルが③のアピール<br/>対象のスマイル以上か"}:::cond
+    c4 -->|"Yes"| e4["③のアピール倍率と固定値倍率が<br/>2倍になる"]:::effect --> c5
+    c4 -->|"No"| c5{"⑤:自身の「瞑想」状態の<br/>合計ターン数が6ターン以上か"}:::cond
+    c5 -->|"Yes"| e5["③のアピールに自身のSP上限の<br/>200倍を固定値として上乗せする"]:::effect --> a3
+    c5 -->|"No"| a3["③実行:最大アピールが最も高い<br/>ライバルへ1回(以上)、自身の「瞑想」<br/>状態のターン数×自身のスマイルの<br/>0.5倍を固定値として上乗せした<br/>800%のアピール"]:::action --> c6
+    c6{"⑥:③のアピールでライバルが<br/>リタイアした、または③の対象の<br/>残りHP割合が40%以上か"}:::cond
+    c6 -->|"Yes"| e6["③のアピール回数が1回増加する<br/>(追加回数は最大3回まで)"]:::effect --> lc1
+    c6 -->|"No"| lc1{"③のアピールが全て完了?<br/>(基本1回、⑥で最大+3回)"}:::cond
+    lc1 -->|"No、次の回へ"| c4
+    lc1 -->|"Yes"| a7["⑦実行:自身の「アピール力アップ」<br/>状態を解除する"]:::action --> finish(("終了")):::startend

@@ -1,0 +1,13 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c2
+    c2{"②:自身のエフォートが①のアピール<br/>対象のエフォート以上か"}:::cond
+    c2 -->|"Yes"| e2["①のアピール倍率と①による<br/>「アピールカダウン」状態の効果倍率が<br/>1.5倍になる"]:::effect --> a1
+    c2 -->|"No"| a1["①実行:残りHP割合が最も高い<br/>ライバル6名へ150%のアピールを行い<br/>(ディフェンス、フィジカルを無視)、<br/>100%の確率で2ターンの間<br/>「アピールカダウン」状態にする"]:::action --> c3
+    c3{"③:①のアピールでライバルが<br/>リタイアしなかったか"}:::cond
+    c3 -->|"Yes"| a3["再度①を実行(再実行は最大1回まで)"]:::action --> finish(("終了")):::startend
+    c3 -->|"No"| finish

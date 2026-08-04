@@ -1,0 +1,17 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c2
+    c2{"②:自身のリフレクトが①のアピール<br/>対象のリフレクト以上か"}:::cond
+    c2 -->|"Yes"| e2["①のアピールにリフレクト×自身の<br/>HP上限の30%を固定値として<br/>上乗せする"]:::effect --> a1
+    c2 -->|"No"| a1["①実行:ライバルへ<br/>600%のアピール"]:::action --> c3
+    c3{"③:①のアピール対象の残りHP割合が<br/>50%以上か"}:::cond
+    c3 -->|"Yes"| e3["①のアピール対象を100%の確率で<br/>2ターンの間「嫉妬」状態にする"]:::effect --> lc1
+    c3 -->|"No"| lc1{"①のアピール5回<br/>すべて完了?"}:::cond
+    lc1 -->|"No、次の回へ"| c2
+    lc1 -->|"Yes"| c4{"④:自身が「反響」状態<br/>または「残響」状態か"}:::cond
+    c4 -->|"Yes"| a4["自身を3ターンの間<br/>「奏響」状態にする"]:::action --> finish(("終了")):::startend
+    c4 -->|"No"| finish

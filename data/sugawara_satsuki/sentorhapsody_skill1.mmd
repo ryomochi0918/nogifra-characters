@@ -1,0 +1,16 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c2
+    c2{"②:自身がバフ・アゲ効果<br/>状態ではないか"}:::cond
+    c2 -->|"Yes"| e2["①の「軽快」状態のアピール力<br/>増加倍率が1.5倍になる"]:::effect --> a1
+    c2 -->|"No"| a1["①実行:自身を2ターンの間<br/>「軽快」状態にする"]:::action --> c4
+    c4{"④:自身のサンクスが③のアピール<br/>対象のサンクス以上か"}:::cond
+    c4 -->|"Yes"| e4["③の対象のバフ・アゲ効果を<br/>1つ解除する"]:::effect --> a3
+    c4 -->|"No"| a3["③実行:最大アピールが最も高い<br/>ライバル4名へ、自身のサンクスの4倍を<br/>固定値として上乗せした<br/>500%のアピール"]:::action --> c5
+    c5{"⑤:③の対象の残りHP割合が50%以上、<br/>または③の対象がバフ・アゲ効果状態か"}:::cond
+    c5 -->|"Yes"| e5["③の対象を100%の確率で2ターンの間<br/>「命中率ダウン」状態にする"]:::effect --> finish(("終了")):::startend
+    c5 -->|"No"| finish

@@ -1,0 +1,13 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> a1["①実行:自身を1ターンの間「アピール<br/>力アップ」状態と3ターンの間<br/>「臨機」状態にする"]:::action --> c3
+    c3{"③:自身のスマイルが②のアピール<br/>対象のスマイル以上か"}:::cond
+    c3 -->|"Yes"| e3["②の対象のバフ・アゲ効果を1つ解除し、<br/>②のアピール倍率と固定値倍率が<br/>2倍になる"]:::effect --> a2
+    c3 -->|"No"| a2["②実行:最大アピールが最も高い<br/>ライバル2名へ2回、自身のスマイルの<br/>4倍を固定値として上乗せした<br/>880%のアピール"]:::action --> c4
+    c4{"④:②のアピールでリタイアした<br/>ライバルが1名以下か"}:::cond
+    c4 -->|"Yes"| a4["再度②を実行(再実行は最大1回まで)"]:::action --> a5
+    c4 -->|"No"| a5["⑤実行:自身のHPをこのスキルで<br/>行った合計アピールの20%分<br/>回復する"]:::action --> a6["⑥実行:自身の「アピール力アップ」<br/>状態を解除する"]:::action --> finish(("終了")):::startend

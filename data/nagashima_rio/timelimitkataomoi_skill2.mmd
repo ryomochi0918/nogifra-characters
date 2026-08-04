@@ -1,0 +1,17 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> e1["①効果:このスキル中、自身の<br/>会心率を+20%する"]:::effect --> c3
+    c3{"③:自身がバフ・アゲ効果状態か"}:::cond
+    c3 -->|"Yes"| e3["②のアピール倍率が3倍になる"]:::effect --> a2
+    c3 -->|"No"| a2["②実行:残りHP割合が最も低い<br/>ライバルへ750%のアピール"]:::action --> c4
+    c4{"④:②のアピール対象の残りHP割合が<br/>50%以上、またはリタイアしなかったか"}:::cond
+    c4 -->|"Yes"| e4["②のアピール回数が1回増加する<br/>(追加回数は最大3回まで)"]:::effect --> c5
+    c4 -->|"No"| c5{"⑤:②のアピールで失敗または<br/>0が3回以上発生したか"}:::cond
+    c5 -->|"Yes"| e5["このスキルによる残りのアピールは<br/>必ず命中する"]:::effect --> lc1
+    c5 -->|"No"| lc1{"②のアピールが全て完了?<br/>(基本4回、④で最大+3回)"}:::cond
+    lc1 -->|"No、次の回へ"| c3
+    lc1 -->|"Yes"| finish(("終了")):::startend

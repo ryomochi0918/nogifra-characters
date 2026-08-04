@@ -1,0 +1,15 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c2
+    c2{"②:自身のエフォートが①の各アピール<br/>対象のエフォート以上か"}:::cond
+    c2 -->|"Yes"| e2["①の解除数が2つ増加し、①の<br/>アピールに自身のエフォートの<br/>4倍を固定値として上乗せする"]:::effect --> c3
+    c2 -->|"No"| c3{"③:①のアピール対象がバフ・アゲ<br/>効果状態ではないか"}:::cond
+    c3 -->|"Yes"| e3["①のアピール倍率が2.5倍になる"]:::effect --> a1
+    c3 -->|"No"| a1["①実行:最大アピールが最も高い<br/>ライバルへ、バフ・アゲ効果を2つ解除し、<br/>400%のアピール(対象固定、リタイア<br/>回復時も対象維持)"]:::action --> lc1
+    lc1{"①のアピール3回<br/>すべて完了?"}:::cond
+    lc1 -->|"No、次の回へ"| c2
+    lc1 -->|"Yes"| a4["④実行:残りHP割合が最も低い<br/>ライバル3名のバフ・アゲ効果を1つ解除し、<br/>自身のエフォートの4倍を固定値として<br/>上乗せした500%のアピール"]:::action --> finish(("終了")):::startend

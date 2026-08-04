@@ -1,0 +1,17 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> a1["①実行:残りHP割合が最も低い<br/>ライバルへ、自身のHP上限の5%を<br/>固定値として上乗せした<br/>400%のアピール"]:::action --> c2
+    c2{"②:自身の「平穏」状態のターン数が<br/>8ターン以上、かつ①の対象の残りHP割合が<br/>50%以上か"}:::cond
+    c2 -->|"Yes"| e2["①のアピール回数が1回増加する<br/>(追加回数は最大2回まで)"]:::effect --> lc1
+    c2 -->|"No"| lc1{"①のアピール4回<br/>すべて完了?"}:::cond
+    lc1 -->|"No、次の回へ"| a1
+    lc1 -->|"Yes"| c3{"③:味方チームのフロントの残りHP割合の<br/>合計がライバルチームのフロントの<br/>残りHP割合の合計未満か"}:::cond
+    c3 -->|"Yes"| a3["残りHP割合が最も低いライバルへ3回、<br/>自身のHP上限の10%を固定値として<br/>上乗せした800%のアピール"]:::action --> a4
+    c3 -->|"No"| a4["④実行:残りHP割合が最も低い<br/>味方2名のHPを自身のHP上限の<br/>40%分回復する"]:::action --> c5
+    c5{"⑤:ライバルチームのフロント人数が<br/>3名以上、または自身の「平穏」状態の<br/>ターン数が7ターン以上か"}:::cond
+    c5 -->|"Yes"| a5["残りHP割合が最も高い味方2名を<br/>3ターンの間「交響」状態にする"]:::action --> finish(("終了")):::startend
+    c5 -->|"No"| finish
