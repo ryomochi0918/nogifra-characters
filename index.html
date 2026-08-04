@@ -21,6 +21,9 @@
         --accent-dim: #7a5aa8;
         --ink: #efe9f7;
         --ink-dim: #a99cc4;
+        --attr-doryoku: #ff6b6b;
+        --attr-kansha: #c77dff;
+        --attr-egao: #e8c468;
         --serif: "Shippori Mincho", serif;
         --sans: "Zen Kaku Gothic New", sans-serif;
       }
@@ -110,6 +113,80 @@
         color: var(--ink-dim);
         white-space: nowrap;
         cursor: pointer;
+      }
+
+      .filter-bar {
+        max-width: 700px;
+        margin: 0 auto 32px;
+        padding: 0 24px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .filter-select {
+        background: var(--card);
+        border: 1px solid var(--card-line);
+        border-radius: 999px;
+        padding: 8px 16px;
+        color: var(--ink);
+        font-family: inherit;
+        font-size: 13px;
+        outline: none;
+        cursor: pointer;
+        transition: border-color 0.2s ease;
+      }
+
+      .filter-select:focus {
+        border-color: var(--accent);
+      }
+
+      .attr-filter {
+        display: flex;
+        gap: 8px;
+      }
+
+      .attr-btn.active[data-attr="努力"] {
+        background: var(--attr-doryoku);
+        border-color: var(--attr-doryoku);
+        color: #1a1220;
+      }
+
+      .attr-btn.active[data-attr="感謝"] {
+        background: var(--attr-kansha);
+        border-color: var(--attr-kansha);
+        color: #1a1220;
+      }
+
+      .attr-btn.active[data-attr="笑顔"] {
+        background: var(--attr-egao);
+        border-color: var(--attr-egao);
+        color: #1a1220;
+      }
+
+      .attr-badge {
+        display: inline-block;
+        font-size: 10.5px;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 999px;
+        margin-left: 8px;
+        vertical-align: middle;
+        color: #1a1220;
+      }
+
+      .attr-badge.attr-doryoku {
+        background: var(--attr-doryoku);
+      }
+
+      .attr-badge.attr-kansha {
+        background: var(--attr-kansha);
+      }
+
+      .attr-badge.attr-egao {
+        background: var(--attr-egao);
       }
 
       .no-results {
@@ -202,6 +279,49 @@
         font-size: 12px;
         color: var(--ink-dim);
         line-height: 1.7;
+      }
+
+      @media (max-width: 600px) {
+        .filter-bar {
+          padding: 0 12px;
+          gap: 8px;
+        }
+
+        .filter-select,
+        .attr-btn {
+          font-size: 12px;
+          padding: 7px 12px;
+        }
+
+        .stage {
+          padding: 0 12px 96px;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 12px;
+        }
+
+        .card {
+          padding: 14px 12px 12px;
+        }
+
+        .card h2 {
+          font-size: 16px;
+        }
+
+        .card .subtitle {
+          font-size: 11px;
+          margin: 0 0 8px;
+        }
+
+        .card .meta {
+          font-size: 10.5px;
+          line-height: 1.5;
+        }
+
+        .tier {
+          font-size: 10px;
+          padding: 2px 7px;
+          margin-bottom: 8px;
+        }
       }
 
       /* Viewer */
@@ -482,6 +602,23 @@
       </label>
     </div>
 
+    <div class="filter-bar">
+      <select id="memberFilter" class="filter-select">
+        <option value="">キャラ: すべて</option>
+      </select>
+      <div class="attr-filter" id="attrFilter">
+        <button type="button" class="tab-btn attr-btn" data-attr="努力">
+          努力
+        </button>
+        <button type="button" class="tab-btn attr-btn" data-attr="感謝">
+          感謝
+        </button>
+        <button type="button" class="tab-btn attr-btn" data-attr="笑顔">
+          笑顔
+        </button>
+      </div>
+    </div>
+
     <main class="stage" id="stage">
       <!-- カードはJSでcharacters.jsonから生成 -->
     </main>
@@ -734,6 +871,9 @@
 
       const searchInput = document.getElementById("searchInput");
       const regexToggle = document.getElementById("regexToggle");
+      const memberFilter = document.getElementById("memberFilter");
+      const attrButtons = document.querySelectorAll(".attr-btn");
+      const activeAttrs = new Set();
       let allCharacters = [];
 
       function buildSearchBlob(c) {
@@ -763,6 +903,18 @@
         });
       }
 
+      const ATTR_CLASS = {
+        努力: "attr-doryoku",
+        感謝: "attr-kansha",
+        笑顔: "attr-egao",
+      };
+
+      function attrBadge(attribute) {
+        const cls = ATTR_CLASS[attribute];
+        if (!cls) return "";
+        return `<span class="attr-badge ${cls}">${escapeHtml(attribute)}</span>`;
+      }
+
       function renderCards(list) {
         if (list.length === 0) {
           stage.innerHTML =
@@ -773,7 +925,7 @@
           .map(
             (c) => `
       <button class="card" data-key="${escapeHtml(c._key)}">
-        <span class="tier">${escapeHtml(c.tier || "SKILL")}</span>
+        <span class="tier">${escapeHtml(c.tier || "SKILL")}</span>${attrBadge(c.attribute)}
         <h2>${escapeHtml(c.name)}</h2>
         <p class="subtitle">${escapeHtml(c.title || "")}</p>
       </button>
@@ -801,7 +953,7 @@
           } catch (e) {
             // 不正な正規表現の間は絞り込まずそのまま全件表示(壊れた入力途中の状態を許容)
             filtered = allCharacters;
-            renderCards(sortCharacters(filtered));
+            renderCards(sortCharacters(filterByMemberAndAttr(filtered)));
             return;
           }
           filtered = allCharacters.filter((c) => re.test(c._blob));
@@ -811,11 +963,54 @@
             c._blob.toLowerCase().includes(q),
           );
         }
-        renderCards(sortCharacters(filtered));
+        renderCards(sortCharacters(filterByMemberAndAttr(filtered)));
+      }
+
+      function filterByMemberAndAttr(list) {
+        let result = list;
+        if (memberFilter.value) {
+          result = result.filter((c) => c.name === memberFilter.value);
+        }
+        if (activeAttrs.size > 0) {
+          result = result.filter((c) => activeAttrs.has(c.attribute));
+        }
+        return result;
       }
 
       searchInput.addEventListener("input", applyFilter);
       regexToggle.addEventListener("change", applyFilter);
+      memberFilter.addEventListener("change", applyFilter);
+      attrButtons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const attr = btn.dataset.attr;
+          if (activeAttrs.has(attr)) {
+            activeAttrs.delete(attr);
+            btn.classList.remove("active");
+          } else {
+            activeAttrs.add(attr);
+            btn.classList.add("active");
+          }
+          applyFilter();
+        });
+      });
+
+      function populateMemberFilter(list) {
+        const seen = new Map();
+        list.forEach((c) => {
+          if (!seen.has(c.name)) seen.set(c.name, c.nameReading || c.name);
+        });
+        const members = [...seen.entries()].sort((a, b) =>
+          a[1].localeCompare(b[1], "ja"),
+        );
+        memberFilter.innerHTML =
+          '<option value="">キャラ: すべて</option>' +
+          members
+            .map(
+              ([name]) =>
+                `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`,
+            )
+            .join("");
+      }
 
       async function init() {
         try {
@@ -829,6 +1024,7 @@
             _blob: buildSearchBlob(c),
           }));
 
+          populateMemberFilter(allCharacters);
           renderCards(sortCharacters(allCharacters));
         } catch (e) {
           stage.innerHTML = `<p class="error" style="grid-column:1/-1;">
