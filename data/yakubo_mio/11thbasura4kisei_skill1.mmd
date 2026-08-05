@@ -1,0 +1,14 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c3{"③:②の発動条件(自身の残りHP割合が<br/>①のアピール対象の残りHP割合以上)を満たし、<br/>かつ①のアピール対象が「アピールカダウン」状態か<br/>(対象ごとに判定)"}:::cond
+    c3 -->|"Yes"| e3["①のアピール倍率が2倍になり、<br/>①のアピール対象のバフ・アゲ効果状態を1つ解除する"]:::effect --> a1
+    c3 -->|"No"| a1["①実行:<br/>最大アピールが最も高いライバルへ<br/>900%のアピールを行う"]:::action
+    a1 --> c2{"②:自身の残りHP割合が<br/>①のアピール対象の残りHP割合以上か"}:::cond
+    c2 -->|"Yes"| e2["①のアピール対象を100%の確率で<br/>3ターンの間「アピールカダウン」状態にする"]:::effect --> lc
+    c2 -->|"No"| lc{"①のアピール<br/>3回すべて完了?"}:::cond
+    lc -->|"No、次の対象へ"| c3
+    lc -->|"Yes"| e4["自身を3ターンの間「堅忍」状態にする"]:::effect --> finish(("終了")):::startend

@@ -1,0 +1,16 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c1{"①:自身がバフ・アゲ効果状態か<br/>特殊状態か"}:::cond
+    c1 -->|"Yes"| e1["このスキル中、自身の会心率を+50%、<br/>会心アピールを+50%する"]:::effect --> c3
+    c1 -->|"No"| c3{"③:②のアピール対象が<br/>デバフ・サゲ効果状態か<br/>(対象ごとに判定)"}:::cond
+    c3 -->|"Yes"| e3["②のアピール倍率と固定値倍率が2倍になる"]:::effect --> a2
+    c3 -->|"No"| a2["②実行:<br/>ライバル6名へ、自身の最大アピールの30%を<br/>固定値として上乗せした600%のアピールを行う"]:::action
+    a2 --> lc{"②のアピール<br/>6回すべて完了?"}:::cond
+    lc -->|"No、次の対象へ"| c3
+    lc -->|"Yes"| c4{"④:②のアピールでライバルが<br/>1名以上リタイアしたか"}:::cond
+    c4 -->|"Yes"| e4["残りHP割合が最も低い味方4名のHPを<br/>自身のアピール力の100%分回復する<br/>(会心率に応じて会心回復が発生)"]:::effect --> finish(("終了")):::startend
+    c4 -->|"No"| finish
