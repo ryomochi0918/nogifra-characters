@@ -1,0 +1,13 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c2{"②:①のアピール対象の<br/>残りHP割合が50%以上か<br/>(対象ごとに判定)"}:::cond
+    c2 -->|"Yes"| e2["①のアピール倍率と<br/>固定値倍率が2倍になる"]:::effect --> a1
+    c2 -->|"No"| a1["①実行:残りHP割合が最も高い<br/>ライバル4名へ、自身のエフォートの<br/>1.5倍を固定値として上乗せした<br/>700%のアピール"]:::action
+    a1 --> c3{"③:自身の残りHP割合が①の<br/>アピール対象の残りHP割合<br/>以上か(対象ごとに判定)"}:::cond
+    c3 -->|"Yes"| e3["①のアピール対象が1名増加する<br/>(増加人数は最大で2名まで)"]:::effect --> e4
+    c3 -->|"No"| e4["④実行:①の各アピール対象の残り<br/>HP割合が50%未満または、①の各<br/>アピールにてリタイアさせたライバルの<br/>人数をアピール回数として、ライバルに<br/>自身のエフォート5倍分のアピール<br/>(ディフェンス、フィジカルを無視する)"]:::action
+    e4 --> finish(("終了")):::startend

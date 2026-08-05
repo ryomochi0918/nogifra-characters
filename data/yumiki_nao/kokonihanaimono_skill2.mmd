@@ -1,0 +1,14 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> e1["①:最大アピールが最も高い<br/>味方2名のデバフ・サゲ効果を<br/>全て解除し、HPを対象の<br/>HP上限の70%分回復する"]:::effect
+    e1 --> e2["②:残りHP割合が最も低い<br/>味方3名のデバフ・サゲ効果を<br/>2つ解除し、HPを自身の<br/>アピール力の140%分回復する<br/>(会心率に応じて<br/>会心回復が発生)"]:::effect
+    e2 --> c4{"④:③の効果対象がデバフ・<br/>サゲ効果状態ではないか<br/>(対象ごとに判定)"}:::cond
+    c4 -->|"Yes"| e4["③による「回避率アップ」<br/>状態を「軽快」状態に<br/>変更する"]:::effect --> lc3
+    c4 -->|"No"| e3["③:効果対象を3ターンの間<br/>「回避率アップ」状態にする"]:::effect --> lc3
+    lc3{"③の効果対象6名<br/>すべて完了?"}:::cond
+    lc3 -->|"No、次の対象へ"| c4
+    lc3 -->|"Yes"| finish(("終了")):::startend

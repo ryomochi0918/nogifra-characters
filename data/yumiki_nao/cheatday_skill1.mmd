@@ -1,0 +1,17 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> e1["①:自身を3ターンの間「興奮」<br/>状態にし、このスキル中のみ、<br/>自身のリフレクト耐性を<br/>+25%する"]:::effect --> c3
+    c3{"③:自身のサンクスが②の<br/>アピール対象のサンクス以上か<br/>(対象ごとに判定)"}:::cond
+    c3 -->|"Yes"| e3["②のアピール対象の<br/>バフ・アゲ効果を1つ解除する"]:::effect --> a2
+    c3 -->|"No"| a2["②実行:ライバルへ、自身の<br/>サンクスの4倍を固定値として<br/>上乗せした740%のアピール"]:::action
+    a2 --> lc1{"②のアピール4名<br/>すべて完了?"}:::cond
+    lc1 -->|"No、次の対象へ"| c3
+    lc1 -->|"Yes"| c4{"④:自身のサンクスが②の<br/>アピール対象のサンクス以上<br/>だった回数が2回以上か"}:::cond
+    c4 -->|"Yes"| a4["残りHP割合が最も低いライバル<br/>4名へ、自身のサンクスの4倍を<br/>固定値として上乗せした<br/>740%のアピール"]:::action --> c5
+    c4 -->|"No"| c5{"⑤:このスキル中、自身の<br/>サンクスがアピール対象の<br/>サンクス以上だった回数が<br/>4回以上か<br/>(④のアピールが発動した<br/>場合は④の後)"}:::cond
+    c5 -->|"Yes"| a5["残りHP割合が最も低い<br/>ライバルへ2回、このスキルで<br/>行った合計アピールの40%分<br/>のアピール(ディフェンス・<br/>フィジカルを無視する)"]:::action --> finish(("終了")):::startend
+    c5 -->|"No"| finish

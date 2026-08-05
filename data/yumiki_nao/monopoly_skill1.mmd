@@ -1,0 +1,16 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> a1["①実行:ライバル4名へ、<br/>700%のアピール"]:::action --> c3
+    c3{"③:自身のスマイルが①の<br/>アピール対象のスマイル以上か<br/>(対象ごとに判定)"}:::cond
+    c3 -->|"Yes"| e3["②による「落胆」状態の確率を<br/>+10%し、②の効果中のみ<br/>自身のサゲ効果耐性貫通を<br/>+20%する"]:::effect --> c4
+    c3 -->|"No"| c4{"④:直前のアピールが<br/>会心アピールか<br/>(対象ごとに判定)"}:::cond
+    c4 -->|"Yes"| e4["②による「落胆」状態の確率を<br/>+10%し、②の効果中のみ<br/>自身のサゲ効果耐性貫通を<br/>+20%する"]:::effect --> e2
+    c4 -->|"No"| e2["②:①のアピール対象を80%の<br/>確率で1ターンの間<br/>「落胆」状態にする"]:::effect --> lc1{"①のアピール4名<br/>すべて完了?"}:::cond
+    lc1 -->|"No、次の対象へ"| c3
+    lc1 -->|"Yes"| c5{"⑤:ライバルチームの<br/>フロントに居る「落胆」状態の<br/>メンバーが2名以下か"}:::cond
+    c5 -->|"Yes"| e5["「落胆」状態ではないライバル<br/>1名を100%の確率で1ターンの<br/>間「落胆」状態にする"]:::effect --> finish(("終了")):::startend
+    c5 -->|"No"| finish

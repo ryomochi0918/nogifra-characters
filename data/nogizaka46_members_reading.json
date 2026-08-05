@@ -1,41 +1,255 @@
 {
   "source": "https://ngzk46seek.jp/members_list.php (2026年7月時点、現役34名のうち期別データが確認できた33名)",
-  "note": "nameReading はソート用のひらがな表記。衣装名(costumeReading)は曲名由来のものが多いが例外もあるため、都度確認すること。",
-  "generation_remark":"新4期生は4期と同列で扱われる; 6期は春組と夏組とに関わらず同列で扱われる",
+  "note": "nameReading はソート用のひらがな表記。衣装名(costumeReading)は曲名由来のものが多いが例外もあるため、都度確認すること。 卒業メンバーはLRカードが存在しうる範囲(山下美月以降に卒業、または掛橋沙耶香の例外)のみ status 付きで追加している。卒業日はWeb検索により確認(2026-08-05時点)。",
+  "generation_remark": "新4期生は4期と同列で扱われる; 6期は春組と夏組とに関わらず同列で扱われる",
   "members": [
-    { "name": "伊藤理々杏", "reading": "いとうりりあ", "generation": "3期" },
-    { "name": "岩本蓮加", "reading": "いわもとれんか", "generation": "3期" },
-    { "name": "吉田綾乃クリスティー", "reading": "よしだあやのくりすてぃー", "generation": "3期" },
-    { "name": "遠藤さくら", "reading": "えんどうさくら", "generation": "4期" },
-    { "name": "賀喜遥香", "reading": "かきはるか", "generation": "4期" },
-    { "name": "金川紗耶", "reading": "かながわさや", "generation": "4期" },
-    { "name": "黒見明香", "reading": "くろみはるか", "generation": "4期(新4期生)" },
-    { "name": "柴田柚菜", "reading": "しばたゆな", "generation": "4期" },
-    { "name": "田村真佑", "reading": "たむらまゆ", "generation": "4期" },
-    { "name": "筒井あやめ", "reading": "つついあやめ", "generation": "4期" },
-    { "name": "林瑠奈", "reading": "はやしるな", "generation": "4期(新4期生)" },
-    { "name": "弓木奈於", "reading": "ゆみきなお", "generation": "4期(新4期生)" },
-    { "name": "五百城茉央", "reading": "いおきまお", "generation": "5期" },
-    { "name": "池田瑛紗", "reading": "いけだてれさ", "generation": "5期" },
-    { "name": "一ノ瀬美空", "reading": "いちのせみく", "generation": "5期" },
-    { "name": "井上和", "reading": "いのうえなぎ", "generation": "5期" },
-    { "name": "岡本姫奈", "reading": "おかもとひな", "generation": "5期" },
-    { "name": "小川彩", "reading": "おがわあや", "generation": "5期" },
-    { "name": "奥田いろは", "reading": "おくだいろは", "generation": "5期" },
-    { "name": "川﨑桜", "reading": "かわさきさくら", "generation": "5期" },
-    { "name": "菅原咲月", "reading": "すがわらさつき", "generation": "5期" },
-    { "name": "冨里奈央", "reading": "とみさとなお", "generation": "5期" },
-    { "name": "中西アルノ", "reading": "なかにしあるの", "generation": "5期" },
-    { "name": "愛宕心響", "reading": "あたごここね", "generation": "6期(夏組)" },
-    { "name": "大越ひなの", "reading": "おおこしひなの", "generation": "6期(夏組)" },
-    { "name": "小津玲奈", "reading": "おづれいな", "generation": "6期(夏組)" },
-    { "name": "海邉朱莉", "reading": "かいべあかり", "generation": "6期(春組)" },
-    { "name": "川端晃菜", "reading": "かわばたひな", "generation": "6期(春組)" },
-    { "name": "鈴木佑捺", "reading": "すずきゆうな", "generation": "6期(夏組)" },
-    { "name": "瀬戸口心月", "reading": "せとぐちみつき", "generation": "6期(春組)" },
-    { "name": "長嶋凛桜", "reading": "ながしまりお", "generation": "6期(春組)" },
-    { "name": "増田三莉音", "reading": "ますだみりね", "generation": "6期(夏組)" },
-    { "name": "森平麗心", "reading": "もりひらうるみ", "generation": "6期(夏組)" },
-    { "name": "矢田萌華", "reading": "やだもえか", "generation": "6期(春組)" }
+    {
+      "name": "伊藤理々杏",
+      "reading": "いとうりりあ",
+      "generation": "3期"
+    },
+    {
+      "name": "岩本蓮加",
+      "reading": "いわもとれんか",
+      "generation": "3期"
+    },
+    {
+      "name": "吉田綾乃クリスティー",
+      "reading": "よしだあやのくりすてぃー",
+      "generation": "3期"
+    },
+    {
+      "name": "遠藤さくら",
+      "reading": "えんどうさくら",
+      "generation": "4期"
+    },
+    {
+      "name": "賀喜遥香",
+      "reading": "かきはるか",
+      "generation": "4期"
+    },
+    {
+      "name": "金川紗耶",
+      "reading": "かながわさや",
+      "generation": "4期"
+    },
+    {
+      "name": "黒見明香",
+      "reading": "くろみはるか",
+      "generation": "4期(新4期生)"
+    },
+    {
+      "name": "柴田柚菜",
+      "reading": "しばたゆな",
+      "generation": "4期"
+    },
+    {
+      "name": "田村真佑",
+      "reading": "たむらまゆ",
+      "generation": "4期"
+    },
+    {
+      "name": "筒井あやめ",
+      "reading": "つついあやめ",
+      "generation": "4期"
+    },
+    {
+      "name": "林瑠奈",
+      "reading": "はやしるな",
+      "generation": "4期(新4期生)"
+    },
+    {
+      "name": "弓木奈於",
+      "reading": "ゆみきなお",
+      "generation": "4期(新4期生)"
+    },
+    {
+      "name": "五百城茉央",
+      "reading": "いおきまお",
+      "generation": "5期"
+    },
+    {
+      "name": "池田瑛紗",
+      "reading": "いけだてれさ",
+      "generation": "5期"
+    },
+    {
+      "name": "一ノ瀬美空",
+      "reading": "いちのせみく",
+      "generation": "5期"
+    },
+    {
+      "name": "井上和",
+      "reading": "いのうえなぎ",
+      "generation": "5期"
+    },
+    {
+      "name": "岡本姫奈",
+      "reading": "おかもとひな",
+      "generation": "5期"
+    },
+    {
+      "name": "小川彩",
+      "reading": "おがわあや",
+      "generation": "5期"
+    },
+    {
+      "name": "奥田いろは",
+      "reading": "おくだいろは",
+      "generation": "5期"
+    },
+    {
+      "name": "川﨑桜",
+      "reading": "かわさきさくら",
+      "generation": "5期"
+    },
+    {
+      "name": "菅原咲月",
+      "reading": "すがわらさつき",
+      "generation": "5期"
+    },
+    {
+      "name": "冨里奈央",
+      "reading": "とみさとなお",
+      "generation": "5期"
+    },
+    {
+      "name": "中西アルノ",
+      "reading": "なかにしあるの",
+      "generation": "5期"
+    },
+    {
+      "name": "愛宕心響",
+      "reading": "あたごここね",
+      "generation": "6期(夏組)"
+    },
+    {
+      "name": "大越ひなの",
+      "reading": "おおこしひなの",
+      "generation": "6期(夏組)"
+    },
+    {
+      "name": "小津玲奈",
+      "reading": "おづれいな",
+      "generation": "6期(夏組)"
+    },
+    {
+      "name": "海邉朱莉",
+      "reading": "かいべあかり",
+      "generation": "6期(春組)"
+    },
+    {
+      "name": "川端晃菜",
+      "reading": "かわばたひな",
+      "generation": "6期(春組)"
+    },
+    {
+      "name": "鈴木佑捺",
+      "reading": "すずきゆうな",
+      "generation": "6期(夏組)"
+    },
+    {
+      "name": "瀬戸口心月",
+      "reading": "せとぐちみつき",
+      "generation": "6期(春組)"
+    },
+    {
+      "name": "長嶋凛桜",
+      "reading": "ながしまりお",
+      "generation": "6期(春組)"
+    },
+    {
+      "name": "増田三莉音",
+      "reading": "ますだみりね",
+      "generation": "6期(夏組)"
+    },
+    {
+      "name": "森平麗心",
+      "reading": "もりひらうるみ",
+      "generation": "6期(夏組)"
+    },
+    {
+      "name": "矢田萌華",
+      "reading": "やだもえか",
+      "generation": "6期(春組)"
+    },
+    {
+      "name": "山下美月",
+      "reading": "やましたみづき",
+      "generation": "3期",
+      "status": "卒業(2024-05-12)"
+    },
+    {
+      "name": "阪口珠美",
+      "reading": "さかぐちたまみ",
+      "generation": "3期",
+      "status": "卒業(2024-07-15)"
+    },
+    {
+      "name": "清宮レイ",
+      "reading": "せいみやれい",
+      "generation": "4期",
+      "status": "卒業(2024-07-17)"
+    },
+    {
+      "name": "掛橋沙耶香",
+      "reading": "かけはしさやか",
+      "generation": "4期",
+      "status": "卒業(2024-08-19)。URのままLR相当のステータス更新がされている例外"
+    },
+    {
+      "name": "向井葉月",
+      "reading": "むかいはづき",
+      "generation": "3期",
+      "status": "卒業(2024-12-31)"
+    },
+    {
+      "name": "与田祐希",
+      "reading": "よだゆうき",
+      "generation": "3期",
+      "status": "卒業(2025-02-23)"
+    },
+    {
+      "name": "佐藤楓",
+      "reading": "さとうかえで",
+      "generation": "3期",
+      "status": "卒業(2025-05-06)"
+    },
+    {
+      "name": "中村麗乃",
+      "reading": "なかむられの",
+      "generation": "3期",
+      "status": "卒業(2025-06-26)"
+    },
+    {
+      "name": "久保史緒里",
+      "reading": "くぼしおり",
+      "generation": "3期",
+      "status": "卒業(2025-11-27)"
+    },
+    {
+      "name": "松尾美佑",
+      "reading": "まつおみゆ",
+      "generation": "4期(新4期生)",
+      "status": "卒業(2025-12-31)"
+    },
+    {
+      "name": "矢久保美緒",
+      "reading": "やくぼみお",
+      "generation": "4期(新4期生)",
+      "status": "卒業(2025-12-31)"
+    },
+    {
+      "name": "佐藤璃果",
+      "reading": "さとうりか",
+      "generation": "4期(新4期生)",
+      "status": "卒業(2026-04-08)"
+    },
+    {
+      "name": "梅澤美波",
+      "reading": "うめざわみなみ",
+      "generation": "3期",
+      "status": "卒業(2026-05-02)"
+    }
   ]
 }

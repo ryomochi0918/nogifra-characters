@@ -1,0 +1,17 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> e1["①実行:自身を3ターンの間<br/>「軽快」状態にし、このスキル中、<br/>自身の会心率を+20%する"]:::effect
+    e1 --> c3{"③:自身のサンクスが②の<br/>アピール対象のサンクス以上か<br/>(対象ごとに判定)"}:::cond
+    c3 -->|"Yes"| e3["①による会心率の<br/>増加倍率が40%になる"]:::effect --> a2
+    c3 -->|"No"| a2["②実行:残りHP割合が最も低い<br/>ライバルへ、自身のサンクスの3.5倍を<br/>固定値として上乗せした<br/>460%のアピール"]:::action
+    a2 --> c4{"④:②のアピールで<br/>会心アピールが発生したか<br/>(対象ごとに判定)"}:::cond
+    c4 -->|"Yes"| e4["自身の「軽快」状態を解除し、<br/>3ターンの間「旋回」状態にする"]:::effect --> lc
+    c4 -->|"No"| lc{"②のアピール<br/>6回すべて完了?"}:::cond
+    lc -->|"No、次の回へ"| c3
+    lc -->|"Yes"| c5{"⑤:②のアピールで会心アピールが<br/>2回以上発生したか"}:::cond
+    c5 -->|"Yes"| e5["このスキル中のみ自身のデバフ耐性<br/>貫通を+40%し、最大アピールが<br/>最も高いライバル3名を100%の確率で<br/>2ターンの間「命中率ダウン」状態にする"]:::effect --> finish
+    c5 -->|"No"| finish(("終了")):::startend
