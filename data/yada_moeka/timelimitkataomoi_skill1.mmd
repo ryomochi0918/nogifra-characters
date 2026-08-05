@@ -1,0 +1,15 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> e1["①効果:このスキル中、自身の<br/>デバフ・サゲ効果耐性貫通を<br/>+30%する"]:::effect --> c3
+    c3{"③:自身のサンクスが②のアピール<br/>対象のサンクス以上か"}:::cond
+    c3 -->|"Yes"| e3["②のアピール対象のバフ・アゲ効果を<br/>1つ解除する"]:::effect --> a2
+    c3 -->|"No"| a2["②実行:ライバルへ<br/>500%のアピール"]:::action --> e4["②のアピール対象を100%の確率で<br/>3ターンの間、②のアピール回数に応じた<br/>デバフ・サゲ効果状態にする<br/>(1回目:ディフェンスダウン、2回目:空腹、<br/>3回目:命中率ダウン、4回目:嫉妬、<br/>5回目:混乱。最大5つまで累積)"]:::effect --> lc1
+    lc1{"②のアピール5回<br/>すべて完了?"}:::cond
+    lc1 -->|"No、次の回へ"| c3
+    lc1 -->|"Yes"| c5{"⑤:ライバルのフロント人数が<br/>3名以下か"}:::cond
+    c5 -->|"Yes"| a5["再度②を実行(再実行は最大1回まで)"]:::action --> finish(("終了")):::startend
+    c5 -->|"No"| finish

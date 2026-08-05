@@ -1,0 +1,13 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> e1["①:自身のデバフ・サゲ効果を全て解除し、<br/>HPを自身のHP上限の80%分回復する"]:::effect --> cloop{"②のアピール6回<br/>すべて完了?"}:::cond
+    cloop -->|"No、次の回へ"| c3{"③:②の各アピール前、自身のサンクスが<br/>②のアピール対象のサンクス以上または<br/>自身のバイタリティが②のアピール対象の<br/>バイタリティ以上か(対象ごとに判定)"}:::cond
+    c3 -->|"Yes"| e3["③:②のアピール倍率と<br/>固定値が2倍になる"]:::effect --> a2
+    c3 -->|"No"| a2["②実行:自身の残りHPの20%を固定値<br/>として上乗せした820%のアピール<br/>(対象ごとに判定)"]:::action --> c4{"④:②の各アピール後、自身の残りHP割合が<br/>②のアピール対象の残りHP割合以上か<br/>(対象ごとに判定)"}:::cond
+    c4 -->|"Yes"| e4["④:②のアピール対象を100%の確率で<br/>3ターンの間「嫉妬」状態にする<br/>(嫉妬:HPが回復しなくなる)"]:::effect --> cloop
+    c4 -->|"No"| cloop
+    cloop -->|"Yes、6回完了"| finish(("終了")):::startend

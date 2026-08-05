@@ -1,0 +1,19 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> e1["①実行:このスキル中、自身の<br/>命中率を+20%する"]:::effect
+    e1 --> c3{"③:②の対象が<br/>「フィジカルダウン」状態か"}:::cond
+    c3 -->|"Yes"| e3["②のアピール倍率が<br/>2倍になる"]:::effect --> c4
+    c3 -->|"No"| c4{"④:②の対象が<br/>「メンタルダウン」状態か"}:::cond
+    c4 -->|"Yes"| e4["②のアピール倍率が<br/>2倍になる"]:::effect --> c5
+    c4 -->|"No"| c5{"⑤:自身のエフォートが②の<br/>アピール対象のエフォート以上か"}:::cond
+    c5 -->|"Yes"| e5["②のアピールに自身の最大<br/>アピールの30%分の固定値を<br/>上乗せする"]:::effect --> a2
+    c5 -->|"No"| a2["②実行:ライバルへ<br/>400%のアピール"]:::action
+    a2 --> lc{"②のアピール<br/>5回すべて完了?"}:::cond
+    lc -->|"No、次の回へ"| c3
+    lc -->|"Yes"| c6{"⑥:②のアピールでデバフ・<br/>サゲ効果状態のライバルに<br/>アピールした回数が3回以上か"}:::cond
+    c6 -->|"Yes"| a6["再度②からスキルを実行<br/>(再実行は最大1回まで)"]:::action --> finish(("終了")):::startend
+    c6 -->|"No"| finish

@@ -1,0 +1,20 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c1{"①:自身の残りHP割合が<br/>70%以上か"}:::cond
+    c1 -->|"Yes"| e1["このスキル中、自身の命中率と<br/>会心アピールを+25%する"]:::effect --> c3
+    c1 -->|"No"| c3{"③:自身の残りHP割合が②の<br/>アピール対象の残りHP割合<br/>以上か"}:::cond
+    c3 -->|"Yes"| e3["②のアピール倍率が<br/>2倍になる"]:::effect --> a2
+    c3 -->|"No"| a2["②実行:残りHP割合が最も高い<br/>ライバルへ550%のアピール"]:::action
+    a2 --> c4{"④:②のアピールが失敗、<br/>またはアピールが0だったか"}:::cond
+    c4 -->|"Yes"| e4["②のアピール回数が1回<br/>増加する(追加回数は<br/>最大3回まで)"]:::effect --> lc
+    c4 -->|"No"| lc{"②のアピールが全て完了?<br/>(基本5回、④で最大+3回)"}:::cond
+    lc -->|"No、次の回へ"| c3
+    lc -->|"Yes"| c5{"⑤:②のアピールでライバルが<br/>リタイアしなかったか"}:::cond
+    c5 -->|"Yes"| a5["再度②を実行<br/>(再実行は最大1回まで)"]:::action --> c6
+    c5 -->|"No"| c6{"⑥:②のアピールでライバルが<br/>リタイアしたか(⑤の再実行が<br/>発動した場合は⑤の終了後)"}:::cond
+    c6 -->|"Yes"| a6["残りHP割合が最も高い<br/>ライバル2名へ②で行った合計<br/>アピールの20%分のアピール<br/>(ディフェンス、フィジカルを<br/>無視する)"]:::action --> finish(("終了")):::startend
+    c6 -->|"No"| finish

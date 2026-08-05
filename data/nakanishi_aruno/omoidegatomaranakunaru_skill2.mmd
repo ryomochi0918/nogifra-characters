@@ -1,0 +1,18 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c3a{"③:自身の残りHP割合が<br/>①のアピール対象の残りHP割合以上か"}:::cond
+    c3a -->|"Yes"| e3a["①のアピールに自身のスマイルの<br/>3倍を固定値として上乗せ"]:::effect --> a1
+    c3a -->|"No"| a1["①実行:<br/>残りHP割合が最も高いライバルへ<br/>バフ・アゲ効果を2つ解除し、<br/>基本500%のアピールを行う"]:::action
+    a1 --> lc1{"①のアピール3回すべて完了?"}:::cond
+    lc1 -->|"No、次の回へ"| c3a
+    lc1 -->|"Yes"| c3b{"③:自身の残りHP割合が<br/>②のアピール対象の残りHP割合以上か"}:::cond
+    c3b -->|"Yes"| e3b["②のアピールに自身のスマイルの<br/>3倍を固定値として上乗せ"]:::effect --> a2
+    c3b -->|"No"| a2["②実行:<br/>残りHP割合が最も低いライバルへ<br/>バフ・アゲ効果を2つ解除し、<br/>基本500%のアピールを行う"]:::action
+    a2 --> lc2{"②のアピール3回すべて完了?"}:::cond
+    lc2 -->|"No、次の回へ"| c3b
+    lc2 -->|"Yes"| e4["④実行:<br/>残りHP割合が最も低い味方3名のHPを<br/>このスキルで行った合計アピールの<br/>30%分回復し、<br/>2ターンの間「陽動」状態にする"]:::effect
+    e4 --> finish(("終了")):::startend

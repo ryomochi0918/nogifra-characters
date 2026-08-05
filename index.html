@@ -35,6 +35,9 @@
         <select id="memberFilter" class="filter-select">
           <option value="">キャラ: すべて</option>
         </select>
+        <select id="genFilter" class="filter-select">
+          <option value="">期: すべて</option>
+        </select>
         <div class="attr-filter" id="attrFilter">
           <button type="button" class="tab-btn attr-btn" data-attr="努力">
             努力
@@ -301,9 +304,16 @@
 
       const searchInput = document.getElementById("searchInput");
       const memberFilter = document.getElementById("memberFilter");
+      const genFilter = document.getElementById("genFilter");
       const attrButtons = document.querySelectorAll(".attr-btn");
       const activeAttrs = new Set();
       let allCharacters = [];
+
+      // 4期と新4期生、6期の春組・夏組はそれぞれ同一の期として扱う(括弧書きの補足を無視)
+      function normalizeGeneration(g) {
+        if (!g) return "";
+        return g.split("(")[0].trim();
+      }
 
       function buildSearchBlob(c) {
         const parts = [c.name, c.costume, c.title];
@@ -400,6 +410,11 @@
         if (memberFilter.value) {
           result = result.filter((c) => c.name === memberFilter.value);
         }
+        if (genFilter.value) {
+          result = result.filter(
+            (c) => normalizeGeneration(c.generation) === genFilter.value,
+          );
+        }
         if (activeAttrs.size > 0) {
           result = result.filter((c) => activeAttrs.has(c.attribute));
         }
@@ -408,6 +423,7 @@
 
       searchInput.addEventListener("input", applyFilter);
       memberFilter.addEventListener("change", applyFilter);
+      genFilter.addEventListener("change", applyFilter);
       attrButtons.forEach((btn) => {
         btn.addEventListener("click", () => {
           const attr = btn.dataset.attr;
@@ -440,6 +456,25 @@
             .join("");
       }
 
+      function populateGenFilter(list) {
+        const gens = new Set();
+        list.forEach((c) => {
+          const g = normalizeGeneration(c.generation);
+          if (g) gens.add(g);
+        });
+        const sorted = [...gens].sort((a, b) => {
+          const na = parseInt(a, 10);
+          const nb = parseInt(b, 10);
+          if (!isNaN(na) && !isNaN(nb) && na !== nb) return na - nb;
+          return a.localeCompare(b, "ja");
+        });
+        genFilter.innerHTML =
+          '<option value="">期: すべて</option>' +
+          sorted
+            .map((g) => `<option value="${escapeHtml(g)}">${escapeHtml(g)}</option>`)
+            .join("");
+      }
+
       async function init() {
         try {
           const res = await fetch("data/characters.json");
@@ -453,6 +488,7 @@
           }));
 
           populateMemberFilter(allCharacters);
+          populateGenFilter(allCharacters);
           renderCards(sortCharacters(allCharacters));
         } catch (e) {
           stage.innerHTML = `<p class="error" style="grid-column:1/-1;">

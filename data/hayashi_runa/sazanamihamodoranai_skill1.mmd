@@ -1,0 +1,9 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> e1["①:このスキル中、自身のリフレクト<br/>耐性を+30%する"]:::effect --> a2["②実行:①の効果後、ライバル4名に<br/>740%のアピール"]:::action --> c4{"④:③の効果前、自身が<br/>「反響」状態か"}:::cond
+    c4 -->|"Yes"| e4["④:③による「反響」状態の<br/>リフレクト倍率が1.5倍になる"]:::effect --> e3["③:①のアピールが全て終了後、自身のHPを<br/>自身のHP上限の40%分回復し、<br/>4ターンの間「反響」状態にする<br/>(反響:リフレクトを+120〜180%し、<br/>受けるアピールが70%低下する)"]:::effect --> finish(("終了")):::startend
+    c4 -->|"No"| e3

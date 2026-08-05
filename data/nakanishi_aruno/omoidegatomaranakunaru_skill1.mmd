@@ -1,0 +1,15 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c2{"②:①のアピール対象が<br/>バフ・アゲ効果状態ではないか<br/>(対象ごとに判定)"}:::cond
+    c2 -->|"Yes"| e2["①のアピールに自身のスマイルの<br/>4倍を固定値として上乗せ"]:::effect --> a1
+    c2 -->|"No"| a1["①実行:<br/>最大アピールが最も高いライバル6名の<br/>バフ・アゲ効果を2つ解除し、<br/>基本700%のアピールを行う"]:::action
+    a1 --> lc{"①のアピール6名すべて完了?"}:::cond
+    lc -->|"No、次の対象へ"| c2
+    lc -->|"Yes"| c4{"④:このスキルでバフ・アゲ効果を<br/>3つ以上解除したか"}:::cond
+    c4 -->|"Yes"| e4["③の効果対象が2名増加"]:::effect --> e3
+    c4 -->|"No"| e3["③実行:<br/>最大アピールが最も高い味方2名を<br/>3ターンの間「興奮」状態にし、<br/>デバフ・サゲ効果を2つ解除し、<br/>HPを自身のアピール力の100%分回復<br/>(会心率に応じて会心回復が発生)"]:::effect
+    e3 --> finish(("終了")):::startend

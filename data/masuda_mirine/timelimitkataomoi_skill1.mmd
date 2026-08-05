@@ -1,0 +1,16 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c2
+    c2{"②:味方フロントの人数が<br/>4名以下か"}:::cond
+    c2 -->|"Yes"| e2["①による「会心アピール耐性アップ」状態の<br/>効果倍率が1.5倍になる"]:::effect --> a1
+    c2 -->|"No"| a1["①実行:<br/>味方6名を3ターンの間<br/>「会心アピール耐性アップ」状態にする"]:::action
+
+    a1 --> c4{"④:デバフ・サゲ効果状態の味方が<br/>フロントに4名以上居るか"}:::cond
+    c4 -->|"Yes"| e4["③の効果対象が1名増加する"]:::effect --> a3
+    c4 -->|"No"| a3["③実行:<br/>最大アピールが最も高い味方1名の<br/>デバフ・サゲ効果を2つ解除し、<br/>2ターンの間「集中」状態にする"]:::action
+
+    a3 --> a5["⑤実行:<br/>残りHP割合が最も低い味方3名のHPを<br/>自身のHP上限の30%分回復し、<br/>2ターンの間「堅忍」状態にする"]:::action --> finish(("終了")):::startend

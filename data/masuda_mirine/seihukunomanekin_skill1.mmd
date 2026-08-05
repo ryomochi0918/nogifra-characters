@@ -1,0 +1,26 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> e1["①:このスキル中、自身の会心率と<br/>サゲ効果耐性貫通を+25%する"]:::effect
+    e1 --> c4a{"④:自身のサンクスが②の対象の<br/>サンクス以上か(対象ごとに判定)"}:::cond
+    c4a -->|"Yes"| e4a["②のアピール中のみ、①の会心率と<br/>サゲ効果耐性貫通の増加倍率が40%になる"]:::effect --> a2
+    c4a -->|"No"| a2["②実行:<br/>ライバル3名へ600%のアピール"]:::action
+
+    a2 --> c4b{"④:自身のサンクスが③の対象の<br/>サンクス以上か(対象ごとに判定)"}:::cond
+    c4b -->|"Yes"| e4b["③のアピール中のみ、①の会心率と<br/>サゲ効果耐性貫通の増加倍率が40%になる"]:::effect --> a3
+    c4b -->|"No"| a3["③実行:<br/>残りHP割合が最も高いライバル3名へ<br/>600%のアピール"]:::action
+
+    a3 --> c5{"⑤:②と③のアピールで<br/>会心アピールが発生した回数は<br/>1回以上か"}:::cond
+    c5 -->|"No"| finish(("終了")):::startend
+    c5 -->|"Yes"| e5a["③の対象を100%の確率で<br/>2ターンの間「転倒」状態にする"]:::effect --> c5b
+
+    c5b{"会心アピールが発生した<br/>回数は2回以上か"}:::cond
+    c5b -->|"No"| finish
+    c5b -->|"Yes"| e5b["③の対象を100%の確率で<br/>2ターンの間「嫉妬」状態にする"]:::effect --> c5c
+
+    c5c{"会心アピールが発生した<br/>回数は3回以上か"}:::cond
+    c5c -->|"No"| finish
+    c5c -->|"Yes"| e5c["③の対象を100%の確率で<br/>2ターンの間「空腹」状態にする<br/>(最大で3つのサゲ効果状態にする)"]:::effect --> finish

@@ -1,0 +1,21 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c4a{"④:①のアピール対象の<br/>残りHP割合が50%以下か<br/>(対象ごとに判定)"}:::cond
+    c4a -->|"Yes"| e4a["①のアピール倍率が2倍になり、<br/>命中率を+20%"]:::effect --> a1
+    c4a -->|"No"| a1["①実行:<br/>ライバル4名へ<br/>基本550%のアピールを行う"]:::action
+    a1 --> lc1{"①のアピール4名すべて完了?"}:::cond
+    lc1 -->|"No、次の対象へ"| c4a
+    lc1 -->|"Yes"| c3{"③:①のアピールで会心アピールが発生、<br/>または①のアピールで「心労」状態の<br/>ライバルを対象にした回数分だけ<br/>②のアピールが会心アピールになるか<br/>(①の各アピールにつき<br/>会心アピールの回数は1回まで増加)"}:::cond
+    c3 -->|"Yes"| e3["②のアピールが会心アピールに"]:::effect --> c4b
+    c3 -->|"No"| c4b{"④:②のアピール対象の<br/>残りHP割合が50%以下か"}:::cond
+    c4b -->|"Yes"| e4b["②のアピール倍率が2倍になり、<br/>命中率を+20%"]:::effect --> a2
+    c4b -->|"No"| a2["②実行:<br/>ライバルへ<br/>基本550%のアピールを行う"]:::action
+    a2 --> lc2{"②のアピール4回すべて完了?"}:::cond
+    lc2 -->|"No、次の回へ"| c3
+    lc2 -->|"Yes"| c5{"⑤:このスキルでライバルを<br/>1名以上リタイアさせたか"}:::cond
+    c5 -->|"Yes"| a5["残りHP割合が最も高いライバル1名へ<br/>①と②の合計アピールの70%分の<br/>アピールを行う<br/>(ディフェンス、メンタルを無視し必ず命中)"]:::action --> finish
+    c5 -->|"No"| finish(("終了")):::startend

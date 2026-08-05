@@ -1,0 +1,16 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c3{"③:②の対象がバフ・アゲ効果状態<br/>ではないか(対象ごとに判定)"}:::cond
+    c3 -->|"Yes"| e3["対象を100%の確率で<br/>2ターンの間「空腹」状態に"]:::effect --> e2
+    c3 -->|"No"| e2["②:対象のバフ・アゲ効果を<br/>1つ解除"]:::effect
+    e2 --> a1["①実行:<br/>残りHP割合が最も高いライバル6名へ<br/>基本550%+固定値 自身の残りHP20%分"]:::action
+    a1 --> lc1{"①のアピール6名すべて完了?"}:::cond
+    lc1 -->|"No、次の対象へ"| c3
+    lc1 -->|"Yes"| a4["④実行:<br/>残りHP割合が最も低いライバルへ2回<br/>基本400%+固定値 自身の残りHP15%分"]:::action
+    a4 --> c5{"⑤:このスキルでライバルが<br/>リタイアしたか"}:::cond
+    c5 -->|"Yes"| e5["自身と自身を除いた残りHP割合が<br/>最も低い味方1名のHPを<br/>自身のアピール力の100%分回復<br/>(会心率に応じて会心回復が発生)"]:::effect --> finish
+    c5 -->|"No"| finish(("終了")):::startend

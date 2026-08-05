@@ -1,0 +1,15 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> e1["①効果:このスキル中、自身の<br/>会心率を+15%する"]:::effect --> c3
+    c3{"③:②のアピール対象の残りHP割合が<br/>50%以上か"}:::cond
+    c3 -->|"Yes"| e3["②の各アピール中のみ①による会心率の<br/>増加倍率と②のアピール倍率が<br/>2倍になる"]:::effect --> a2
+    c3 -->|"No"| a2["②実行:残りHP割合が最も低い<br/>ライバルへ、対象が受けているデバフ・<br/>サゲ効果状態の種類数×自身のサンクスを<br/>固定値として上乗せした620%のアピール<br/>(固定値上限は自身のサンクスの5倍、<br/>デバフ・サゲ効果状態のライバルを<br/>優先選択)"]:::action --> c4
+    c4{"④:②のアピール対象が受けている<br/>デバフ・サゲ効果状態の種類数が<br/>3種類以上か"}:::cond
+    c4 -->|"Yes"| e4["②のアピール回数が1回増加する<br/>(増加は最大2回まで)"]:::effect --> lc1
+    c4 -->|"No"| lc1{"②のアピールが全て完了?<br/>(基本3回、④で最大+2回)"}:::cond
+    lc1 -->|"No、次の回へ"| c3
+    lc1 -->|"Yes"| a5["⑤実行:自身のアピール力の<br/>100%分回復する<br/>(会心率に応じて会心回復が発生)"]:::action --> finish(("終了")):::startend
