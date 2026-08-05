@@ -1,0 +1,15 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c2{"②:自身の残りHP割合が①の<br/>アピール対象の残りHP割合以上か<br/>(対象ごとに判定)"}:::cond
+    c2 -->|"Yes"| e2["①のアピール倍率と<br/>固定値倍率が2倍になる"]:::effect --> a1
+    c2 -->|"No"| a1["①実行:<br/>残りHP割合が最も高いライバルに、<br/>自身のエフォートの3倍を固定値として<br/>上乗せした700%のアピール<br/>(対象はリタイアするまで変更しない。<br/>リタイア回復発生時も対象を変更しない)"]:::action
+    a1 --> c3{"③:①のアピール対象の<br/>残りHP割合が30%未満か"}:::cond
+    c3 -->|"Yes"| a3["③実行:<br/>①のアピール対象に、<br/>自身のエフォート7倍分のアピール<br/>(ディフェンス、フィジカルを無視する)"]:::action --> lc
+    c3 -->|"No"| lc{"①のアピール<br/>3回すべて完了?"}:::cond
+    lc -->|"No、次の回へ"| c2
+    lc -->|"Yes"| a4["④実行:<br/>ライバル1名に、このスキルで行った<br/>合計アピールの30%分のアピール<br/>(ディフェンス、フィジカルを無視する)"]:::action
+    a4 --> finish(("終了")):::startend

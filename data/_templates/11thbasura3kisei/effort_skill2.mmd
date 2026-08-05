@@ -1,0 +1,15 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> a1["①実行:<br/>残りHP割合が最も低いライバルへ、<br/>自身の残りHP14%分を固定値として<br/>上乗せした500%のアピール"]:::action
+    a1 --> c2{"②③:自身の残りHP割合が<br/>50%未満か"}:::cond
+    c2 -->|"Yes"| e2["自身のHPを①で行った<br/>直前のアピールの40%分回復する"]:::effect --> lc
+    c2 -->|"No"| e3["自身以外の残りHP割合が最も低い味方1名のHPを<br/>①で行った直前のアピールの40%分回復する"]:::effect --> lc
+    lc{"①のアピール<br/>4回すべて完了?"}:::cond
+    lc -->|"No、次の対象へ"| a1
+    lc -->|"Yes"| c4{"④:①のアピールで<br/>ライバルがリタイアしたか"}:::cond
+    c4 -->|"Yes(再実行は最大1回まで)"| a1
+    c4 -->|"No"| finish(("終了")):::startend

@@ -1,0 +1,16 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c2{"②:対象の残りHP割合が<br/>80%以上か"}:::cond
+    c2 -->|"Yes"| e2["対象を100%の確率で1ターンの間<br/>「執着」状態にする"]:::effect --> a1
+    c2 -->|"No"| a1["①実行:<br/>ライバルへ400%のアピール<br/>(③の効果で倍率上昇の場合あり、上限6400%)"]:::action
+    a1 --> c3{"③:①のアピールで<br/>ライバルがリタイアしなかったか"}:::cond
+    c3 -->|"Yes"| e3["①のアピール倍率が2倍に<br/>(次回以降適用、上限6400%)"]:::effect --> lc
+    c3 -->|"No"| lc{"①の対象<br/>4回すべて完了?"}:::cond
+    lc -->|"No、次の対象へ"| c2
+    lc -->|"Yes"| c4{"④:①でデバフ・サゲ効果状態の<br/>ライバルに3回以上アピールしたか<br/>(かつ再実行がまだの場合)"}:::cond
+    c4 -->|"Yes(再実行は最大1回まで)"| e4["このスキル中のみ<br/>自身の命中率を+20%"]:::effect --> c2
+    c4 -->|"No"| finish(("終了")):::startend

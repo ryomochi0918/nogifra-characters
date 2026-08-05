@@ -1,0 +1,15 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c2{"②:①の効果対象が<br/>既に「軽快」状態か"}:::cond
+    c2 -->|"Yes"| e2["①の効果対象が<br/>1名増加する(最大6名まで)"]:::effect --> e1
+    c2 -->|"No"| e1["①実行:<br/>味方2名を3ターンの間<br/>「軽快」状態にする"]:::effect
+    e1 --> c4{"④:③の各アピール前、<br/>味方フロントの「軽快」状態の<br/>メンバーが4名以上いるか"}:::cond
+    c4 -->|"Yes"| e4["③の各アピール中のみ<br/>自身の命中率を+20%する"]:::effect --> a3
+    c4 -->|"No"| a3["③実行:<br/>ライバルへ700%のアピール"]:::action
+    a3 --> lc{"③のアピール<br/>4回すべて完了?"}:::cond
+    lc -->|"No、次の回へ"| c4
+    lc -->|"Yes"| finish(("終了")):::startend
