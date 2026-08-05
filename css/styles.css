@@ -16,8 +16,29 @@
         --sans: "Zen Kaku Gothic New", sans-serif;
       }
 
+      :root[data-theme="light"] {
+        --bg-0: #f7f3ec;
+        --bg-1: #fdfbf7;
+        --card: #ffffff;
+        --card-line: #ddd2ee;
+        --spotlight: #b8860b;
+        --spotlight-soft: rgba(184, 134, 11, 0.12);
+        --accent: #8a4fd1;
+        --accent-dim: #b79ce0;
+        --ink: #2b2333;
+        --ink-dim: #6b6178;
+        --diagram-bg: #ffffff;
+        --viewer-overlay: rgba(60, 50, 80, 0.35);
+      }
+
       * {
         box-sizing: border-box;
+      }
+
+      body {
+        transition:
+          background-color 0.25s ease,
+          color 0.25s ease;
       }
 
       body {
@@ -348,7 +369,7 @@
       .viewer {
         position: fixed;
         inset: 0;
-        background: rgba(8, 6, 13, 0.88);
+        background: var(--viewer-overlay, rgba(8, 6, 13, 0.88));
         backdrop-filter: blur(6px);
         display: none;
         align-items: flex-start;
@@ -469,7 +490,7 @@
       }
 
       .diagram-wrap {
-        background: #100c1a;
+        background: var(--diagram-bg, #100c1a);
         border: 1px solid var(--card-line);
         border-radius: 12px;
         padding: 20px;
@@ -596,4 +617,74 @@
         padding: 32px 24px 64px;
         color: var(--ink-dim);
         font-size: 12px;
+      }
+
+      /* Theme toggle */
+      .theme-toggle {
+        position: fixed;
+        right: 20px;
+        bottom: 20px;
+        z-index: 60;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--card);
+        border: 1px solid var(--accent-dim);
+        border-radius: 999px;
+        padding: 6px;
+        cursor: pointer;
+        box-shadow: 0 8px 24px -12px rgba(0, 0, 0, 0.4);
+      }
+
+      .theme-toggle .track {
+        position: relative;
+        width: 52px;
+        height: 26px;
+        border-radius: 999px;
+        background: var(--bg-0);
+        border: 1px solid var(--accent-dim);
+        transition: background-color 0.25s ease;
+      }
+
+      .theme-toggle .icon {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 12px;
+        line-height: 1;
+        pointer-events: none;
+      }
+
+      .theme-toggle .icon-sun {
+        left: 5px;
+      }
+
+      .theme-toggle .icon-moon {
+        right: 5px;
+      }
+
+      .theme-toggle .thumb {
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: var(--accent);
+        border: 1px solid var(--accent);
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+        transition: transform 0.25s ease;
+      }
+
+      :root[data-theme="light"] .theme-toggle .thumb {
+        transform: translateX(26px);
+        background: var(--spotlight);
+        border-color: var(--spotlight);
+      }
+
+      @media (max-width: 600px) {
+        .theme-toggle {
+          right: 12px;
+          bottom: 12px;
+        }
       }
