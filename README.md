@@ -87,7 +87,3 @@ mermaid.jsはcdnjs経由でCDN読み込みしているため、リポジトリ�
 `data/nogizaka46_members_reading.json` に、現役メンバー33名分の名前の読み仮名(`nameReading`用)をまとめてあります。出典は非公式データベース[ngzk46seek.jp](https://ngzk46seek.jp/members_list.php)(公式データを元に掲載)。新キャラ追加時はまずここを確認してください。
 
 衣装名(`costumeReading`)は乃木坂46の楽曲タイトルに由来するものが大半です。読み仮名がまとまったサイトとして[n46db.com](https://n46db.com/songs/all-songs-list.php)がありますが、**robots.txtで自動アクセスが禁止されており、Claudeから直接内容を取得できません**。読みが不明な衣装名がある場合は、都度検索するか、このサイトを手動で確認してClaudeに読みを伝えてください。
-
-## 今後の実装課題(TODO)
-
-- **ライトモード切り替え**: 現状はダーク(スポットライト)テーマ固定。トグルボタンでライト/ダークを切り替えられるようにする(mermaidのthemeVariablesもテーマに応じて切り替えが必要)。
