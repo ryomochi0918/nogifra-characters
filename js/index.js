@@ -276,16 +276,30 @@ const MERMAID_THEME_VARS = {
         });
       }
 
-      const ATTR_CLASS = {
+      const TYPE_ATTR_CLASS = {
         努力: "attr-doryoku",
         感謝: "attr-kansha",
         笑顔: "attr-egao",
       };
 
       function attrBadge(attribute) {
-        const cls = ATTR_CLASS[attribute];
+        const cls = TYPE_ATTR_CLASS[attribute];
         if (!cls) return "";
         return `<span class="attr-badge ${cls}">${escapeHtml(attribute)}</span>`;
+      }
+
+      const GENERATION_ATTR_CLASS = {
+        "3期": "attr-3rd",
+        "4期": "attr-4th",
+        "5期": "attr-5th",
+        "6期": "attr-6th"
+      };
+
+      function genBadge(generation) {
+        const g = normalizeGeneration(generation);
+        if (!g) return "";
+        const cls = GENERATION_ATTR_CLASS[g];
+        return `<span class="gen-badge ${cls}">${escapeHtml(g)}</span>`;
       }
 
       function renderCards(list) {
@@ -299,7 +313,7 @@ const MERMAID_THEME_VARS = {
             (c) => `
       <button class="card" data-key="${escapeHtml(c._key)}">
         <span class="tier">${escapeHtml(c.tier || "SKILL")}</span>${attrBadge(c.attribute)}
-        <h2>${escapeHtml(c.name)}</h2>
+        <h2>${escapeHtml(c.name)}${genBadge(c.generation)}</h2>
         <p class="subtitle">${escapeHtml(c.title || "")}</p>
       </button>
     `,
