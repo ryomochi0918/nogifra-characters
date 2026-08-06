@@ -1,0 +1,15 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> e1["①実行:自身のリフレクト耐性を+40%"]:::effect
+    e1 --> c3{"③:自身の「根性」状態の<br/>ターン数が9ターン以上か"}:::cond
+    c3 -->|"Yes"| e3["②のアピール倍率と<br/>固定値倍率が3倍に"]:::effect --> a2
+    c3 -->|"No"| a2["②実行:<br/>最大アピールが最も高いライバルへ<br/>基本400%+固定値 自身のバイタリティ"]:::action
+    a2 --> c4{"④:②のアピールで<br/>会心アピールが発生したか"}:::cond
+    c4 -->|"Yes"| e4["②のアピール回数を1回増加<br/>(追加は最大3回まで)"]:::effect --> lc
+    c4 -->|"No"| lc{"②のアピール<br/>5回(+追加分)すべて完了?"}:::cond
+    lc -->|"No、次の回へ"| c3
+    lc -->|"Yes"| finish(("終了")):::startend
