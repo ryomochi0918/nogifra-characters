@@ -63,16 +63,18 @@ python3 -m http.server 8000
 
 ```
 ./
-├── index.html                            # カード一覧+ビューアのHTML
+├── index.html                              # カード一覧+ビューアのHTML
 ├── css/
-│   └── styles.css                       # スタイル(ライト/ダークモード切り替え対応)
+│   └── styles.css                         # スタイル(ライト/ダークモード切り替え対応)
 ├── js/
-│   └── index.js                         # 検索・絞り込み・ビューア等のロジック
+│   └── index.js                           # 検索・絞り込み・ビューア等のロジック
+├── assets/
+│   └── logo.svg                           # サイトロゴ(favicon兼ヘッダー表示用)
 ├── data/
-│   ├── characters.json                  # キャラ一覧のメタデータ
-│   ├── nogizaka46_members_reading.json  # 現役メンバー等の読み仮名・期データ
-│   ├── _templates/                      # 期・属性で内容が共通する衣装テンプレート(非公開衣装追加フロー用)
-│   └── {キャラslug}/                    # キャラごとのMermaidフローチャート(例: ioki_mao/, ikeda_teresa/)
+│   ├── characters.json                    # キャラ一覧のメタデータ
+│   ├── nogizaka46_members_reading.json    # 現役メンバー等の読み仮名・期データ
+│   ├── _templates/                        # 期・属性で内容が共通する衣装テンプレート(非公開衣装追加フロー用)
+│   └── {キャラslug}/                      # キャラごとのMermaidフローチャート(例: ioki_mao/, ikeda_teresa/)
 │       └── *.mmd
 └── README.md
 ```
