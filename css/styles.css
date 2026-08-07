@@ -66,6 +66,11 @@ header {
   padding: 64px 24px 40px;
 }
 
+header .site-logo {
+  display: block;
+  margin: 0 auto;
+}
+
 header .eyebrow {
   font-size: 12px;
   letter-spacing: 0.35em;
