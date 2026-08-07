@@ -53,13 +53,30 @@ const MERMAID_THEME_VARS = {
       const viewerClose = document.getElementById("viewerClose");
 
       const zoomBar = document.getElementById("zoomBar");
+      const diagramSection = document.getElementById("diagramSection");
       const diagramWrap = document.getElementById("diagramWrap");
       const zoomIn = document.getElementById("zoomIn");
       const zoomOut = document.getElementById("zoomOut");
       const zoomReset = document.getElementById("zoomReset");
       const zoomLabel = document.getElementById("zoomLabel");
+      const expandToggle = document.getElementById("expandToggle");
       const originalText = document.getElementById("originalText");
       const originalTextBody = document.getElementById("originalTextBody");
+
+      function collapseExpanded() {
+        diagramSection.classList.remove("expanded");
+        expandToggle.classList.remove("active");
+        expandToggle.setAttribute("aria-label", "拡大表示");
+      }
+
+      expandToggle.addEventListener("click", () => {
+        const expanded = diagramSection.classList.toggle("expanded");
+        expandToggle.classList.toggle("active", expanded);
+        expandToggle.setAttribute(
+          "aria-label",
+          expanded ? "縮小表示" : "拡大表示",
+        );
+      });
 
       let renderCount = 0;
       let zoomPct = 100; // 100 = リセット(svg width:100%)
@@ -84,6 +101,26 @@ const MERMAID_THEME_VARS = {
         applyZoom();
       });
 
+      const legendToggle = document.getElementById("legendToggle");
+      const legendPanel = document.getElementById("legendPanel");
+      legendToggle.addEventListener("click", (e) => {
+        e.stopPropagation();
+        legendPanel.style.display =
+          legendPanel.style.display === "none" ? "block" : "none";
+      });
+      document.addEventListener("click", (e) => {
+        if (
+          legendPanel.style.display !== "none" &&
+          !legendPanel.contains(e.target) &&
+          e.target !== legendToggle
+        ) {
+          legendPanel.style.display = "none";
+        }
+      });
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") legendPanel.style.display = "none";
+      });
+
       function escapeHtml(str) {
         return String(str).replace(
           /[&<>"']/g,
@@ -104,6 +141,7 @@ const MERMAID_THEME_VARS = {
         diagramTarget.className = "loading";
         diagramTarget.textContent = "読み込み中...";
         zoomPct = 100;
+        collapseExpanded();
 
         if (tab.text) {
           originalText.style.display = "";
@@ -130,6 +168,7 @@ const MERMAID_THEME_VARS = {
       }
 
       function renderPassiveTab(tab) {
+        collapseExpanded();
         zoomBar.style.display = "none";
         originalText.style.display = "none";
         diagramWrap.style.display = "";
@@ -227,13 +266,19 @@ const MERMAID_THEME_VARS = {
 
       function closeViewer() {
         viewer.classList.remove("open");
+        collapseExpanded();
       }
       viewerClose.addEventListener("click", closeViewer);
       viewer.addEventListener("click", (e) => {
         if (e.target === viewer) closeViewer();
       });
       document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape") closeViewer();
+        if (e.key !== "Escape") return;
+        if (diagramSection.classList.contains("expanded")) {
+          collapseExpanded();
+        } else {
+          closeViewer();
+        }
       });
 
       const searchInput = document.getElementById("searchInput");
