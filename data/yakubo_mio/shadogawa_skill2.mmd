@@ -1,0 +1,20 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> e1["①:このスキル中、自身のリフレクト耐性を+25%する"]:::effect --> c3
+    c3{"③:②のアピール対象がバフ・アゲ効果状態<br/>ではないか"}:::cond
+    c3 -->|"Yes"| e3["①によるリフレクト耐性の増加倍率が2倍になり、<br/>②のアピール倍率と固定値倍率が2倍になる"]:::effect --> c4
+    c3 -->|"No"| c4
+    c4{"④:②のアピール対象が特殊状態か"}:::cond
+    c4 -->|"Yes"| e4["②のアピール倍率と固定値倍率が1.5倍になる"]:::effect --> a2
+    c4 -->|"No"| a2
+    a2["②実行:<br/>最大アピールが最も高いライバルに、<br/>自身の最大アピールの55%を固定値として<br/>上乗せした400%のアピールを行う"]:::action --> lc
+    lc{"②のアピール<br/>6回すべて完了?"}:::cond
+    lc -->|"No、次の対象へ"| c3
+    lc -->|"Yes"| c5
+    c5{"⑤:このスキルでライバルがリタイアしたか<br/>(かつ再実行がまだの場合)"}:::cond
+    c5 -->|"Yes(再実行は最大1回まで)"| c3
+    c5 -->|"No"| finish(("終了")):::startend

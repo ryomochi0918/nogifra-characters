@@ -1,0 +1,18 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c3
+    c3{"③:①のアピール対象が特殊状態ではないか"}:::cond
+    c3 -->|"Yes"| e3["②の効果によるアピール倍率と固定値倍率の<br/>倍率増加がリセットされる"]:::effect --> c2
+    c3 -->|"No"| c2
+    c2{"②:①のアピール対象が特殊状態か<br/>(対象にする度、倍率増加が積算)"}:::cond
+    c2 -->|"Yes"| e2["①のアピール倍率と固定値倍率が2倍になる<br/>(アピール倍率上限12800%、固定値倍率上限48倍まで)"]:::effect --> a1
+    c2 -->|"No"| a1
+    a1["①実行:<br/>残りHP割合が最も低いライバルに、<br/>バフ・アゲ効果を1つ解除し、<br/>自身のエフォートの1.5倍を固定値として<br/>上乗せした400%のアピールを行う"]:::action --> e4
+    e4["④:自身のHPを①で行った直前のアピールの<br/>100%分回復する"]:::effect --> lc
+    lc{"①のアピール<br/>6回すべて完了?"}:::cond
+    lc -->|"No、次の回へ"| c3
+    lc -->|"Yes"| finish(("終了")):::startend

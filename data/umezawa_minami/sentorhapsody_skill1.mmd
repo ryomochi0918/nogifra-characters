@@ -1,0 +1,15 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> e1["①:自身を3ターンの間<br/>「神気」状態にする"]:::effect --> a2
+    a2["②実行:<br/>ライバル4名に自身の残りSPの40倍を<br/>上乗せした550%のアピールを行う"]:::action --> a3
+    a3["③実行:<br/>残りHP割合が最も低いライバルに3回、<br/>自身の残りSPの40倍を上乗せした<br/>550%のアピールを行う"]:::action --> c4
+    c4{"④:②と③の各アピール前、自身の残りHP割合が<br/>アピール対象の残りHP割合以上か<br/>(対象ごとに判定)"}:::cond
+    c4 -->|"Yes"| e4["②と③の各アピール倍率とSPの<br/>上乗せ倍率が2倍になる"]:::effect --> c5
+    c4 -->|"No"| c5
+    c5{"⑤:このスキルによってライバルが<br/>1名以上リタイアしたか"}:::cond
+    c5 -->|"Yes"| e5["「このスキルでリタイアさせたライバルの人数」を<br/>効果人数として、自分以外の最大アピールが<br/>最も高い味方を3ターンの間「神気」状態にする<br/>(効果人数は最大5名)"]:::effect --> finish(("終了")):::startend
+    c5 -->|"No"| finish

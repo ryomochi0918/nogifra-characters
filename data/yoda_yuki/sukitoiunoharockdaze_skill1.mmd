@@ -1,0 +1,15 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c2{"②:①の効果対象がデバフ・サゲ<br/>効果状態か(対象ごとに判定)"}:::cond
+    c2 -->|"Yes"| e2["①の効果対象のデバフ・<br/>サゲ効果を2つ解除"]:::effect --> a1
+    c2 -->|"No"| c3{"③:①の効果対象がデバフ・サゲ<br/>効果状態ではないか(対象ごとに判定)"}:::cond
+    c3 -->|"Yes"| e3["①による「勇気」状態の効果倍率と<br/>「全開」状態のアピール力増加倍率が1.5倍に"]:::effect --> a1
+    c3 -->|"No"| a1
+    a1["①実行:対象を2ターンの間<br/>「勇気」と「全開」状態にし、自身のHPを<br/>自身のアピール力の120%分回復する<br/>(会心率に応じて会心回復が発生)"]:::action
+    a1 --> lc{"①の対象2名<br/>すべて完了?"}:::cond
+    lc -->|"No、次の対象へ"| c2
+    lc -->|"Yes"| finish(("終了")):::startend

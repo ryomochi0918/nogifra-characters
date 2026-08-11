@@ -1,0 +1,17 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> e1["①:このスキル中、<br/>自身の会心率を+30%する"]:::effect --> c3
+    c3{"③:自身の最大アピールが②のアピール対象の<br/>最大アピール以上または自身のエフォートが<br/>②のアピール対象のエフォート以上か"}:::cond
+    c3 -->|"Yes"| e3["②のアピール倍率が2倍になる"]:::effect --> c4
+    c3 -->|"No"| c4
+    c4{"④:②の各アピール後、前回と<br/>同じアピール対象を選択したか"}:::cond
+    c4 -->|"Yes"| e4["②のアピール倍率が2倍になる<br/>(度に積算。④の効果による<br/>アピール倍率の最大は10240%、<br/>③の効果が同時発生した場合の<br/>最大は20480%)"]:::effect --> a2
+    c4 -->|"No"| a2
+    a2["②実行:<br/>最大アピールが最も低いライバルに<br/>320%のアピールを行う<br/>(ライバルがリタイアするまで対象を変更せず、<br/>リタイア回復が発生した場合も対象を変更しない)"]:::action --> lc
+    lc{"②のアピール<br/>6回すべて完了?"}:::cond
+    lc -->|"No、次の回へ"| c3
+    lc -->|"Yes"| finish(("終了")):::startend

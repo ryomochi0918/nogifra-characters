@@ -1,0 +1,13 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c1
+    c1{"①:スキル発動前の自身の「根性」状態の<br/>ターン数が5ターン以上か"}:::cond
+    c1 -->|"Yes"| e1["このスキル中、自身の<br/>会心率を+40%する"]:::effect --> a2
+    c1 -->|"No"| a2
+    a2["②実行(条件を満たさない場合でも発動):<br/>残りHP割合が最も高いライバル4名に<br/>自身のサンクスの2倍を固定値として<br/>上乗せした790%のアピールを行う"]:::action --> a3
+    a3["③実行:<br/>②のアピールで会心アピールが発生した<br/>回数をアピール回数として、最大アピールが<br/>最も高いライバル1名に自身の「根性」状態の<br/>ターン数×自身のサンクスの0.5倍を加算した<br/>自身のサンクス4倍分のアピールを行う<br/>(ディフェンス、フィジカルを無視し、③の効果<br/>による加算を含めたサンクスの最大倍率は10倍まで)"]:::action --> e4
+    e4["④:自身と残りHP割合が最も低い味方1名のHPを<br/>このスキルで行った合計アピール30%分回復する<br/>(③のアピールが発動した場合は③の後)"]:::effect --> finish(("終了")):::startend

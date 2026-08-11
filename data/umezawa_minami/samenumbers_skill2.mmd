@@ -1,0 +1,14 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> e1["①:このスキル中、<br/>自身の会心率を+20%する"]:::effect --> c3
+    c3{"③:自身のサンクスが②のアピール対象の<br/>サンクス以上か(度に積算)"}:::cond
+    c3 -->|"Yes"| e3["②のアピール倍率が2倍になる<br/>(最大5600%のアピール)"]:::effect --> c4
+    c3 -->|"No"| c4
+    c4{"④:自身の「光輝」状態のターン数が<br/>10ターン以上か"}:::cond
+    c4 -->|"Yes"| e4["②のアピールに自身の最大アピールの<br/>25%を固定値として上乗せする"]:::effect --> a2
+    c4 -->|"No"| a2
+    a2["②実行:<br/>残りHP割合が最も低いライバルに7回、<br/>350%のアピールを行う"]:::action --> finish(("終了")):::startend

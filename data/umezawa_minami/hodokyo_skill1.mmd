@@ -1,0 +1,18 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> e1["①:このスキル中、自身のサゲ効果<br/>耐性貫通を+30%する"]:::effect --> c3
+    c3{"③:②のアピール対象の残りHP割合が<br/>50%以上か(対象ごとに判定)"}:::cond
+    c3 -->|"Yes"| e3["②のアピール倍率と<br/>固定値倍率が2倍になる"]:::effect --> c4
+    c3 -->|"No"| c4
+    c4{"④:自身のスマイルが②のアピール対象の<br/>スマイル以上か(対象ごとに判定)"}:::cond
+    c4 -->|"Yes"| e4["②のアピール対象を100%の確率で<br/>2ターンの間「空腹」状態にする"]:::effect --> a2
+    c4 -->|"No"| a2
+    a2["②実行:<br/>残りHP割合が最も高いライバル5名に<br/>自身の最大アピールの25%を固定値として<br/>上乗せした700%のアピールを行う"]:::action --> a5
+    a5["⑤実行:<br/>残りHP割合が最も低いライバル2名に<br/>②で行った合計アピールの50%分の<br/>アピールを行う(ディフェンス、<br/>メンタルを無視する)"]:::action --> c6
+    c6{"⑥:自身の残りHP割合が⑤のアピール対象の<br/>残りHP割合以上か(対象ごとに判定)"}:::cond
+    c6 -->|"Yes"| e6["⑤のアピール対象を100%の確率で<br/>2ターンの間「嫉妬」状態にする"]:::effect --> finish(("終了")):::startend
+    c6 -->|"No"| finish

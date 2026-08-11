@@ -1,0 +1,13 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> a1["①実行:<br/>ライバル6名へ、自身のサンクスの4倍を<br/>固定値として上乗せした770%のアピールを行う"]:::action --> c3
+    c3{"③:②の効果対象がバフ・アゲ効果状態か<br/>(対象ごとに判定)"}:::cond
+    c3 -->|"Yes"| e3["②で行うデバフ・サゲ効果の解除数が1つ増加し、<br/>②の回復倍率が2倍になる"]:::effect --> a2
+    c3 -->|"No"| a2["②実行:<br/>残りHP割合が最も低い味方2名のデバフ・サゲ効果を<br/>1つ解除し、HPを①で行った合計アピールの<br/>30%分回復する"]:::action
+    a2 --> lc{"②の効果<br/>対象2名すべて完了?"}:::cond
+    lc -->|"No、次の対象へ"| c3
+    lc -->|"Yes"| a4["④実行:<br/>残りHP割合が最も高いライバル1名に<br/>①で行った合計アピール30%分のアピールを行う<br/>(ディフェンス、フィジカルを無視する)"]:::action --> finish(("終了")):::startend

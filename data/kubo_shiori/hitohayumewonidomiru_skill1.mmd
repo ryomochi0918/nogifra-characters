@@ -1,0 +1,11 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> a1["①実行:最大アピールが<br/>最も高いライバル6名へ<br/>600%のアピールを行い、<br/>100%の確率で3ターンの間<br/>「アピールカダウン」状態にする"]:::action
+    a1 --> c2{"②:ライバルチームのフロントに<br/>「アピールカダウン」状態ではない<br/>メンバーが1名以上居るか<br/>(①再実行は最大1回まで)"}:::cond
+    c2 -->|"Yes"| e2["このスキル中のみ自身の<br/>デバフ耐性貫通を+30%する"]:::effect --> a1b["①再実行:最大アピールが<br/>最も高いライバル6名へ<br/>600%のアピールを行い、<br/>100%の確率で3ターンの間<br/>「アピールカダウン」状態にする"]:::action --> e3
+    c2 -->|"No"| e3["③実行:自身を2ターンの間<br/>「翻弄」状態にする"]:::effect
+    e3 --> finish(("終了")):::startend

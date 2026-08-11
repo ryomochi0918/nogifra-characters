@@ -1,0 +1,14 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c2
+    c2{"②:自身のバイタリティが①の<br/>効果対象のバイタリティ以上か<br/>(対象ごとに判定)"}:::cond
+    c2 -->|"Yes"| e2["①の効果対象が1名増加する<br/>(増加人数は最大1名まで)"]:::effect --> e1
+    c2 -->|"No"| e1
+    e1["①実行:<br/>最大アピールが最も高いライバル2名の<br/>バフ・アゲ効果を全て解除する"]:::effect --> e3
+    e3["③:自身と最大アピールが最も高い味方2名の<br/>デバフ・サゲ効果を全て解除し、<br/>3ターンの間「反響」状態にする"]:::effect --> a4
+    a4["④実行:<br/>ライバルに6回、自身のHP上限の10%を<br/>固定値として上乗せした380%の<br/>アピールを行う"]:::action --> e5
+    e5["⑤:自身と最大アピールが最も高い味方2名の<br/>HPを自身のHP上限の20%分回復する"]:::effect --> finish(("終了")):::startend

@@ -1,0 +1,13 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> a1["①実行:<br/>残りHP割合が最も低い味方4名のデバフ・サゲ効果を<br/>全て解除し、3ターンの間「堅忍」状態にする"]:::action --> c3
+    c3{"③:②の効果対象の残りHP割合が50%未満か<br/>(対象ごとに判定)"}:::cond
+    c3 -->|"Yes"| e3["②の効果対象のHPを自身のアピール力の<br/>100%分回復する(会心率に応じて会心回復が発生する)"]:::effect --> a2
+    c3 -->|"No"| a2["②実行:<br/>最大アピールが最も高い味方2名を<br/>2ターンの間「集中」状態にする"]:::action
+    a2 --> lc{"②の効果<br/>対象2名すべて完了?"}:::cond
+    lc -->|"No、次の対象へ"| c3
+    lc -->|"Yes"| finish(("終了")):::startend

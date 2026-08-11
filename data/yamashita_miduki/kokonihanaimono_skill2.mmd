@@ -1,0 +1,11 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c2{"②:①のアピール対象が<br/>「心労」状態か(対象ごとに判定)"}:::cond
+    c2 -->|"Yes"| e2["①のバフ・アゲ効果解除数を<br/>1つ追加し、アピール倍率と<br/>固定値倍率が2倍になる"]:::effect --> a1
+    c2 -->|"No"| a1
+    a1["①実行:ライバル6名のバフ・<br/>アゲ効果を1つ解除し、自身の<br/>最大アピールの120%を固定値として<br/>上乗せした400%のアピールを行う"]:::action --> e3
+    e3["③効果:①のアピールが全て終了後、<br/>残りHP割合が最も高いライバル1名を<br/>100%の確率で2ターンの間<br/>「雑音」状態にする"]:::effect --> finish(("終了")):::startend

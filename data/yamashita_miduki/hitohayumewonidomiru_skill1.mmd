@@ -1,0 +1,17 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> e4["④効果:このスキル中、ライバルを<br/>リタイアさせる度に、このスキル中の<br/>自身の会心率を「このスキル中に<br/>リタイアさせた回数×30%」分増加する<br/>(会心率の増加上限は+90%まで)"]:::effect --> a1
+    a1["①実行:残りHP割合が最も低い<br/>ライバルに自身の最大アピールの20%を<br/>固定値として上乗せした360%の<br/>アピールを行う"]:::action --> c2
+    c2{"②:自身の残りHP割合が<br/>50%未満か"}:::cond
+    c2 -->|"Yes"| e2["自身のHPを①で行った<br/>直前のアピールの50%分<br/>回復する"]:::effect --> loop1
+    c2 -->|"No"| loop1
+    loop1{"①のアピール8回<br/>すべて完了?"}:::cond
+    loop1 -->|"No、次の回へ"| a1
+    loop1 -->|"Yes"| c3
+    c3{"③:①のアピールでライバルが<br/>1名以上リタイアしたか"}:::cond
+    c3 -->|"Yes"| a3["ライバル3名に自身の<br/>最大アピールの20%を固定値として<br/>上乗せした360%のアピールを行う"]:::action --> finish(("終了")):::startend
+    c3 -->|"No"| finish
