@@ -19,7 +19,7 @@
   ],
   "passive": [
     {
-      "condition": "1回覚醒後習得",
+      "condition": "パッシブ1",
       "effect": [
         "アピール力を47%アップ",
         "SP上限をC.Rank×25アップ",
@@ -27,7 +27,7 @@
       ]
     },
     {
-      "condition": "3回覚醒後習得",
+      "condition": "パッシブ2",
       "effect": [
         "HP上限を45%アップ",
         "バイタリティをC.Rank×270アップ",
@@ -35,7 +35,7 @@
       ]
     },
     {
-      "condition": "6回覚醒後習得",
+      "condition": "パッシブ3",
       "effect": [
         "スマイルをC.Rank×300アップ",
         "命中値をC.Rank×280アップ",

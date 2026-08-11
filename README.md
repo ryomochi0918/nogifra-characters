@@ -35,7 +35,7 @@ python3 -m http.server 8000
     { "type": "active", "label": "スキル1: ○○", "file": "data/xxx_skill1.mmd", "text": "原文全文(任意)" }
   ],
   "passive": [
-    { "condition": "1回覚醒後習得", "effect": ["読点で区切った箇条書き1", "箇条書き2", "..."] }
+    { "condition": "パッシブ1", "effect": ["読点で区切った箇条書き1", "箇条書き2", "..."] }
   ]
 }
 ```

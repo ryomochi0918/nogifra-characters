@@ -183,7 +183,7 @@ const MERMAID_THEME_VARS = {
         diagramTarget.innerHTML = `
       <table class="passive-table">
         <thead>
-          <tr><th>習得条件</th><th>効果内容</th></tr>
+          <tr><th>タイトル</th><th>効果内容</th></tr>
         </thead>
         <tbody>
           ${rows
