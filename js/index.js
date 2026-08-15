@@ -45,6 +45,7 @@ const MERMAID_THEME_VARS = {
       applyTheme(currentTheme);
 
       const stage = document.getElementById("stage");
+      const resultCount = document.getElementById("resultCount");
       const viewer = document.getElementById("viewer");
       const viewerTitle = document.getElementById("viewerTitle");
       const viewerSubtitle = document.getElementById("viewerSubtitle");
@@ -284,6 +285,7 @@ const MERMAID_THEME_VARS = {
       const searchInput = document.getElementById("searchInput");
       const memberFilter = document.getElementById("memberFilter");
       const genFilter = document.getElementById("genFilter");
+      const gradFilter = document.getElementById("gradFilter");
       const attrButtons = document.querySelectorAll(".attr-btn");
       const activeAttrs = new Set();
       let allCharacters = [];
@@ -347,7 +349,12 @@ const MERMAID_THEME_VARS = {
         return `<span class="gen-badge ${cls}">${escapeHtml(g)}</span>`;
       }
 
+      function graduatedBadge(c) {
+        return c._graduated ? `<span class="graduated-badge">卒業済み</span>` : "";
+      }
+
       function renderCards(list) {
+        resultCount.textContent = list.length + "件";
         if (list.length === 0) {
           stage.innerHTML =
             '<p class="no-results">該当するキャラクターが見つかりませんでした。</p>';
@@ -358,7 +365,7 @@ const MERMAID_THEME_VARS = {
             (c) => `
       <button class="card" data-key="${escapeHtml(c._key)}">
         <span class="tier">${escapeHtml(c.tier || "SKILL")}</span>${attrBadge(c.attribute)}
-        <h2>${escapeHtml(c.name)}${genBadge(c.generation)}</h2>
+        <h2>${escapeHtml(c.name)}${genBadge(c.generation)}${graduatedBadge(c)}</h2>
         <p class="subtitle">${escapeHtml(c.title || "")}</p>
       </button>
     `,
@@ -400,6 +407,9 @@ const MERMAID_THEME_VARS = {
 
       function filterByMemberAndAttr(list) {
         let result = list;
+        if (!gradFilter.checked) {
+          result = result.filter((c) => !c._graduated);
+        }
         if (memberFilter.value) {
           result = result.filter((c) => c.name === memberFilter.value);
         }
@@ -417,6 +427,7 @@ const MERMAID_THEME_VARS = {
       searchInput.addEventListener("input", applyFilter);
       memberFilter.addEventListener("change", applyFilter);
       genFilter.addEventListener("change", applyFilter);
+      gradFilter.addEventListener("change", applyFilter);
       attrButtons.forEach((btn) => {
         btn.addEventListener("click", () => {
           const attr = btn.dataset.attr;
@@ -470,14 +481,28 @@ const MERMAID_THEME_VARS = {
 
       async function init() {
         try {
-          const res = await fetch("data/characters.json");
-          if (!res.ok) throw new Error("HTTP " + res.status);
-          const characters = await res.json();
+          const [charRes, readingRes] = await Promise.all([
+            fetch("data/characters.json"),
+            fetch("data/nogizaka46_members_reading.json"),
+          ]);
+          if (!charRes.ok) throw new Error("HTTP " + charRes.status);
+          const characters = await charRes.json();
+
+          const graduatedNames = new Set();
+          if (readingRes.ok) {
+            const reading = await readingRes.json();
+            (reading.members || []).forEach((m) => {
+              if (m.status && m.status.startsWith("卒業")) {
+                graduatedNames.add(m.name);
+              }
+            });
+          }
 
           allCharacters = characters.map((c, i) => ({
             ...c,
             _key: c.name + "__" + (c.costume || c.title || i),
             _blob: buildSearchBlob(c),
+            _graduated: graduatedNames.has(c.name),
           }));
 
           populateMemberFilter(allCharacters);
