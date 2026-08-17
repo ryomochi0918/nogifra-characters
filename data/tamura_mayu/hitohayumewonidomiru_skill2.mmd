@@ -1,0 +1,17 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> e1["①効果:このスキル中、自身の<br/>会心率と命中率を+20%する"]:::effect --> c3
+    c3{"③:②の各アピール前、自身のサンクスが<br/>②のアピール対象のサンクス以上か<br/>(対象ごとに判定)"}:::cond
+    c3 -->|"Yes"| e3["②の各アピール中のみ①による<br/>会心率と命中率の増加倍率が30%になる"]:::effect --> a2
+    c3 -->|"No"| a2["②実行:ライバルに6回、自身の<br/>最大アピールの20%を固定値として<br/>上乗せした550%のアピールを行う"]:::action --> c4
+    c4{"④:②の各アピール後、②のアピールで<br/>会心アピールが発生したか<br/>(アピールごとに判定)"}:::cond
+    c4 -->|"Yes"| e4["②のアピール回数が1回増加する<br/>(アピールの追加回数は最大で3回まで)"]:::effect --> loop2
+    c4 -->|"No"| loop2{"②のアピール6回すべて完了?"}:::cond
+    loop2 -->|"No、次の回へ"| c3
+    loop2 -->|"Yes"| c6{"⑥:⑤のアピール前、②のアピールで<br/>会心アピールが4回以上発生したか"}:::cond
+    c6 -->|"Yes"| e6["⑤のアピール対象が1名増加する<br/>(増加人数は最大で1名まで)"]:::effect --> a5
+    c6 -->|"No"| a5["⑤実行:②のアピールが全て終了後、<br/>残りHP割合が最も低いライバル1名に<br/>②で行った合計アピールの40%分の<br/>アピールを行う<br/>(ディフェンス、フィジカルを無視する)"]:::action --> finish(("終了")):::startend
