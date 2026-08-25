@@ -1,0 +1,15 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c2{"②:ライバルチームの<br/>フロント人数が4名以下か"}:::cond
+    c2 -->|"Yes"| e2["①による命中率の<br/>増加倍率が40%になる"]:::effect --> e1
+    c2 -->|"No"| e1["①効果:このスキル中、<br/>自身の命中率を+20%する"]:::effect --> c4{"④:③のアピール対象の<br/>残りHP割合が50%以上か<br/>(各アピール前に判定)"}:::cond
+    c4 -->|"Yes"| e4["③の固定値倍率が2倍になる"]:::effect --> a3
+    c4 -->|"No"| a3["③実行:残りHP割合が最も高い<br/>ライバルへ、アピール対象の<br/>残りHPの6%分を固定値として<br/>上乗せした800%のアピール"]:::action --> loop3{"③のアピール3回<br/>すべて完了?"}:::cond
+    loop3 -->|"No、次の回へ"| c4
+    loop3 -->|"Yes"| c6{"⑥:自身の残りHP割合が<br/>50%以下か"}:::cond
+    c6 -->|"Yes"| e6["⑤による「華麗」状態の<br/>ディフェンスの増加倍率が<br/>1.5倍になる"]:::effect --> e5
+    c6 -->|"No"| e5["⑤効果:自身以外のHP上限が<br/>最も高い味方2名を2ターンの間<br/>「華麗」状態にする"]:::effect --> finish(("終了")):::startend

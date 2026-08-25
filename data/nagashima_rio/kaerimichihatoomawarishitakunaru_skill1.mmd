@@ -1,0 +1,20 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> e1["①:このスキル中、自身の<br/>デバフ・サゲ効果耐性貫通を+20%する"]:::effect
+    e1 --> c3
+
+    c3{"③:自身のスマイルが②のアピール対象の<br/>スマイル以上か<br/>(対象ごとに判定)"}:::cond
+    c3 -->|"Yes"| e3["②のアピール対象が1名増加する<br/>(増加人数は最大で2名まで)"]:::effect --> c4
+    c3 -->|"No"| c4
+
+    c4{"④:自身の残りHP割合が50%以上か<br/>(対象ごとに判定)"}:::cond
+    c4 -->|"Yes"| e4["②のアピール対象を100%の確率で<br/>3ターンの間「不調」状態にする"]:::effect --> a2
+    c4 -->|"No"| a2["②実行:<br/>最大アピールが最も高いライバル2名を<br/>100%の確率で2ターンの間<br/>「回避率ダウン」状態にし、<br/>1500%のアピールを行う"]:::action
+
+    a2 --> lc{"②のアピール<br/>対象すべて完了?"}:::cond
+    lc -->|"No、次の対象へ"| c3
+    lc -->|"Yes"| a5["⑤実行:<br/>「回避率ダウン」状態のライバルへ<br/>基本1200%+固定値 自身のスマイル×5<br/>のアピール"]:::action --> finish(("終了")):::startend
