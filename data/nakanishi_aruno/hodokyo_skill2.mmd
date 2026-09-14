@@ -1,0 +1,20 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c2{"②:①のアピール対象が<br/>「雑音」状態か<br/>(対象ごとに判定)"}:::cond
+    c2 -->|"Yes"| e2["①のアピール対象の<br/>バフ・アゲ効果を1つ解除"]:::effect --> a1
+    c2 -->|"No"| a1["①実行:<br/>ライバル4名を50%の確率で2ターンの間<br/>「回避率ダウン」状態にし、<br/>基本1100%+固定値 自身のSP上限の90倍<br/>のアピール"]:::action
+    a1 --> lc1{"①のアピール4名すべて完了?"}:::cond
+    lc1 -->|"No、次の対象へ"| c2
+    lc1 -->|"Yes"| c3{"③:①のアピールで<br/>ライバルがリタイアしなかったか<br/>(再実行は最大1回まで)"}:::cond
+    c3 -->|"Yes、再度①を実行"| c2
+    c3 -->|"No(または再実行済み)"| a4["④実行:<br/>残りHP割合が最も低いライバルに4回、<br/>基本580%+固定値 自身のSP上限の140倍<br/>のアピール"]:::action
+    a4 --> lc2{"④のアピール4回すべて完了?"}:::cond
+    lc2 -->|"No、次の回へ"| a4
+    lc2 -->|"Yes"| c5{"⑤:このスキルでリタイアした<br/>ライバルが1名以下か"}:::cond
+    c5 -->|"No"| finish(("終了")):::startend
+    c5 -->|"Yes"| a5["ライバル1名にこのスキルで行った<br/>合計アピールの20%分のアピール<br/>(ディフェンス、メンタルを無視する)"]:::action
+    a5 --> finish
