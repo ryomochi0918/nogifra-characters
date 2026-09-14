@@ -1,0 +1,26 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> s1["①最大アピールが最も高い味方3名を<br/>2ターンの間「賢明」状態にする"]:::effect
+    s1 --> s2["②①の効果後、残りHP割合が最も低い味方2名のHPを<br/>自身のHP上限の20%分回復し、<br/>3ターンの間「堅忍」状態にする"]:::effect
+    s2 --> s3start["③②の効果後、残りHP割合が最も高いライバルに<br/>4回アピールを開始"]:::effect
+
+    s3start --> c4{"④③の各アピール前:<br/>ライブ中に自身のスキル2「大オチひなの。」が<br/>1回以上発動した?"}:::cond
+    c4 -- "Yes" --> e4["③のアピール倍率と固定値倍率が2倍になる"]:::effect
+    c4 -- "No" --> c5{"⑤③の各アピール前:<br/>自身のスマイルが③のアピール対象の<br/>スマイル以上?"}:::cond
+    e4 --> c5
+    c5 -- "Yes" --> e5["③の各アピール中のみ<br/>自身の命中率を+20%する<br/>(スマイル以上の発生回数を数える)"]:::effect
+    c5 -- "No" --> atk
+    e5 --> atk
+
+    atk["③アピール実行:<br/>アピール対象の残りHPの1%分の固定値を<br/>上乗せした760%のアピールを行う"]:::action
+    atk --> loop{"③のアピール4回すべて完了?"}:::cond
+    loop -- "No、次の回へ" --> c4
+    loop -- "Yes" --> c6{"⑥③のアピールが全て終了後:<br/>このスキル中に自身のスマイルが<br/>③のアピール対象のスマイル以上である事が<br/>2回以上発生した?"}:::cond
+
+    c6 -- "Yes" --> e6["最大アピールが最も高い味方3名の<br/>デバフ・サゲ効果を1つ解除する"]:::effect
+    c6 -- "No" --> finish
+    e6 --> finish(("終了")):::startend
