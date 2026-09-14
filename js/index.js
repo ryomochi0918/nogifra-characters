@@ -168,6 +168,29 @@ const MERMAID_THEME_VARS = {
         }
       }
 
+      // パッシブの効果1項目を描画する。
+      // 「※」で始まる注記(バフ状態の定義・アドバンス/アンコールスキル)は
+      // 本文と役割が違うので視覚的に分け、見出し(※◯◯:)をラベルとして切り出す。
+      // アドバンス/アンコールスキルの [①][②] は段落として改行する。
+      function renderEffectItem(text) {
+        if (!text.startsWith("※")) {
+          return `<li>${escapeHtml(text)}</li>`;
+        }
+        const m = text.match(/^※([^:：]{1,24})[:：]([\s\S]*)$/);
+        const label = m ? m[1] : "";
+        const body = m ? m[2] : text.slice(1);
+        const steps = body.split(/(?=\[[①-⑳]\])/).filter(Boolean);
+        const html =
+          steps.length > 1
+            ? steps
+                .map((s) => `<span class="note-step">${escapeHtml(s)}</span>`)
+                .join("")
+            : escapeHtml(body);
+        return `<li class="note">${
+          label ? `<b class="note-label">${escapeHtml(label)}</b>` : ""
+        }${html}</li>`;
+      }
+
       function renderPassiveTab(tab) {
         collapseExpanded();
         zoomBar.style.display = "none";
@@ -195,7 +218,7 @@ const MERMAID_THEME_VARS = {
               <td class="cond">${escapeHtml(r.condition || "")}</td>
               <td><ul class="effect-list">${items
                 .filter(Boolean)
-                .map((i) => `<li>${escapeHtml(i)}</li>`)
+                .map(renderEffectItem)
                 .join("")}</ul></td>
             </tr>
           `;
