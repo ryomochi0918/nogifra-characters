@@ -1,0 +1,19 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c2{"②:①の効果前<br/>自身の残りHP割合が50%未満か"}:::cond
+    c2 -->|"Yes"| e2["②:①による「回避率アップ」状態の<br/>効果倍率が1.5倍になる"]:::effect
+    c2 -->|"No"| e1
+    e2 --> e1["①:自身を3ターンの間<br/>「回避率アップ」状態にする<br/>(※回避率アップ:回避率が30〜45%上昇する)"]:::effect
+    e1 --> a3pre["③:①の効果後<br/>ライバル6名を対象とする"]:::action
+    a3pre --> c4{"④:③の各アピール前<br/>自身の残りHP割合が50%以上か<br/>(対象ごとに判定)"}:::cond
+    c4 -->|"Yes"| e4["④:③の各アピール中のみ<br/>自身のリフレクト耐性を+30%し<br/>③のアピール倍率と固定値倍率が2倍になる"]:::effect
+    c4 -->|"No"| a3
+    e4 --> a3["③:対象のバフ・アゲ効果を1つ解除し<br/>自身の最大アピールの30%を固定値として<br/>上乗せした850%のアピールを行う"]:::action
+    a3 --> cloop{"③のアピール<br/>ライバル6名すべて完了?"}:::cond
+    cloop -->|"No、次の対象へ"| c4
+    cloop -->|"Yes"| e5["⑤:③のアピールが全て終了後<br/>自身のHPをこのスキルで行った<br/>合計アピールの30%分回復する"]:::effect
+    e5 --> finish(("終了")):::startend
