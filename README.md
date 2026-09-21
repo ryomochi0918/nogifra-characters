@@ -103,7 +103,7 @@ mermaid.jsはcdnjs経由でCDN読み込みしているため、リポジトリ�
 `index.html` の `<head>` に OGP (`og:*`) と `twitter:card` (`summary_large_image`) のメタタグを置いています。X・Discord・LINE などにURLを貼ると、`assets/ogp.png` を使った横長カードで表示されます。
 
 - 画像は 1200x630。`css/styles.css` のダークテーマの変数(`--bg-0` / `--spotlight` / `--attr-*`)と同じ配色で作成しています。
-- 説明文に **キャラ数と件数を書いているため、大きく増えたら `og:description` / `twitter:description` / `name="description"` の3か所と画像内の文言を更新** してください。
+- **画像にもメタタグの説明文にも、キャラ数や件数といった変動する数字は入れていません。**新キャラが追加されるたびに作り直しになるためです。数字を足したくなったときは、この方針ごと見直してください。
 - X はカードを一定期間キャッシュします。メタタグを変更したら、GitHub Pages への反映を確認してから共有し直してください。
 
 ## 読み仮名の参考データ
