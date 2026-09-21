@@ -79,13 +79,14 @@ python3 -m http.server 8000
 
 ```
 ./
-├── index.html                              # カード一覧+ビューアのHTML
+├── index.html                              # カード一覧+ビューアのHTML(<head>にOGP/twitter:cardのメタタグを含む)
 ├── css/
 │   └── styles.css                         # スタイル(ライト/ダークモード切り替え対応)
 ├── js/
 │   └── index.js                           # 検索・絞り込み・ビューア等のロジック
 ├── assets/
-│   └── logo.svg                           # サイトロゴ(favicon兼ヘッダー表示用)
+│   ├── logo.svg                           # サイトロゴ(favicon兼ヘッダー表示用)
+│   └── ogp.png                            # SNS共有カード用画像(1200x630)
 ├── data/
 │   ├── characters.json                    # キャラ一覧のメタデータ
 │   ├── nogizaka46_members_reading.json    # 現役メンバー等の読み仮名・期データ
@@ -96,6 +97,14 @@ python3 -m http.server 8000
 ```
 
 mermaid.jsはcdnjs経由でCDN読み込みしているため、リポジトリ側でのビルドや依存関係管理は不要です。
+
+## SNS共有カード(OGP)
+
+`index.html` の `<head>` に OGP (`og:*`) と `twitter:card` (`summary_large_image`) のメタタグを置いています。X・Discord・LINE などにURLを貼ると、`assets/ogp.png` を使った横長カードで表示されます。
+
+- 画像は 1200x630。`css/styles.css` のダークテーマの変数(`--bg-0` / `--spotlight` / `--attr-*`)と同じ配色で作成しています。
+- 説明文に **キャラ数と件数を書いているため、大きく増えたら `og:description` / `twitter:description` / `name="description"` の3か所と画像内の文言を更新** してください。
+- X はカードを一定期間キャッシュします。メタタグを変更したら、GitHub Pages への反映を確認してから共有し直してください。
 
 ## 読み仮名の参考データ
 
