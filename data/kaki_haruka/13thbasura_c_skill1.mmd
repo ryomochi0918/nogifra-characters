@@ -1,0 +1,19 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c2{"②:①の効果対象が受けている<br/>バフ・アゲ効果状態の種類数が<br/>2種類以下か"}:::cond
+    c2 -->|"Yes"| e2["①による「夢中」状態の<br/>効果倍率が2倍に"]:::effect --> a1
+    c2 -->|"No"| a1["①実行:自身と自身以外の味方4名<br/>(計5名)を3ターンの間<br/>「夢中」状態にする"]:::action
+    a1 --> lc1{"①の効果<br/>対象5名すべて完了?"}:::cond
+    lc1 -->|"No、次の対象へ"| c2
+    lc1 -->|"Yes"| c4{"④:③の効果対象の<br/>残りHP割合が50%以上か"}:::cond
+    c4 -->|"Yes"| e4["③による「聡明」状態の<br/>効果倍率が1.5倍に"]:::effect --> c5
+    c4 -->|"No"| c5{"⑤:③の効果対象が<br/>デバフ・サゲ効果状態ではないか"}:::cond
+    c5 -->|"Yes"| e5["③の効果対象を2ターンの間<br/>「豪運」状態にする"]:::effect --> a3
+    c5 -->|"No"| a3["③実行:自身と自身以外の最大アピールが<br/>最も高い味方2名を2ターンの間<br/>「聡明」状態にし、デバフ・サゲ効果を1つ解除"]:::action
+    a3 --> lc3{"③の効果<br/>対象すべて完了?"}:::cond
+    lc3 -->|"No、次の対象へ"| c4
+    lc3 -->|"Yes"| finish(("終了")):::startend
