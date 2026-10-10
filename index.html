@@ -36,13 +36,21 @@
       name="twitter:image"
       content="https://ryomochi0918.github.io/nogifra-characters/assets/ogp.png"
     />
+    <script>
+      // 描画前に保存済みテーマを当てて、読み込み時のちらつきを防ぐ
+      try {
+        if (localStorage.getItem("nogifra-theme") === "light") {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      } catch (e) {}
+    </script>
     <link rel="icon" type="image/svg+xml" href="assets/logo.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
       href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="css/styles.css?v=20261010-7" />
   </head>
 
   <body>
@@ -91,6 +99,14 @@
           <input type="checkbox" id="gradFilter" />
           卒業済みメンバーも表示
         </label>
+        <button
+          type="button"
+          class="tab-btn compare-toggle"
+          id="compareToggle"
+          aria-pressed="false"
+        >
+          比較モード
+        </button>
       </div>
     </div>
 
@@ -108,6 +124,15 @@
         >
           ✕
         </button>
+        <button
+          type="button"
+          class="viewer-compare-btn"
+          id="viewerCompare"
+          aria-label="他のキャラと比較"
+          title="他のキャラと比較"
+        >
+          ⇄ 比較
+        </button>
         <h2 id="viewerTitle"></h2>
         <p class="subtitle" id="viewerSubtitle"></p>
         <div class="tabs" id="viewerTabs"></div>
@@ -122,10 +147,9 @@
             </button>
             <button
               type="button"
-              class="zoom-btn"
+              class="zoom-btn zoom-reset"
               id="zoomReset"
               aria-label="リセット"
-              style="width: auto; padding: 0 10px; font-size: 12px"
             >
               リセット
             </button>
@@ -191,6 +215,46 @@
       </div>
     </div>
 
+    <div class="viewer" id="compareViewer">
+      <div class="viewer-panel compare-panel">
+        <button
+          type="button"
+          class="viewer-close"
+          id="compareClose"
+          aria-label="閉じる"
+        >
+          ✕
+        </button>
+        <h2>キャラ比較</h2>
+        <p class="subtitle" id="compareSubtitle"></p>
+        <div class="compare-head">
+          <div class="tabs compare-tabs" id="compareTabs"></div>
+          <div class="compare-nav" id="compareNav"></div>
+        </div>
+        <div class="compare-panes" id="comparePanes"></div>
+      </div>
+    </div>
+
+    <div class="compare-tray" id="compareTray" hidden>
+      <div class="compare-list" id="compareList" hidden>
+        <p class="compare-list-head">選択中のキャラ</p>
+        <ul class="compare-list-items" id="compareListItems"></ul>
+      </div>
+      <button
+        type="button"
+        class="compare-tray-count"
+        id="compareTrayCount"
+        aria-expanded="false"
+        aria-controls="compareList"
+      ></button>
+      <button type="button" class="compare-go" id="compareGo" disabled>
+        比較する
+      </button>
+      <button type="button" class="compare-clear" id="compareClear">
+        終了
+      </button>
+    </div>
+
     <footer>
       個人制作・非公式のファン向けアーカイブです。<br />
       各フローチャートはAIによる画像読み取り・生成のため、誤りが含まれる可能性があります。気になる場合は原文と併せてご確認ください。
@@ -212,6 +276,6 @@
     </button>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js"></script>
-    <script src="js/index.js"></script>
+    <script src="js/index.js?v=20261010-7"></script>
   </body>
 </html>

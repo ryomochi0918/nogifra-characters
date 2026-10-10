@@ -25,11 +25,34 @@ const MERMAID_THEME_VARS = {
         },
       };
 
+      // プライベートモード等でlocalStorageが使えない場合でも動くようにする
+      function storageGet(key) {
+        try {
+          return localStorage.getItem(key);
+        } catch (e) {
+          return null;
+        }
+      }
+      function storageSet(key, value) {
+        try {
+          localStorage.setItem(key, value);
+        } catch (e) {}
+      }
+
+      // 検索条件・比較の選択はタブを閉じるまで残す(リロードでは消えない)
+      const SEARCH_STATE_KEY = "nogifra-search-state";
+      function loadSearchState() {
+        try {
+          return JSON.parse(sessionStorage.getItem(SEARCH_STATE_KEY)) || {};
+        } catch (e) {
+          return {};
+        }
+      }
+
       const THEME_STORAGE_KEY = "nogifra-theme";
+      const GRAD_STORAGE_KEY = "nogifra-show-graduated";
       function getStoredTheme() {
-        return localStorage.getItem(THEME_STORAGE_KEY) === "light"
-          ? "light"
-          : "dark";
+        return storageGet(THEME_STORAGE_KEY) === "light" ? "light" : "dark";
       }
       function applyTheme(theme) {
         document.documentElement.setAttribute("data-theme", theme);
@@ -81,6 +104,10 @@ const MERMAID_THEME_VARS = {
 
       let renderCount = 0;
       let zoomPct = 100; // 100 = リセット(svg width:100%)
+      // 詳細ビューア・比較ビューア共通のズーム範囲
+      const ZOOM_MIN = 50;
+      const ZOOM_MAX = 400;
+      const ZOOM_STEP = 25;
 
       function applyZoom() {
         const svg = diagramTarget.querySelector("svg");
@@ -90,11 +117,11 @@ const MERMAID_THEME_VARS = {
         zoomLabel.textContent = zoomPct + "%";
       }
       zoomIn.addEventListener("click", () => {
-        zoomPct = Math.min(400, zoomPct + 25);
+        zoomPct = Math.min(ZOOM_MAX, zoomPct + ZOOM_STEP);
         applyZoom();
       });
       zoomOut.addEventListener("click", () => {
-        zoomPct = Math.max(50, zoomPct - 25);
+        zoomPct = Math.max(ZOOM_MIN, zoomPct - ZOOM_STEP);
         applyZoom();
       });
       zoomReset.addEventListener("click", () => {
@@ -152,19 +179,25 @@ const MERMAID_THEME_VARS = {
           originalText.style.display = "none";
         }
 
+        if (await renderMermaidInto(diagramTarget, tab.file)) applyZoom();
+      }
+
+      // .mmdを読み込んでtargetにSVGを描画する。成功したらtrueを返す
+      async function renderMermaidInto(target, file) {
         try {
-          const res = await fetch(tab.file);
+          const res = await fetch(file);
           if (!res.ok) throw new Error("file not found");
           const mmdText = await res.text();
           const id = "mmd-" + renderCount++;
           const { svg } = await mermaid.render(id, mmdText);
-          diagramTarget.className = "";
-          diagramTarget.innerHTML = svg;
-          applyZoom();
+          target.className = "";
+          target.innerHTML = svg;
+          return true;
         } catch (e) {
-          diagramTarget.className = "error";
-          diagramTarget.textContent =
+          target.className = "error";
+          target.textContent =
             "フローチャートの読み込みに失敗しました: " + e.message;
+          return false;
         }
       }
 
@@ -198,13 +231,14 @@ const MERMAID_THEME_VARS = {
         diagramWrap.style.display = "";
         diagramTarget.className = "";
 
-        const rows = tab.data || [];
+        diagramTarget.innerHTML = passiveTableHtml(tab.data || []);
+      }
+
+      function passiveTableHtml(rows) {
         if (rows.length === 0) {
-          diagramTarget.innerHTML =
-            '<p class="loading">パッシブスキルの情報はまだありません。</p>';
-          return;
+          return '<p class="loading">パッシブスキルの情報はまだありません。</p>';
         }
-        diagramTarget.innerHTML = `
+        return `
       <table class="passive-table">
         <thead>
           <tr><th>タイトル</th><th>効果内容</th></tr>
@@ -242,14 +276,17 @@ const MERMAID_THEME_VARS = {
       const themeToggle = document.getElementById("themeToggle");
       themeToggle.addEventListener("click", () => {
         currentTheme = currentTheme === "light" ? "dark" : "light";
-        localStorage.setItem(THEME_STORAGE_KEY, currentTheme);
+        storageSet(THEME_STORAGE_KEY, currentTheme);
         applyTheme(currentTheme);
         if (viewer.classList.contains("open") && currentTab && currentTab.type !== "passive") {
           renderTab(currentTab);
         }
+        if (compareViewer.classList.contains("open")) renderCompareTab();
       });
 
+      let viewerChara = null;
       function openViewer(chara) {
+        viewerChara = chara;
         viewerTitle.textContent = chara.name;
         viewerSubtitle.textContent = chara.title || "";
 
@@ -293,12 +330,26 @@ const MERMAID_THEME_VARS = {
         collapseExpanded();
       }
       viewerClose.addEventListener("click", closeViewer);
+
+      // 詳細画面から、このキャラを選んだ状態で比較モードに入る
+      document.getElementById("viewerCompare").addEventListener("click", () => {
+        if (!viewerChara) return;
+        closeViewer();
+        if (!compareMode) setCompareMode(true);
+        if (!compareSelected.has(viewerChara._key)) {
+          toggleCompareSelection(viewerChara._key);
+        }
+      });
       viewer.addEventListener("click", (e) => {
         if (e.target === viewer) closeViewer();
       });
       document.addEventListener("keydown", (e) => {
         if (e.key !== "Escape") return;
-        if (diagramSection.classList.contains("expanded")) {
+        if (!compareList.hidden) {
+          closeCompareList();
+        } else if (compareViewer.classList.contains("open")) {
+          closeCompare();
+        } else if (diagramSection.classList.contains("expanded")) {
           collapseExpanded();
         } else {
           closeViewer();
@@ -386,7 +437,8 @@ const MERMAID_THEME_VARS = {
         stage.innerHTML = list
           .map(
             (c) => `
-      <button class="card" data-key="${escapeHtml(c._key)}">
+      <button class="card${compareSelected.has(c._key) ? " selected" : ""}" data-key="${escapeHtml(c._key)}">
+        <span class="compare-check" aria-hidden="true"></span>
         <span class="tier">${escapeHtml(c.tier || "SKILL")}</span>${attrBadge(c.attribute)}
         <h2>${escapeHtml(c.name)}${genBadge(c.generation)}${graduatedBadge(c)}</h2>
         <p class="subtitle">${escapeHtml(c.title || "")}</p>
@@ -397,11 +449,312 @@ const MERMAID_THEME_VARS = {
 
         stage.querySelectorAll(".card").forEach((btn) => {
           btn.addEventListener("click", () => {
+            if (compareMode) {
+              toggleCompareSelection(btn.dataset.key);
+              return;
+            }
             const c = allCharacters.find((x) => x._key === btn.dataset.key);
             if (c) openViewer(c);
           });
         });
       }
+
+      // 比較モード: カードをタップして選び、「比較する」で並べて表示する。
+      // PCでは横並び、狭い画面では同じタブの内容を縦に積む
+      const MAX_COMPARE = 3;
+      const compareSelected = new Set();
+      let compareMode = false;
+      let compareCharas = [];
+      let compareTabDefs = [];
+      let compareTabIndex = 0;
+
+      const compareToggle = document.getElementById("compareToggle");
+      const compareTray = document.getElementById("compareTray");
+      const compareList = document.getElementById("compareList");
+      const compareListItems = document.getElementById("compareListItems");
+      const compareTrayCount = document.getElementById("compareTrayCount");
+      const compareGo = document.getElementById("compareGo");
+      const compareClear = document.getElementById("compareClear");
+      const compareViewer = document.getElementById("compareViewer");
+      const compareClose = document.getElementById("compareClose");
+      const compareSubtitle = document.getElementById("compareSubtitle");
+      const compareTabs = document.getElementById("compareTabs");
+      const comparePanes = document.getElementById("comparePanes");
+      const compareNav = document.getElementById("compareNav");
+
+      function findCharacter(key) {
+        return allCharacters.find((x) => x._key === key);
+      }
+
+      // 同じメンバーの別衣装を選んだときに区別できるよう、名前が重なる場合だけ衣装名を添える
+      function compareLabel(c, list) {
+        const dup = list.filter((x) => x.name === c.name).length > 1;
+        return dup ? `${c.name}(${c.title || c.costume || ""})` : c.name;
+      }
+
+      function setCompareMode(on) {
+        if (!on) closeCompareList();
+        compareMode = on;
+        document.body.classList.toggle("compare-mode", on);
+        compareToggle.classList.toggle("active", on);
+        compareToggle.setAttribute("aria-pressed", String(on));
+        compareTray.hidden = !on;
+        if (!on) compareSelected.clear();
+        syncCompareSelection();
+      }
+
+      function toggleCompareSelection(key) {
+        if (compareSelected.has(key)) {
+          compareSelected.delete(key);
+        } else if (compareSelected.size >= MAX_COMPARE) {
+          compareTray.classList.remove("shake");
+          void compareTray.offsetWidth; // アニメーションを再生し直す
+          compareTray.classList.add("shake");
+          return;
+        } else {
+          compareSelected.add(key);
+        }
+        syncCompareSelection();
+      }
+
+      function syncCompareSelection() {
+        stage.querySelectorAll(".card").forEach((card) => {
+          card.classList.toggle("selected", compareSelected.has(card.dataset.key));
+        });
+        compareTrayCount.textContent =
+          compareSelected.size === 0
+            ? `比較するキャラを2〜${MAX_COMPARE}体タップ`
+            : `選択中 ${compareSelected.size}/${MAX_COMPARE} ${compareList.hidden ? "▲" : "▼"}`;
+        compareTrayCount.disabled = compareSelected.size === 0 && compareList.hidden;
+        compareGo.disabled = compareSelected.size < 2;
+        renderCompareList();
+        saveSearchState();
+      }
+
+      // 選択中キャラの一覧(画面下のバーから開く)。
+      // 検索で一覧に出ていないキャラも、ここから1体ずつ解除できる。
+      // 開いている間は解除したキャラも薄く残して「戻す」を押せるようにし、閉じたときに消す
+      let compareListKeys = [];
+
+      function renderCompareList() {
+        if (compareList.hidden) return;
+        compareListKeys = [...new Set([...compareListKeys, ...compareSelected])];
+        const listed = compareListKeys.map(findCharacter).filter(Boolean);
+        compareListItems.innerHTML = listed
+          .map((c) => {
+            const on = compareSelected.has(c._key);
+            return `
+        <li class="compare-list-item${on ? "" : " removed"}">
+          <span class="compare-list-text">
+            <span class="compare-list-name">${escapeHtml(c.name)}</span>
+            <span class="compare-list-title">${escapeHtml(c.title || "")}</span>
+          </span>
+          <button type="button" class="compare-list-btn" data-key="${escapeHtml(c._key)}" aria-label="${on ? "選択を解除" : "選択に戻す"}">${on ? "×" : "戻す"}</button>
+        </li>`;
+          })
+          .join("");
+      }
+
+      function openCompareList() {
+        compareList.hidden = false;
+        compareListKeys = [...compareSelected];
+        compareTrayCount.setAttribute("aria-expanded", "true");
+        syncCompareSelection();
+      }
+
+      function closeCompareList() {
+        if (compareList.hidden) return;
+        compareList.hidden = true;
+        compareListKeys = [];
+        compareListItems.innerHTML = "";
+        compareTrayCount.setAttribute("aria-expanded", "false");
+        syncCompareSelection();
+      }
+
+      compareTrayCount.addEventListener("click", () => {
+        if (compareList.hidden) openCompareList();
+        else closeCompareList();
+      });
+      compareListItems.addEventListener("click", (e) => {
+        const btn = e.target.closest(".compare-list-btn");
+        if (btn) toggleCompareSelection(btn.dataset.key);
+      });
+      // 一覧の外を押したら閉じる(押したボタンは再描画で消えていることがあるので、押した時点の経路で判定する)
+      document.addEventListener("click", (e) => {
+        if (!compareList.hidden && !e.composedPath().includes(compareTray)) {
+          closeCompareList();
+        }
+      });
+
+      compareToggle.addEventListener("click", () => setCompareMode(!compareMode));
+      compareClear.addEventListener("click", () => setCompareMode(false));
+      compareGo.addEventListener("click", openCompare);
+
+      function openCompare() {
+        closeCompareList();
+        compareCharas = [...compareSelected].map(findCharacter).filter(Boolean);
+        if (compareCharas.length < 2) return;
+
+        const maxSkills = Math.max(
+          ...compareCharas.map((c) => (c.skills || []).length),
+        );
+        compareTabDefs = [];
+        for (let i = 0; i < maxSkills; i++) {
+          compareTabDefs.push({ type: "active", index: i, label: "スキル" + (i + 1) });
+        }
+        if (compareCharas.some((c) => c.passive && c.passive.length > 0)) {
+          compareTabDefs.push({ type: "passive", label: "パッシブ" });
+        }
+        compareTabIndex = 0;
+
+        compareSubtitle.textContent = compareCharas
+          .map((c) => c.title || c.name)
+          .join(" / ");
+        compareTabs.innerHTML = compareTabDefs
+          .map(
+            (t, i) =>
+              `<button class="tab-btn${i === 0 ? " active" : ""}" data-index="${i}">${t.label}</button>`,
+          )
+          .join("");
+        comparePanes.style.setProperty("--cols", compareCharas.length);
+        compareNav.innerHTML = compareCharas
+          .map(
+            (c, i) =>
+              `<button type="button" class="compare-nav-btn${i === 0 ? " active" : ""}" data-index="${i}">${escapeHtml(compareLabel(c, compareCharas))}</button>`,
+          )
+          .join("");
+
+        compareViewer.classList.add("open");
+        compareViewer.scrollTop = 0;
+        comparePanes.scrollLeft = 0;
+        renderCompareTab();
+      }
+
+      // 狭い画面では列を横スクロールで切り替える。
+      // 名前ボタンで列へ移動し、スクロール位置に合わせて今見ている列のボタンを光らせる
+      function scrollToPane(index) {
+        const pane = comparePanes.children[index];
+        if (!pane) return;
+        comparePanes.scrollTo({
+          left: pane.offsetLeft - comparePanes.offsetLeft,
+          behavior: "smooth",
+        });
+      }
+
+      function updateCompareNav() {
+        const panes = [...comparePanes.children];
+        if (panes.length === 0) return;
+        const left = comparePanes.scrollLeft;
+        let current = 0;
+        panes.forEach((p, i) => {
+          if (p.offsetLeft - comparePanes.offsetLeft - p.offsetWidth / 2 <= left) {
+            current = i;
+          }
+        });
+        compareNav.querySelectorAll(".compare-nav-btn").forEach((b, i) => {
+          if (i === current && !b.classList.contains("active")) {
+            // 名前ボタンが横にはみ出しているときも、光らせたボタンが見えるようにする
+            compareNav.scrollTo({
+              left: b.offsetLeft - compareNav.offsetLeft - 8,
+              behavior: "smooth",
+            });
+          }
+          b.classList.toggle("active", i === current);
+        });
+      }
+
+      compareNav.addEventListener("click", (e) => {
+        const btn = e.target.closest(".compare-nav-btn");
+        if (btn) scrollToPane(Number(btn.dataset.index));
+      });
+      comparePanes.addEventListener("scroll", updateCompareNav, { passive: true });
+
+      compareTabs.addEventListener("click", (e) => {
+        const btn = e.target.closest(".tab-btn");
+        if (!btn) return;
+        compareTabIndex = Number(btn.dataset.index);
+        compareTabs
+          .querySelectorAll(".tab-btn")
+          .forEach((b) => b.classList.toggle("active", b === btn));
+        renderCompareTab();
+      });
+
+      function renderCompareTab() {
+        const def = compareTabDefs[compareTabIndex];
+        // タブを切り替えても、横スクロールで見ていたキャラの位置を保つ
+        const keepLeft = comparePanes.scrollLeft;
+        comparePanes.innerHTML = compareCharas
+          .map(
+            (c, i) => `
+      <section class="compare-pane">
+        <div class="compare-pane-head">
+          ${attrBadge(c.attribute)}
+          <h3>${escapeHtml(c.name)}${genBadge(c.generation)}${graduatedBadge(c)}</h3>
+          <p class="subtitle">${escapeHtml(c.title || "")}</p>
+        </div>
+        <div class="compare-pane-body" data-index="${i}"></div>
+      </section>
+    `,
+          )
+          .join("");
+        comparePanes.scrollLeft = keepLeft;
+
+        comparePanes.querySelectorAll(".compare-pane-body").forEach((body) => {
+          const c = compareCharas[Number(body.dataset.index)];
+          if (def.type === "passive") {
+            body.innerHTML = `<div class="diagram-wrap">${passiveTableHtml(c.passive || [])}</div>`;
+            return;
+          }
+          const skill = (c.skills || [])[def.index];
+          if (!skill) {
+            body.innerHTML = '<p class="loading">このスキルはありません。</p>';
+            return;
+          }
+          body.innerHTML = `
+        <p class="compare-skill-label">${escapeHtml(skill.label)}</p>
+        <div class="zoom-bar compare-zoom-bar">
+          <button type="button" class="zoom-btn" data-zoom="out" aria-label="縮小">−</button>
+          <span class="zoom-label">100%</span>
+          <button type="button" class="zoom-btn" data-zoom="in" aria-label="拡大">＋</button>
+          <button type="button" class="zoom-btn zoom-reset" data-zoom="reset">リセット</button>
+        </div>
+        <div class="diagram-wrap"><div class="loading">読み込み中...</div></div>
+        ${skill.text ? '<details class="original-text"><summary>原文を見る</summary><div class="original-text-body"></div></details>' : ""}
+      `;
+          if (skill.text) {
+            body.querySelector(".original-text-body").textContent = skill.text;
+          }
+          const target = body.querySelector(".diagram-wrap > div");
+          renderMermaidInto(target, skill.file).then((ok) => {
+            // 読み込み中にズームされていた場合も倍率を反映する
+            const svg = target.querySelector("svg");
+            if (ok && svg && body.dataset.zoom) svg.style.width = body.dataset.zoom + "%";
+          });
+        });
+      }
+
+      // 比較ビューアのズームはキャラ(列)ごとに別々に効かせる
+      comparePanes.addEventListener("click", (e) => {
+        const btn = e.target.closest("[data-zoom]");
+        if (!btn) return;
+        const body = btn.closest(".compare-pane-body");
+        let pct = Number(body.dataset.zoom || 100);
+        if (btn.dataset.zoom === "in") pct = Math.min(ZOOM_MAX, pct + ZOOM_STEP);
+        else if (btn.dataset.zoom === "out") pct = Math.max(ZOOM_MIN, pct - ZOOM_STEP);
+        else pct = 100;
+        body.dataset.zoom = pct;
+        body.querySelector(".zoom-label").textContent = pct + "%";
+        const svg = body.querySelector(".diagram-wrap svg");
+        if (svg) svg.style.width = pct + "%";
+      });
+
+      function closeCompare() {
+        compareViewer.classList.remove("open");
+      }
+      compareClose.addEventListener("click", closeCompare);
+      compareViewer.addEventListener("click", (e) => {
+        if (e.target === compareViewer) closeCompare();
+      });
 
       function applyFilter() {
         const query = searchInput.value.trim();
@@ -426,6 +779,51 @@ const MERMAID_THEME_VARS = {
           }
         }
         renderCards(sortCharacters(filterByMemberAndAttr(filtered)));
+        saveSearchState();
+      }
+
+      let searchStateRestored = false;
+      function saveSearchState() {
+        if (!searchStateRestored) return; // 復元前の初期状態で上書きしない
+        try {
+          sessionStorage.setItem(
+            SEARCH_STATE_KEY,
+            JSON.stringify({
+              query: searchInput.value,
+              member: memberFilter.value,
+              gen: genFilter.value,
+              attrs: [...activeAttrs],
+              compareMode,
+              compareSelected: [...compareSelected],
+            }),
+          );
+        } catch (e) {}
+      }
+
+      // 選択肢の生成後に呼ぶ(キャラ・期のプルダウンは読み込み後に作られるため)
+      function restoreSearchState() {
+        const state = loadSearchState();
+        searchInput.value = state.query || "";
+        const hasOption = (select, v) =>
+          [...select.options].some((o) => o.value === v);
+        if (state.member && hasOption(memberFilter, state.member)) {
+          memberFilter.value = state.member;
+        }
+        if (state.gen && hasOption(genFilter, state.gen)) {
+          genFilter.value = state.gen;
+        }
+        (state.attrs || []).forEach((attr) => activeAttrs.add(attr));
+        attrButtons.forEach((btn) => {
+          btn.classList.toggle("active", activeAttrs.has(btn.dataset.attr));
+        });
+        if (state.compareMode) {
+          (state.compareSelected || [])
+            .filter((key) => findCharacter(key))
+            .slice(0, MAX_COMPARE)
+            .forEach((key) => compareSelected.add(key));
+          setCompareMode(true);
+        }
+        searchStateRestored = true;
       }
 
       function filterByMemberAndAttr(list) {
@@ -450,7 +848,11 @@ const MERMAID_THEME_VARS = {
       searchInput.addEventListener("input", applyFilter);
       memberFilter.addEventListener("change", applyFilter);
       genFilter.addEventListener("change", applyFilter);
-      gradFilter.addEventListener("change", applyFilter);
+      gradFilter.checked = storageGet(GRAD_STORAGE_KEY) === "1";
+      gradFilter.addEventListener("change", () => {
+        storageSet(GRAD_STORAGE_KEY, gradFilter.checked ? "1" : "0");
+        applyFilter();
+      });
       attrButtons.forEach((btn) => {
         btn.addEventListener("click", () => {
           const attr = btn.dataset.attr;
@@ -530,7 +932,8 @@ const MERMAID_THEME_VARS = {
 
           populateMemberFilter(allCharacters);
           populateGenFilter(allCharacters);
-          renderCards(sortCharacters(allCharacters));
+          restoreSearchState();
+          applyFilter();
         } catch (e) {
           stage.innerHTML = `<p class="error" style="grid-column:1/-1;">
         キャラクター一覧の読み込みに失敗しました(${e.message})。
