@@ -14,11 +14,6 @@
       "generation": "3期"
     },
     {
-      "name": "吉田綾乃クリスティー",
-      "reading": "よしだあやのくりすてぃー",
-      "generation": "3期"
-    },
-    {
       "name": "遠藤さくら",
       "reading": "えんどうさくら",
       "generation": "4期"
@@ -250,6 +245,12 @@
       "reading": "うめざわみなみ",
       "generation": "3期",
       "status": "卒業(2026-05-02)"
+    },
+    {
+      "name": "吉田綾乃クリスティー",
+      "reading": "よしだあやのくりすてぃー",
+      "generation": "3期",
+      "status": "卒業(2026-08-09)"
     }
   ]
 }
