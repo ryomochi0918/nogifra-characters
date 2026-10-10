@@ -1,0 +1,19 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c2{"②①の各アピール前:<br/>自身のサンクスが①のアピール対象の<br/>サンクス以上?<br/>(対象ごとに判定)"}:::cond
+    c2 -->|"Yes"| e2["①のアピール倍率と固定値倍率が<br/>2倍になる"]:::effect
+    c2 -->|"No"| c3
+    e2 --> c3{"③①の各アピール前:<br/>味方チームのフロント人数が1名<br/>またはこのスキルが発動する前の<br/>味方チームのフロント人数が<br/>ライバルチームのフロント人数未満?<br/>(対象ごとに判定)"}:::cond
+    c3 -->|"Yes"| e3["①のアピール対象のバフ・アゲ効果を<br/>2つ解除し、①の各アピール中のみ<br/>自身の会心率と会心アピールを+30%する"]:::effect
+    c3 -->|"No"| a1
+    e3 --> a1["①実行:ライバル3名に<br/>自身の最大アピールの35%を固定値として<br/>上乗せした600%のアピールを行う"]:::action
+    a1 --> loop1{"①のアピール3名分すべて完了?"}:::cond
+    loop1 -->|"No、次の対象へ"| c2
+    loop1 -->|"Yes"| c4{"④①のアピールが全て終了後:<br/>①のアピールでライバルがリタイアした?<br/>(再実行は最大1回まで)"}:::cond
+    c4 -->|"Yes(未再実行)"| r4["再度①を実行する"]:::effect
+    r4 --> c2
+    c4 -->|"No/再実行済み"| finish(("終了")):::startend

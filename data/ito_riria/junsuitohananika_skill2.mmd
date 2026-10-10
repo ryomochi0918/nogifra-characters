@@ -1,0 +1,17 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> e1["①:残りHP割合が最も低いライバル2名を<br/>2ターンの間「空腹」状態にする"]:::effect
+    e1 --> c3{"③:自身のスマイルが<br/>②のアピール対象のスマイル以上か<br/>(対象ごとに判定)"}:::cond
+
+    c3 -->|"Yes"| e3["バフ・アゲ効果を2つ解除し、<br/>②の固定値倍率が2倍に"]:::effect --> a2
+    c3 -->|"No"| a2["②実行:<br/>残りHP割合が最も低いライバル2名へ<br/>基本800%+固定値 自身のスマイル×3.5"]:::action
+
+    a2 --> lc{"②のアピール<br/>3回すべて完了?"}:::cond
+    lc -->|"No、次の回へ"| c3
+    lc -->|"Yes"| c4{"④:②のアピールで<br/>ライバルがリタイアしたか"}:::cond
+    c4 -->|"Yes、再度①と②を実行<br/>(再実行は最大1回まで)"| e1
+    c4 -->|"No、または再実行済み"| finish(("終了")):::startend

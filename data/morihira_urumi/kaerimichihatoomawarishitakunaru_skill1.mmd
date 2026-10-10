@@ -1,0 +1,20 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> s1["①このスキル中、自身の会心率を+60%、<br/>会心アピールを+30%、命中率を+10%する"]:::effect
+    s1 --> c3{"③②のアピール前:<br/>味方チームのフロント人数が1名?"}:::cond
+    c3 -->|"Yes"| e3["②のアピール対象を3名増加する"]:::effect
+    c3 -->|"No"| c4
+    e3 --> c4{"④②の各アピール前:<br/>自身の残りHP割合が50%未満?<br/>(アピールごとに判定)"}:::cond
+    c4 -->|"Yes"| e4["②のアピール倍率が2倍になる"]:::effect
+    c4 -->|"No"| a2
+    e4 --> a2["②実行:①の効果後、最大アピールが最も高い<br/>ライバル1名(③成立時は+3名)の<br/>バフ・アゲ効果を2つ解除し、<br/>自身の最大アピールの70%を固定値として<br/>上乗せした1000%のアピールを行う"]:::action
+    a2 --> loop2{"②のアピールすべて完了?"}:::cond
+    loop2 -->|"No、次の対象へ"| c4
+    loop2 -->|"Yes"| a5["⑤実行:②のアピールが全て終了後、<br/>最大アピールが最も高いライバルに、<br/>②で行った合計アピールの40%分の<br/>アピールを行う<br/>(ディフェンス、フィジカルを無視する)"]:::action
+    a5 --> loop5{"⑤のアピール4回すべて完了?"}:::cond
+    loop5 -->|"No、次の回へ"| a5
+    loop5 -->|"Yes"| finish(("終了")):::startend
