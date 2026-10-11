@@ -1,0 +1,14 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c2{"②:①の各アピール前、<br/>アピール対象がデバフ・サゲ<br/>効果状態か(対象ごとに判定)"}:::cond
+    c2 -->|"Yes"| e2["①のアピール倍率と<br/>固定値倍率が2倍になる"]:::effect --> c3
+    c2 -->|"No"| c3{"③:①の各アピール前、<br/>アピール対象が<br/>「不調」状態か(対象ごとに判定)"}:::cond
+    c3 -->|"Yes"| e3["①のアピール倍率と<br/>固定値倍率が2倍になる"]:::effect --> a1
+    c3 -->|"No"| a1["①実行:<br/>最大アピールが最も低いライバルへ、<br/>自身のスマイルの2倍を固定値として<br/>上乗せした350%のアピール"]:::action
+    a1 --> lc{"①のアピール<br/>5回すべて完了?"}:::cond
+    lc -->|"No、次の回へ"| c2
+    lc -->|"Yes"| e4["自身と自身以外の残りHP割合が<br/>最も低い味方1名のデバフ・サゲ効果を1つ解除し、<br/>HPを①で行った合計アピールの<br/>40%分回復する"]:::effect --> finish(("終了")):::startend
