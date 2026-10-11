@@ -1,0 +1,15 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c2{"②:自身のスマイルが<br/>①のアピール対象のスマイル以上か<br/>(対象ごとに判定)"}:::cond
+    c2 -->|"Yes"| e2["①のアピール対象のバフ・アゲ効果を1つ解除<br/>①の各アピール中のみ自身の命中率と<br/>サゲ効果耐性貫通を+30%"]:::effect --> c3
+    c2 -->|"No"| c3{"③:このスキルが発動する前の<br/>ライバルチームのフロント人数が5名以下か"}:::cond
+    c3 -->|"Yes"| e3["①のアピール倍率と固定値倍率が2倍に"]:::effect --> a1
+    c3 -->|"No"| a1["①実行:<br/>残りHP割合が最も高いライバル4名を<br/>100%の確率で2ターンの間「弱音」状態にし、<br/>基本800%+固定値 自身の残りSP×85のアピール<br/>(弱音:フィジカル60%低下、メンタル60%低下)"]:::action
+    a1 --> lc{"①のアピール<br/>4名すべて完了?"}:::cond
+    lc -->|"No、次の対象へ"| c2
+    lc -->|"Yes"| e4["④:最大アピールが最も高い味方2名を<br/>2ターンの間「豪運」状態にし、<br/>HPを①で行った合計アピールの35%分回復<br/>(豪運:会心アピール+20%、会心率+40%)"]:::effect
+    e4 --> finish(("終了")):::startend

@@ -371,7 +371,8 @@ const MERMAID_THEME_VARS = {
       }
 
       function buildSearchBlob(c) {
-        const parts = [c.name, c.costume, c.title];
+        // 期は「◯期」だけを検索対象にする(新4期生・春組/夏組などの括弧書きは含めない)
+        const parts = [c.name, c.costume, c.title, normalizeGeneration(c.generation)];
         (c.skills || []).forEach((s) => {
           parts.push(s.label);
           if (s.text) parts.push(s.text);
