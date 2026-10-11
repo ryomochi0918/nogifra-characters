@@ -1,1 +1,5 @@
 .DS_Store
+
+# scripts/build-character-pages.js の生成物(デプロイ時に GitHub Actions で生成する)
+/c/
+/sitemap.xml

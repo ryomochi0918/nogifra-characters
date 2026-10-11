@@ -1,71 +1,4 @@
-const MERMAID_THEME_VARS = {
-        dark: {
-          background: "#100c1a",
-          primaryColor: "#1c1630",
-          primaryTextColor: "#efe9f7",
-          primaryBorderColor: "#c77dff",
-          lineColor: "#a99cc4",
-          fontFamily: "Zen Kaku Gothic New, sans-serif",
-          fontSize: "14px",
-          clusterBkg: "#211a35",
-          clusterBorder: "#3a2d55",
-          titleColor: "#efe9f7",
-        },
-        light: {
-          background: "#ffffff",
-          primaryColor: "#f3edfb",
-          primaryTextColor: "#2b2333",
-          primaryBorderColor: "#8a4fd1",
-          lineColor: "#6b6178",
-          fontFamily: "Zen Kaku Gothic New, sans-serif",
-          fontSize: "14px",
-          clusterBkg: "#f7f3ec",
-          clusterBorder: "#ddd2ee",
-          titleColor: "#2b2333",
-        },
-      };
-
-      // プライベートモード等でlocalStorageが使えない場合でも動くようにする
-      function storageGet(key) {
-        try {
-          return localStorage.getItem(key);
-        } catch (e) {
-          return null;
-        }
-      }
-      function storageSet(key, value) {
-        try {
-          localStorage.setItem(key, value);
-        } catch (e) {}
-      }
-
-      // 検索条件・比較の選択はタブを閉じるまで残す(リロードでは消えない)
-      const SEARCH_STATE_KEY = "nogifra-search-state";
-      function loadSearchState() {
-        try {
-          return JSON.parse(sessionStorage.getItem(SEARCH_STATE_KEY)) || {};
-        } catch (e) {
-          return {};
-        }
-      }
-
-      const THEME_STORAGE_KEY = "nogifra-theme";
       const GRAD_STORAGE_KEY = "nogifra-show-graduated";
-      function getStoredTheme() {
-        return storageGet(THEME_STORAGE_KEY) === "light" ? "light" : "dark";
-      }
-      function applyTheme(theme) {
-        document.documentElement.setAttribute("data-theme", theme);
-        mermaid.initialize({
-          startOnLoad: false,
-          theme: "base",
-          themeVariables: MERMAID_THEME_VARS[theme],
-          flowchart: { curve: "basis" },
-        });
-      }
-
-      let currentTheme = getStoredTheme();
-      applyTheme(currentTheme);
 
       const stage = document.getElementById("stage");
       const resultCount = document.getElementById("resultCount");
@@ -102,12 +35,7 @@ const MERMAID_THEME_VARS = {
         );
       });
 
-      let renderCount = 0;
       let zoomPct = 100; // 100 = リセット(svg width:100%)
-      // 詳細ビューア・比較ビューア共通のズーム範囲
-      const ZOOM_MIN = 50;
-      const ZOOM_MAX = 400;
-      const ZOOM_STEP = 25;
 
       function applyZoom() {
         const svg = diagramTarget.querySelector("svg");
@@ -149,20 +77,6 @@ const MERMAID_THEME_VARS = {
         if (e.key === "Escape") legendPanel.style.display = "none";
       });
 
-      function escapeHtml(str) {
-        return String(str).replace(
-          /[&<>"']/g,
-          (m) =>
-            ({
-              "&": "&amp;",
-              "<": "&lt;",
-              ">": "&gt;",
-              '"': "&quot;",
-              "'": "&#39;",
-            })[m],
-        );
-      }
-
       async function renderActiveTab(tab) {
         diagramWrap.style.display = "";
         zoomBar.style.display = "flex";
@@ -182,48 +96,6 @@ const MERMAID_THEME_VARS = {
         if (await renderMermaidInto(diagramTarget, tab.file)) applyZoom();
       }
 
-      // .mmdを読み込んでtargetにSVGを描画する。成功したらtrueを返す
-      async function renderMermaidInto(target, file) {
-        try {
-          const res = await fetch(file);
-          if (!res.ok) throw new Error("file not found");
-          const mmdText = await res.text();
-          const id = "mmd-" + renderCount++;
-          const { svg } = await mermaid.render(id, mmdText);
-          target.className = "";
-          target.innerHTML = svg;
-          return true;
-        } catch (e) {
-          target.className = "error";
-          target.textContent =
-            "フローチャートの読み込みに失敗しました: " + e.message;
-          return false;
-        }
-      }
-
-      // パッシブの効果1項目を描画する。
-      // 「※」で始まる注記(バフ状態の定義・アドバンス/アンコールスキル)は
-      // 本文と役割が違うので視覚的に分け、見出し(※◯◯:)をラベルとして切り出す。
-      // アドバンス/アンコールスキルの [①][②] は段落として改行する。
-      function renderEffectItem(text) {
-        if (!text.startsWith("※")) {
-          return `<li>${escapeHtml(text)}</li>`;
-        }
-        const m = text.match(/^※([^:：]{1,24})[:：]([\s\S]*)$/);
-        const label = m ? m[1] : "";
-        const body = m ? m[2] : text.slice(1);
-        const steps = body.split(/(?=\[[①-⑳]\])/).filter(Boolean);
-        const html =
-          steps.length > 1
-            ? steps
-                .map((s) => `<span class="note-step">${escapeHtml(s)}</span>`)
-                .join("")
-            : escapeHtml(body);
-        return `<li class="note">${
-          label ? `<b class="note-label">${escapeHtml(label)}</b>` : ""
-        }${html}</li>`;
-      }
-
       function renderPassiveTab(tab) {
         collapseExpanded();
         zoomBar.style.display = "none";
@@ -232,35 +104,6 @@ const MERMAID_THEME_VARS = {
         diagramTarget.className = "";
 
         diagramTarget.innerHTML = passiveTableHtml(tab.data || []);
-      }
-
-      function passiveTableHtml(rows) {
-        if (rows.length === 0) {
-          return '<p class="loading">パッシブスキルの情報はまだありません。</p>';
-        }
-        return `
-      <table class="passive-table">
-        <thead>
-          <tr><th>タイトル</th><th>効果内容</th></tr>
-        </thead>
-        <tbody>
-          ${rows
-            .map((r) => {
-              const items = Array.isArray(r.effect) ? r.effect : [r.effect];
-              return `
-            <tr>
-              <td class="cond">${escapeHtml(r.condition || "")}</td>
-              <td><ul class="effect-list">${items
-                .filter(Boolean)
-                .map(renderEffectItem)
-                .join("")}</ul></td>
-            </tr>
-          `;
-            })
-            .join("")}
-        </tbody>
-      </table>
-    `;
       }
 
       let currentTab = null;
@@ -273,11 +116,7 @@ const MERMAID_THEME_VARS = {
         }
       }
 
-      const themeToggle = document.getElementById("themeToggle");
-      themeToggle.addEventListener("click", () => {
-        currentTheme = currentTheme === "light" ? "dark" : "light";
-        storageSet(THEME_STORAGE_KEY, currentTheme);
-        applyTheme(currentTheme);
+      setupThemeToggle(() => {
         if (viewer.classList.contains("open") && currentTab && currentTab.type !== "passive") {
           renderTab(currentTab);
         }
@@ -289,10 +128,13 @@ const MERMAID_THEME_VARS = {
         viewerChara = chara;
         track("view_character", {
           member: chara.name,
-          character: chara.name + " / " + (chara.costume || chara.title || ""),
+          character: characterLabel(chara),
         });
         viewerTitle.textContent = chara.name;
         viewerSubtitle.textContent = chara.title || "";
+        const path = characterPath(chara);
+        viewerActions.hidden = !path;
+        if (path) viewerPageLink.href = path;
 
         const tabs = [...(chara.skills || [])];
         if (chara.passive && chara.passive.length > 0) {
@@ -328,6 +170,12 @@ const MERMAID_THEME_VARS = {
         viewer.classList.add("open");
         if (tabs[0]) renderTab(tabs[0]);
       }
+
+      const viewerActions = document.getElementById("viewerActions");
+      const viewerPageLink = document.getElementById("viewerPageLink");
+      document.getElementById("viewerCopyLink").addEventListener("click", (e) => {
+        if (viewerChara) copyCharacterLink(viewerChara, e.currentTarget);
+      });
 
       function closeViewer() {
         viewer.classList.remove("open");
@@ -368,12 +216,6 @@ const MERMAID_THEME_VARS = {
       const activeAttrs = new Set();
       let allCharacters = [];
 
-      // 4期と新4期生、6期の春組・夏組はそれぞれ同一の期として扱う(括弧書きの補足を無視)
-      function normalizeGeneration(g) {
-        if (!g) return "";
-        return g.split("(")[0].trim();
-      }
-
       function buildSearchBlob(c) {
         // 期は「◯期」だけを検索対象にする(新4期生・春組/夏組などの括弧書きは含めない)
         const parts = [c.name, c.costume, c.title, normalizeGeneration(c.generation)];
@@ -402,32 +244,6 @@ const MERMAID_THEME_VARS = {
         });
       }
 
-      const TYPE_ATTR_CLASS = {
-        努力: "attr-doryoku",
-        感謝: "attr-kansha",
-        笑顔: "attr-egao",
-      };
-
-      function attrBadge(attribute) {
-        const cls = TYPE_ATTR_CLASS[attribute];
-        if (!cls) return "";
-        return `<span class="attr-badge ${cls}">${escapeHtml(attribute)}</span>`;
-      }
-
-      const GENERATION_ATTR_CLASS = {
-        "3期": "attr-3rd",
-        "4期": "attr-4th",
-        "5期": "attr-5th",
-        "6期": "attr-6th"
-      };
-
-      function genBadge(generation) {
-        const g = normalizeGeneration(generation);
-        if (!g) return "";
-        const cls = GENERATION_ATTR_CLASS[g];
-        return `<span class="gen-badge ${cls}">${escapeHtml(g)}</span>`;
-      }
-
       function graduatedBadge(c) {
         return c._graduated ? `<span class="graduated-badge">卒業済み</span>` : "";
       }
@@ -442,18 +258,21 @@ const MERMAID_THEME_VARS = {
         stage.innerHTML = list
           .map(
             (c) => `
-      <button class="card${compareSelected.has(c._key) ? " selected" : ""}" data-key="${escapeHtml(c._key)}">
+      <a class="card${compareSelected.has(c._key) ? " selected" : ""}" href="${escapeHtml(characterPath(c) || "#")}" data-key="${escapeHtml(c._key)}">
         <span class="compare-check" aria-hidden="true"></span>
         <span class="tier">${escapeHtml(c.tier || "SKILL")}</span>${attrBadge(c.attribute)}
         <h2>${escapeHtml(c.name)}${genBadge(c.generation)}${graduatedBadge(c)}</h2>
         <p class="subtitle">${escapeHtml(c.title || "")}</p>
-      </button>
+      </a>
     `,
           )
           .join("");
 
         stage.querySelectorAll(".card").forEach((btn) => {
-          btn.addEventListener("click", () => {
+          btn.addEventListener("click", (e) => {
+            // Ctrl/Shift+クリックなどはブラウザに任せて、キャラ別ページを新しいタブで開けるようにする
+            if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;
+            e.preventDefault();
             if (compareMode) {
               toggleCompareSelection(btn.dataset.key);
               return;
@@ -466,7 +285,6 @@ const MERMAID_THEME_VARS = {
 
       // 比較モード: カードをタップして選び、「比較する」で並べて表示する。
       // PCでは横並び、狭い画面では同じタブの内容を縦に積む
-      const MAX_COMPARE = 3;
       const compareSelected = new Set();
       let compareMode = false;
       let compareCharas = [];
@@ -489,11 +307,6 @@ const MERMAID_THEME_VARS = {
 
       function findCharacter(key) {
         return allCharacters.find((x) => x._key === key);
-      }
-
-      // Google アナリティクスにイベントを送る(gtag は index.html の head で定義)
-      function track(name, params) {
-        if (typeof gtag === "function") gtag("event", name, params);
       }
 
       // 同じメンバーの別衣装を選んだときに区別できるよう、名前が重なる場合だけ衣装名を添える

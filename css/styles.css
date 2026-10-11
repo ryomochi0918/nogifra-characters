@@ -1344,3 +1344,102 @@ footer a {
     padding: 20px 14px;
   }
 }
+
+/* カードはキャラ別ページへのリンク(普通のクリックでは詳細画面を開く) */
+a.card {
+  display: block;
+  text-decoration: none;
+}
+
+/* 詳細画面・キャラ別ページの「リンクをコピー」など */
+.chara-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: -8px 0 18px;
+}
+
+.chara-actions[hidden] {
+  display: none;
+}
+
+.chara-action {
+  font-family: inherit;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--ink-dim);
+  background: transparent;
+  border: 1px solid var(--card-line);
+  border-radius: 999px;
+  padding: 5px 12px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.chara-action:hover {
+  color: var(--accent);
+  border-color: var(--accent-dim);
+}
+
+/* キャラ別ページ(c/…/index.html) */
+.chara-nav {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 20px 16px 0;
+  font-size: 13px;
+}
+
+.chara-nav a {
+  color: var(--ink-dim);
+  text-decoration: none;
+}
+
+.chara-nav a:hover {
+  color: var(--accent);
+}
+
+.chara-page {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 24px 16px 0;
+}
+
+.chara-head h1 {
+  font-family: var(--serif);
+  font-size: clamp(24px, 4vw, 32px);
+  margin: 10px 0 4px;
+}
+
+.chara-head h1 .gen-badge {
+  font-family: var(--sans);
+}
+
+.chara-head .subtitle {
+  color: var(--accent);
+  font-size: 14px;
+  margin: 0 0 16px;
+}
+
+.chara-head .chara-actions {
+  margin: 0 0 24px;
+}
+
+.chara-section {
+  background: var(--bg-1);
+  border: 1px solid var(--card-line);
+  border-radius: 16px;
+  padding: 24px;
+  margin: 0 0 20px;
+}
+
+.chara-section h2 {
+  font-family: var(--serif);
+  font-size: 18px;
+  margin: 0 0 14px;
+}
+
+@media (max-width: 600px) {
+  .chara-section {
+    padding: 18px 14px;
+  }
+}
