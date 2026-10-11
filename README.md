@@ -131,7 +131,7 @@ mermaid.jsはcdnjs経由でCDN読み込みしているため、依存関係の�
 
 ## キャラ別ページ
 
-キャラ(メンバー×衣装)ごとに `c/{メンバー}/{衣装スラッグ}/` のページがあります(例: `c/ikeda_teresa/11thbasura5kisei/`)。設計の詳細は `docs/character-pages.md`。
+キャラ(メンバー×衣装)ごとに `c/{メンバー}/{衣装スラッグ}/` のページがあります(例: `c/ikeda_teresa/11thbasura5kisei/`)。設計時の判断と理由は `docs/character-pages.md`(記録用。運用はこの節を正とする)。
 
 - 一覧で詳細を開いたときと同じ内容(スキルごとのフローチャート・原文、パッシブ)を、タブではなく上から順に並べています。スキル原文とパッシブはHTMLに直接書き出しているので、検索エンジンにも読まれます。
 - **ページは `scripts/build-character-pages.js` が `data/characters.json` から生成します。生成はデプロイ時に GitHub Actions(`.github/workflows/deploy.yml`)が行うので、キャラを追加しても自分で実行する必要はありません。**生成物(`c/`・`sitemap.xml`)は `.gitignore` で除外しています。
@@ -140,7 +140,7 @@ mermaid.jsはcdnjs経由でCDN読み込みしているため、依存関係の�
 - 詳細画面とキャラ別ページの「リンクをコピー」で、キャラ別ページのURLをコピーできます。キャラ別ページの「他のキャラと比較」を押すと、そのキャラを選んだ状態で一覧の比較モードが開きます。
 - **URLはスキル1の `.mmd` のファイル名から作っているので、公開済みの `.mmd` の名前は変えないでください。**変えるとURLが変わり、共有されたリンクが切れます。
 - ヘッドのGAのタグ・テーマの初期化・フォント・フッター・凡例などは、生成スクリプトが `index.html` から切り出して使います。`index.html` のこれらの書き方を大きく変えると、生成スクリプトが「取り出せませんでした」というエラーで止まる(=デプロイが失敗する)ので、そのときはスクリプトの正規表現も直してください。
-- `sitemap.xml` にはトップページと全キャラ別ページが載ります。Google Search Console に `https://ryomochi0918.github.io/nogifra-characters/sitemap.xml` として登録します。
+- `sitemap.xml` にはトップページと全キャラ別ページが載ります。Google Search Console に `https://ryomochi0918.github.io/nogifra-characters/sitemap.xml` として登録済み(2026-10-11)。
 
 ## SNS共有カード(OGP)
 
