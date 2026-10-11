@@ -2,7 +2,6 @@
 // data/characters.json から、キャラ別ページ(c/{メンバー}/{衣装スラッグ}/index.html)と sitemap.xml を生成する。
 // GitHub Actions のデプロイ時に実行する(.github/workflows/deploy.yml)。生成物はコミットしない(.gitignore で除外)。
 // ローカルで確認するときは site/ で `node scripts/build-character-pages.js` を実行する。
-// 設計は docs/character-pages.md を参照。
 
 const fs = require("fs");
 const path = require("path");
