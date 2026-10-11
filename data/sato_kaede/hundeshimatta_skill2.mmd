@@ -1,0 +1,22 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> e1["①:このスキル中、<br/>自身の命中率を+30%する"]:::effect --> c4a
+    c4a{"④:②のアピール対象の<br/>残りHP割合が50%未満か"}:::cond
+    c4a -->|"Yes"| e4a["②のアピールは<br/>必ず会心アピールになる"]:::effect --> c5a
+    c4a -->|"No"| c5a{"⑤:自身の残りHP割合が<br/>②のアピール対象の残りHP割合以上か"}:::cond
+    c5a -->|"Yes"| e5a["②のアピール倍率と<br/>固定値倍率が1.5倍になる"]:::effect --> a2
+    c5a -->|"No"| a2["②実行:<br/>残りHP割合が最も低いライバル1名に<br/>自身のサンクスの6倍を固定値として上乗せした<br/>1800%のアピールを行う"]:::action
+    a2 --> c3{"③:②のアピールで<br/>アピール対象がリタイアしなかったか"}:::cond
+    c3 -->|"Yes"| c4b{"④:③のアピール対象の<br/>残りHP割合が50%未満か<br/>(対象ごとに判定)"}:::cond
+    c4b -->|"Yes"| e4b["③のアピールは<br/>必ず会心アピールになる"]:::effect --> c5b
+    c4b -->|"No"| c5b{"⑤:自身の残りHP割合が<br/>③のアピール対象の残りHP割合以上か<br/>(対象ごとに判定)"}:::cond
+    c5b -->|"Yes"| e5b["③のアピール倍率が<br/>1.5倍になる"]:::effect --> a3
+    c5b -->|"No"| a3["③実行:<br/>ライバル3名に②で行った直前のアピールの<br/>40%分のアピールを行う<br/>(ディフェンス、フィジカルを無視する)"]:::action
+    a3 --> c6
+    c3 -->|"No"| c6{"⑥:②と③のアピールで<br/>ライバルがリタイアしたか<br/>(かつ再実行がまだの場合)"}:::cond
+    c6 -->|"Yes、再度②からスキルを実行<br/>(再実行は最大1回まで)"| c4a
+    c6 -->|"No"| finish(("終了")):::startend

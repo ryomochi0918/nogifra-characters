@@ -1,0 +1,17 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c2{"②:自身のスマイルが①の<br/>アピール対象のスマイル以上か<br/>(対象ごとに判定)"}:::cond
+    c2 -->|"Yes"| e2["①のアピール倍率と<br/>SPの上乗せ倍率が2倍になる"]:::effect --> a1
+    c2 -->|"No"| a1["①実行:ライバルへ、自身の残りSPの<br/>80倍を上乗せした<br/>1000%のアピール"]:::action
+    a1 --> lc{"①のアピール対象<br/>3名すべて完了?"}:::cond
+    lc -->|"No、次の対象へ"| c2
+    lc -->|"Yes"| c4{"④:③のアピール対象の<br/>残りHP割合が50%以上か"}:::cond
+    c4 -->|"Yes"| e4["③のアピール倍率が2倍になる"]:::effect --> a3
+    c4 -->|"No"| a3["③実行:ライバル1名に①で行った<br/>合計アピールの80%分のアピール<br/>(ディフェンス、メンタルを無視する)"]:::action
+    a3 --> c5{"⑤:このスキルのアピールで<br/>ライバルがリタイアしたか"}:::cond
+    c5 -->|"Yes"| a5["ライバル1名にこのスキルで行った<br/>合計アピールの30%分のアピール<br/>(ディフェンス、メンタルを無視する)"]:::action --> finish(("終了")):::startend
+    c5 -->|"No"| finish

@@ -1,0 +1,13 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> a1["①実行:ライバル4名へ、自身の<br/>「重奏」状態の重ねがけ回数×600%の<br/>倍率を上乗せした600%のアピール"]:::action --> c2
+    c2{"②:①のアピールでライバルが<br/>リタイアしなかったか"}:::cond
+    c2 -->|"Yes"| a2["再度①を実行する<br/>(②による再実行は最大1回まで)"]:::action --> a3
+    c2 -->|"No"| a3["③実行:ライバルへ3回、自身の<br/>「重奏」状態の重ねがけ回数×600%の<br/>倍率を上乗せした600%のアピール"]:::action --> c4
+    c4{"④:③のアピールでライバルが<br/>リタイアしなかったか"}:::cond
+    c4 -->|"Yes"| a4["再度③を実行する<br/>(④による再実行は最大1回まで)"]:::action --> e5
+    c4 -->|"No"| e5["⑤効果:自身を「重奏」状態にする<br/>(④の再実行が発動した場合は<br/>④の終了後)"]:::effect --> finish(("終了")):::startend

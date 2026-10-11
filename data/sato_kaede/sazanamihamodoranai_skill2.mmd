@@ -1,0 +1,16 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c2{"②:①のアピール対象が<br/>デバフ・サゲ効果状態か"}:::cond
+    c2 -->|"Yes"| e2["①のアピール倍率と<br/>固定値倍率が2倍になる"]:::effect --> a1
+    c2 -->|"No"| a1["①実行:<br/>ライバルに自身の最大アピールの30%を<br/>固定値として上乗せした550%のアピールを行う"]:::action
+    a1 --> c3{"③:①のアピールで<br/>ライバルがリタイアしたか"}:::cond
+    c3 -->|"Yes"| e3["①のアピール回数を1回追加し、<br/>ライバル1名を100%の確率で<br/>3ターンの間「執着」状態にする<br/>(アピールの追加回数は最大で4回まで)"]:::effect --> lc
+    c3 -->|"No"| lc{"①のアピール<br/>4回(+追加回数)すべて完了?"}:::cond
+    lc -->|"No、次の回へ"| c2
+    lc -->|"Yes"| c4{"④:①のアピールで<br/>ライバルがリタイアしなかったか"}:::cond
+    c4 -->|"Yes"| a4["④実行:<br/>ライバル1名に①で行った<br/>合計アピールの30%分のアピールを行う<br/>(ディフェンス、フィジカルを無視する)"]:::action --> finish(("終了")):::startend
+    c4 -->|"No"| finish

@@ -1,0 +1,15 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> e1["①:このスキル中、<br/>自身の会心率を+40%する"]:::effect --> a2["②実行:ライバル5名へ<br/>600%のアピール"]:::action --> c5a{"⑤:②の各アピール後、<br/>②と③の各アピールでアピールの失敗<br/>またはアピールが0である事が<br/>3回以上発生したか"}:::cond
+    c5a -->|"Yes"| e5a["⑤効果:このスキルによる<br/>残りのアピールは必ず命中する"]:::effect --> a3
+    c5a -->|"No"| a3["③実行:残りHP割合が最も低い<br/>ライバルへ1000%のアピール"]:::action --> c4{"④:③のアピール対象の<br/>残りHP割合が30%以下<br/>またはリタイアしたか"}:::cond
+    c4 -->|"Yes"| e4["④効果:③のアピール回数が1回増加し、<br/>③による残りのアピール倍率が2倍になる<br/>(アピールの追加回数は最大で3回まで、<br/>最大8000%のアピール)"]:::effect --> c5b
+    c4 -->|"No"| c5b{"⑤:③の各アピール後、<br/>②と③の各アピールでアピールの失敗<br/>またはアピールが0である事が<br/>3回以上発生したか"}:::cond
+    c5b -->|"Yes"| e5b["⑤効果:このスキルによる<br/>残りのアピールは必ず命中する"]:::effect --> loop
+    c5b -->|"No"| loop{"③のアピール3回(④の追加分を含む)<br/>すべて完了?"}:::cond
+    loop -->|"No、次の回へ"| a3
+    loop -->|"Yes"| finish(("終了")):::startend

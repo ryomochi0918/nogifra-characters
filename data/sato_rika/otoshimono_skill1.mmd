@@ -1,0 +1,17 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c2{"②:自身のスマイルが①の<br/>アピール対象のスマイル以上か<br/>(対象ごとに判定)"}:::cond
+    c2 -->|"Yes"| e2["①の各アピール中のみ自身の<br/>サゲ効果耐性貫通を+30%し、<br/>①のアピール対象の<br/>バフ・アゲ効果を1つ解除する"]:::effect --> c3
+    c2 -->|"No"| c3{"③:自身の残りHP割合が①の<br/>アピール対象の残りHP割合以上か<br/>(対象ごとに判定)"}:::cond
+    c3 -->|"Yes"| e3["①による「空腹」状態の<br/>効果倍率を1.5倍にする"]:::effect --> a1
+    c3 -->|"No"| a1["①実行:最大アピールが最も高い<br/>ライバルを100%の確率で3ターンの間<br/>「空腹」状態にし、自身のスマイルの<br/>4倍を固定値として上乗せした<br/>500%のアピール"]:::action
+    a1 --> c4{"④:①のアピール対象の<br/>残りHP割合が50%未満<br/>またはリタイアしたか<br/>(対象ごとに判定)"}:::cond
+    c4 -->|"Yes"| e4["自身のHPを自身のアピール力の<br/>60%分回復し(会心率に応じて<br/>会心回復が発生)、自身を<br/>2ターンの間「勇気」状態にする"]:::effect --> lc
+    c4 -->|"No"| lc{"①のアピール<br/>5回すべて完了?"}:::cond
+    lc -->|"No、次の回へ"| c2
+    lc -->|"Yes"| a5["⑤実行:ライバルチームに居る<br/>デバフ・サゲ効果状態のメンバーに<br/>①で行った合計アピールの40%分の<br/>アピール(ディフェンス、メンタルを<br/>無視する、最大で6名まで)"]:::action
+    a5 --> finish(("終了")):::startend

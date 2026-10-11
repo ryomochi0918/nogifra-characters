@@ -1,0 +1,20 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c2{"②:自身のサンクスが①の<br/>アピール対象のサンクス以上か<br/>(対象ごとに判定)"}:::cond
+    c2 -->|"Yes"| e2["①のアピール対象の<br/>バフ・アゲ効果を1つ解除し、<br/>①の各アピール中のみ<br/>自身の会心率を+20%する"]:::effect --> c3
+    c2 -->|"No"| c3{"③:自身の残りHP割合が<br/>50%以上か"}:::cond
+    c3 -->|"Yes"| e3["①のアピール倍率と<br/>固定値倍率が2倍になる"]:::effect --> a1
+    c3 -->|"No"| a1["①実行:ライバルへ、自身の<br/>最大アピールの15%を固定値として<br/>上乗せした480%のアピール"]:::action
+    a1 --> c4{"④:直前のアピールで<br/>会心アピールが発生していたか"}:::cond
+    c4 -->|"Yes"| e4["①の直前のアピール対象の<br/>バフ・アゲ効果を1つ解除する"]:::effect --> c5
+    c4 -->|"No"| c5{"⑤:①のアピールで<br/>会心アピールが発生したか"}:::cond
+    c5 -->|"Yes"| e5["①のアピール回数が1回増加する<br/>(アピールの追加回数は<br/>最大で2回まで)"]:::effect --> lc
+    c5 -->|"No"| lc{"①のアピール5回<br/>(+⑤による追加分)<br/>すべて完了?"}:::cond
+    lc -->|"No、次の回へ"| c2
+    lc -->|"Yes"| c6{"⑥:①のアピールでリタイアした<br/>ライバルが1名以下か"}:::cond
+    c6 -->|"Yes"| a6["⑥実行:残りHP割合が最も低い<br/>ライバルに1回、①で行った<br/>合計アピールの20%分のアピール<br/>(ディフェンス、フィジカルを無視する)"]:::action --> finish(("終了")):::startend
+    c6 -->|"No"| finish

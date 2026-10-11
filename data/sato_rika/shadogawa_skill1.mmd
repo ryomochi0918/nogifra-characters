@@ -1,0 +1,16 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> e1["①効果:自身を2ターンの間<br/>「光華」状態にする"]:::effect --> c3
+    c3{"③:自身のサンクスが②の<br/>アピール対象のサンクス以上か<br/>(対象ごとに判定)"}:::cond
+    c3 -->|"Yes"| e3["②のアピール倍率と<br/>固定値倍率が2倍になる"]:::effect --> a2
+    c3 -->|"No"| a2["②実行:ライバルへ、自身の<br/>サンクスの3倍を固定値として<br/>上乗せした800%のアピール"]:::action
+    a2 --> lc{"②のアピール対象<br/>3名すべて完了?"}:::cond
+    lc -->|"No、次の対象へ"| c3
+    lc -->|"Yes"| c4{"④:②のアピールで<br/>会心アピールが発生したか"}:::cond
+    c4 -->|"Yes"| a4["④実行:ライバル3名に②のアピールで<br/>会心アピールが発生した回数を<br/>アピール回数として、自身のサンクスの<br/>6倍を固定値として上乗せした<br/>1600%のアピール(④によるアピールは<br/>最大2回まで、2回目以降の<br/>アピールは対象を選び直す)"]:::action --> e5
+    c4 -->|"No"| e5["⑤:自身のHPをこのスキルで行った<br/>合計アピールの30%分回復する"]:::effect
+    e5 --> finish(("終了")):::startend

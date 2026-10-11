@@ -1,0 +1,16 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c2{"②:自身の残りHP割合が<br/>50%以上か"}:::cond
+    c2 -->|"Yes"| e2["①のアピール倍率と<br/>固定値倍率を2倍にする"]:::effect --> a1
+    c2 -->|"No"| a1["①実行:<br/>ライバルへ、自身のバイタリティの1.5倍を<br/>固定値として上乗せした<br/>500%のアピール"]:::action
+    a1 --> e3["③:自身のHPを<br/>直前アピールの20%分回復する"]:::effect
+    e3 --> lc{"①のアピール<br/>5回すべて完了?"}:::cond
+    lc -->|"No、次の回へ"| c2
+    lc -->|"Yes"| c5{"⑤:自身の残りHP割合が<br/>70%以上か"}:::cond
+    c5 -->|"Yes"| e5["④による「反響」状態の<br/>リフレクト倍率を2倍にする"]:::effect --> e4
+    c5 -->|"No"| e4["④:自身を4ターンの間<br/>「反響」状態にする"]:::effect
+    e4 --> finish(("終了")):::startend

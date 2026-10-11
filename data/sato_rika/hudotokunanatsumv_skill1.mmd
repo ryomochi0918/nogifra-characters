@@ -1,0 +1,16 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> e1["①効果:このスキル中、自身の<br/>リフレクト耐性を+30%する"]:::effect --> c3
+    c3{"③:②のアピール対象の残りHP割合が<br/>50%以上またはこのスキル開始時の<br/>自身の「不屈」状態のターン数が<br/>5ターン以上か(対象ごとに判定)"}:::cond
+    c3 -->|"Yes"| e3["②のアピール対象の<br/>バフ・アゲ効果を1つ解除する"]:::effect --> a2
+    c3 -->|"No"| a2["②実行:ライバルへ、自身の<br/>エフォートの3倍を固定値として<br/>上乗せした730%のアピール"]:::action
+    a2 --> lc{"②のアピール対象<br/>5名すべて完了?"}:::cond
+    lc -->|"No、次の対象へ"| c3
+    lc -->|"Yes"| c5{"⑤:④の開始前の自身の<br/>「抱擁」状態の合計ターン数が<br/>4ターン以上か"}:::cond
+    c5 -->|"Yes"| e5["4ターン毎に④のアピール回数が<br/>1回増加する(アピールの追加回数は<br/>最大で2回まで、2回目以降の<br/>アピールは対象を選び直す)"]:::effect --> a4
+    c5 -->|"No"| a4["④実行:残りHP割合が最も低い<br/>ライバル1名に②のアピールで行った<br/>合計アピールの30%分のアピール<br/>(ディフェンス、フィジカルを無視する)"]:::action
+    a4 --> finish(("終了")):::startend

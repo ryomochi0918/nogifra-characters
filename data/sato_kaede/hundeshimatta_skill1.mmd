@@ -1,0 +1,18 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> e1["①:このスキル中、自身の命中率を+30%し、<br/>リフレクト耐性を+50%する"]:::effect --> c4a
+    c4a{"④:②のアピール対象の<br/>残りHP割合が50%以上か"}:::cond
+    c4a -->|"Yes"| e4a["②のアピールが<br/>必ず会心アピールになる"]:::effect --> a2
+    c4a -->|"No"| a2["②実行:<br/>残りHP割合が最も高いライバル1名に<br/>自身のサンクスの6倍を固定値として上乗せした<br/>1800%のアピールを行う"]:::action
+    a2 --> c3{"③:②のアピールで<br/>アピール対象がリタイアしたか"}:::cond
+    c3 -->|"Yes"| c4b{"④:③のアピール対象の<br/>残りHP割合が50%以上か<br/>(対象ごとに判定)"}:::cond
+    c4b -->|"Yes"| e4b["③のアピールが<br/>必ず会心アピールになる"]:::effect --> a3
+    c4b -->|"No"| a3["③実行:<br/>ライバル3名に②で行った直前のアピールの<br/>40%分のアピールを行う<br/>(ディフェンス、フィジカルを無視する)"]:::action
+    a3 --> finish(("終了")):::startend
+    c3 -->|"No"| c5{"⑤:再実行がまだか<br/>(再実行は最大1回まで)"}:::cond
+    c5 -->|"Yes、再度②からスキルを実行"| c4a
+    c5 -->|"No"| finish

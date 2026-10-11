@@ -1,0 +1,17 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> e1["①:ライバル4名を100%の確率で<br/>3ターンの間<br/>「ディフェンスダウン」状態にする"]:::effect
+    e1 --> c2{"②:自身のサンクスが<br/>①のアピール対象のサンクス以上か<br/>(対象ごとに判定)"}:::cond
+    c2 -->|"Yes"| e2["①のアピール倍率を<br/>2倍にする"]:::effect --> a1
+    c2 -->|"No"| a1["①実行:<br/>ライバル4名へ500%のアピール"]:::action
+    a1 --> a3["③実行:<br/>ライバルへ500%のアピール<br/>(「転倒」状態ではないライバルを<br/>優先的に選択する)"]:::action
+    a3 --> c5{"⑤:④の効果対象が<br/>デバフ・サゲ効果状態か"}:::cond
+    c5 -->|"Yes"| e5["④による「転倒」状態にする<br/>確率が100%になる"]:::effect --> e4
+    c5 -->|"No"| e4["④:③のアピール対象を<br/>80%の確率で1ターンの間<br/>「転倒」状態にする"]:::effect
+    e4 --> l3{"③のアピール<br/>4回すべて完了?"}:::cond
+    l3 -->|"No、次の回へ"| a3
+    l3 -->|"Yes"| finish(("終了")):::startend
