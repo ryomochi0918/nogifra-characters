@@ -846,6 +846,10 @@ footer {
   font-size: 12px;
 }
 
+footer a {
+  color: inherit;
+}
+
 /* Theme toggle */
 .theme-toggle {
   position: fixed;

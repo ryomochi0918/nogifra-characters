@@ -287,6 +287,10 @@ const MERMAID_THEME_VARS = {
       let viewerChara = null;
       function openViewer(chara) {
         viewerChara = chara;
+        track("view_character", {
+          member: chara.name,
+          character: chara.name + " / " + (chara.costume || chara.title || ""),
+        });
         viewerTitle.textContent = chara.name;
         viewerSubtitle.textContent = chara.title || "";
 
@@ -487,6 +491,11 @@ const MERMAID_THEME_VARS = {
         return allCharacters.find((x) => x._key === key);
       }
 
+      // Google アナリティクスにイベントを送る(gtag は index.html の head で定義)
+      function track(name, params) {
+        if (typeof gtag === "function") gtag("event", name, params);
+      }
+
       // 同じメンバーの別衣装を選んだときに区別できるよう、名前が重なる場合だけ衣装名を添える
       function compareLabel(c, list) {
         const dup = list.filter((x) => x.name === c.name).length > 1;
@@ -595,6 +604,7 @@ const MERMAID_THEME_VARS = {
         closeCompareList();
         compareCharas = [...compareSelected].map(findCharacter).filter(Boolean);
         if (compareCharas.length < 2) return;
+        track("compare_characters", { character_count: compareCharas.length });
 
         const maxSkills = Math.max(
           ...compareCharas.map((c) => (c.skills || []).length),
@@ -783,6 +793,19 @@ const MERMAID_THEME_VARS = {
         saveSearchState();
       }
 
+      // 検索語は入力途中の文字を送らないよう、入力が1.5秒止まってから送る
+      let searchTrackTimer = null;
+      let lastTrackedSearch = "";
+      function trackSearch() {
+        clearTimeout(searchTrackTimer);
+        searchTrackTimer = setTimeout(() => {
+          const term = searchInput.value.trim();
+          if (term === "" || term === lastTrackedSearch) return;
+          lastTrackedSearch = term;
+          track("search", { search_term: term });
+        }, 1500);
+      }
+
       let searchStateRestored = false;
       function saveSearchState() {
         if (!searchStateRestored) return; // 復元前の初期状態で上書きしない
@@ -847,6 +870,7 @@ const MERMAID_THEME_VARS = {
       }
 
       searchInput.addEventListener("input", applyFilter);
+      searchInput.addEventListener("input", trackSearch);
       memberFilter.addEventListener("change", applyFilter);
       genFilter.addEventListener("change", applyFilter);
       gradFilter.checked = storageGet(GRAD_STORAGE_KEY) === "1";
