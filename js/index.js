@@ -17,8 +17,9 @@
       const zoomReset = document.getElementById("zoomReset");
       const zoomLabel = document.getElementById("zoomLabel");
       const expandToggle = document.getElementById("expandToggle");
-      const originalText = document.getElementById("originalText");
-      const originalTextBody = document.getElementById("originalTextBody");
+      const viewerPanels = document.getElementById("viewerPanels");
+      // 詳細を閉じたときに戻すタイトル(キャラ別ページでは生成スクリプトが data-index-title に入れている)
+      const INDEX_TITLE = document.documentElement.dataset.indexTitle || document.title;
 
       function collapseExpanded() {
         diagramSection.classList.remove("expanded");
@@ -77,48 +78,39 @@
         if (e.key === "Escape") legendPanel.style.display = "none";
       });
 
-      async function renderActiveTab(tab) {
-        diagramWrap.style.display = "";
-        zoomBar.style.display = "flex";
+      async function renderDiagram(tab) {
         diagramTarget.className = "loading";
         diagramTarget.textContent = "読み込み中...";
         zoomPct = 100;
         collapseExpanded();
-
-        if (tab.text) {
-          originalText.style.display = "";
-          originalTextBody.textContent = tab.text;
-          originalText.open = false;
-        } else {
-          originalText.style.display = "none";
-        }
-
         if (await renderMermaidInto(diagramTarget, tab.file)) applyZoom();
       }
 
-      function renderPassiveTab(tab) {
-        collapseExpanded();
-        zoomBar.style.display = "none";
-        originalText.style.display = "none";
-        diagramWrap.style.display = "";
-        diagramTarget.className = "";
-
-        diagramTarget.innerHTML = passiveTableHtml(tab.data || []);
-      }
-
+      // タブの切り替え。原文・パッシブ表は全タブ分がHTMLにあるので、表示するものを切り替えるだけ
+      let viewerTabList = [];
       let currentTab = null;
-      function renderTab(tab) {
-        currentTab = tab;
-        if (tab.type === "passive") {
-          renderPassiveTab(tab);
-        } else {
-          renderActiveTab(tab);
-        }
+      function showTab(index) {
+        currentTab = viewerTabList[index];
+        viewerTabs.querySelectorAll(".tab-btn").forEach((b) => {
+          b.classList.toggle("active", Number(b.dataset.index) === index);
+        });
+        viewerPanels.querySelectorAll("[data-tab]").forEach((panel) => {
+          panel.hidden = Number(panel.dataset.tab) !== index;
+          if (panel.tagName === "DETAILS") panel.open = false;
+        });
+        const isPassive = currentTab.type === "passive";
+        diagramSection.hidden = isPassive;
+        if (isPassive) collapseExpanded();
+        else renderDiagram(currentTab);
       }
+      viewerTabs.addEventListener("click", (e) => {
+        const btn = e.target.closest(".tab-btn");
+        if (btn) showTab(Number(btn.dataset.index));
+      });
 
       setupThemeToggle(() => {
         if (viewer.classList.contains("open") && currentTab && currentTab.type !== "passive") {
-          renderTab(currentTab);
+          renderDiagram(currentTab);
         }
         if (compareViewer.classList.contains("open")) renderCompareTab();
       });
@@ -132,55 +124,71 @@
         });
         viewerTitle.textContent = chara.name;
         viewerSubtitle.textContent = chara.title || "";
-        const path = characterPath(chara);
-        viewerActions.hidden = !path;
-        if (path) viewerPageLink.href = path;
-
-        const tabs = [...(chara.skills || [])];
-        if (chara.passive && chara.passive.length > 0) {
-          tabs.push({
-            type: "passive",
-            label: "パッシブ",
-            data: chara.passive,
-          });
-        }
-
-        if (tabs.length > 1) {
-          viewerTabs.style.display = "flex";
-          viewerTabs.innerHTML = tabs
-            .map(
-              (t, i) =>
-                `<button class="tab-btn${i === 0 ? " active" : ""}" data-index="${i}">${t.label}</button>`,
-            )
-            .join("");
-          viewerTabs.querySelectorAll(".tab-btn").forEach((btn) => {
-            btn.addEventListener("click", () => {
-              viewerTabs
-                .querySelectorAll(".tab-btn")
-                .forEach((b) => b.classList.remove("active"));
-              btn.classList.add("active");
-              renderTab(tabs[Number(btn.dataset.index)]);
-            });
-          });
-        } else {
-          viewerTabs.style.display = "none";
-          viewerTabs.innerHTML = "";
-        }
-
+        viewerTabList = viewerTabDefs(chara);
+        viewerTabs.innerHTML = viewerTabsHtml(viewerTabList);
+        viewerTabs.style.display = viewerTabList.length > 1 ? "flex" : "none";
+        viewerPanels.innerHTML = viewerPanelsHtml(viewerTabList);
+        document.title = characterPageTitle(chara);
         viewer.classList.add("open");
-        if (tabs[0]) renderTab(tabs[0]);
+        if (viewerTabList.length > 0) showTab(0);
       }
 
-      const viewerActions = document.getElementById("viewerActions");
-      const viewerPageLink = document.getElementById("viewerPageLink");
-      document.getElementById("viewerCopyLink").addEventListener("click", (e) => {
-        if (viewerChara) copyCharacterLink(viewerChara, e.currentTarget);
-      });
+      // 詳細を開いている間は、URLをそのキャラのページ(c/…/)にする。
+      // 一覧から開いたときは履歴に積むので、ブラウザの「戻る」で閉じられる。
+      // キャラのURLを直接開いたときは履歴に積まず、閉じたらURLを一覧に置き換える
+      let viewerInHistory = false;
 
-      function closeViewer() {
+      function characterFromLocation() {
+        const rel = location.href.split(/[?#]/)[0].slice(SITE_ROOT.length);
+        if (!rel.startsWith("c/")) return null;
+        return allCharacters.find((c) => characterPath(c) === rel) || null;
+      }
+
+      function openViewerFromList(chara) {
+        openViewer(chara);
+        const path = characterPath(chara);
+        if (!path) return;
+        history.pushState({ chara: chara._key }, "", new URL(path, SITE_ROOT));
+        viewerInHistory = true;
+      }
+
+      function hideViewer() {
         viewer.classList.remove("open");
         collapseExpanded();
+        document.title = INDEX_TITLE;
       }
+
+      function closeViewer() {
+        if (!viewer.classList.contains("open")) return;
+        if (viewerInHistory) {
+          viewerInHistory = false;
+          history.back(); // popstate で閉じる
+        } else {
+          hideViewer();
+          if (characterFromLocation()) history.replaceState(null, "", SITE_ROOT);
+        }
+      }
+
+      window.addEventListener("popstate", () => {
+        const c = characterFromLocation();
+        if (c) {
+          openViewer(c);
+          viewerInHistory = Boolean(history.state && history.state.chara);
+        } else {
+          hideViewer();
+          viewerInHistory = false;
+        }
+
+        const charas = compareFromLocation();
+        if (charas) {
+          selectForCompare(charas);
+          openCompare({ fromHistory: true });
+          compareInHistory = Boolean(history.state && history.state.compare);
+        } else {
+          hideCompare();
+          compareInHistory = false;
+        }
+      });
       viewerClose.addEventListener("click", closeViewer);
 
       // 詳細画面から、このキャラを選んだ状態で比較モードに入る
@@ -278,7 +286,7 @@
               return;
             }
             const c = allCharacters.find((x) => x._key === btn.dataset.key);
-            if (c) openViewer(c);
+            if (c) openViewerFromList(c);
           });
         });
       }
@@ -411,9 +419,38 @@
 
       compareToggle.addEventListener("click", () => setCompareMode(!compareMode));
       compareClear.addEventListener("click", () => setCompareMode(false));
-      compareGo.addEventListener("click", openCompare);
+      compareGo.addEventListener("click", () => openCompare());
 
-      function openCompare() {
+      // 比較画面のURL(一覧のURLに比較するキャラを付け足したもの)。更新・共有・「戻る」で閉じるために使う
+      // 例: ?compare=ikeda_teresa/11thbasura5kisei,yoda_yuki/chancewabyoudou
+      function compareUrl(charas) {
+        const slugs = charas.map((c) => (characterPath(c) || "").slice(2, -1)).filter(Boolean);
+        return new URL("?compare=" + slugs.join(","), SITE_ROOT).href;
+      }
+
+      function compareFromLocation() {
+        const param = new URLSearchParams(location.search).get("compare");
+        if (!param) return null;
+        const charas = param
+          .split(",")
+          .map((slug) => allCharacters.find((c) => characterPath(c) === `c/${slug}/`))
+          .filter(Boolean)
+          .slice(0, MAX_COMPARE);
+        return charas.length >= 2 ? charas : null;
+      }
+
+      // URLから開くときは、そのキャラを選んだ状態の比較モードにしてから開く
+      function selectForCompare(charas) {
+        if (!compareMode) setCompareMode(true);
+        compareSelected.clear();
+        charas.forEach((c) => compareSelected.add(c._key));
+        syncCompareSelection();
+      }
+
+      // 一覧から開いたときは履歴に積むので、ブラウザの「戻る」で閉じられる。
+      // URL(更新・共有・戻る/進む)から開いたときは fromHistory を true にして、履歴は触らない
+      let compareInHistory = false;
+      function openCompare({ fromHistory = false } = {}) {
         closeCompareList();
         compareCharas = [...compareSelected].map(findCharacter).filter(Boolean);
         if (compareCharas.length < 2) return;
@@ -452,6 +489,11 @@
         compareViewer.scrollTop = 0;
         comparePanes.scrollLeft = 0;
         renderCompareTab();
+
+        if (!fromHistory) {
+          history.pushState({ compare: true }, "", compareUrl(compareCharas));
+          compareInHistory = true;
+        }
       }
 
       // 狭い画面では列を横スクロールで切り替える。
@@ -572,8 +614,19 @@
         if (svg) svg.style.width = pct + "%";
       });
 
-      function closeCompare() {
+      function hideCompare() {
         compareViewer.classList.remove("open");
+      }
+
+      function closeCompare() {
+        if (!compareViewer.classList.contains("open")) return;
+        if (compareInHistory) {
+          compareInHistory = false;
+          history.back(); // popstate で閉じる
+        } else {
+          hideCompare();
+          if (compareFromLocation()) history.replaceState(null, "", SITE_ROOT);
+        }
       }
       compareClose.addEventListener("click", closeCompare);
       compareViewer.addEventListener("click", (e) => {
@@ -772,6 +825,18 @@
           populateGenFilter(allCharacters);
           restoreSearchState();
           applyFilter();
+
+          // キャラのURL(c/…/)で開かれたら、そのキャラの詳細を開いた状態にする
+          const initial = characterFromLocation();
+          if (initial) openViewer(initial);
+          else if (viewer.classList.contains("open")) hideViewer();
+
+          // 比較画面のURL(?compare=…)で開かれたら、そのキャラを選んで比較画面を開く
+          const initialCompare = compareFromLocation();
+          if (initialCompare) {
+            selectForCompare(initialCompare);
+            openCompare({ fromHistory: true });
+          }
         } catch (e) {
           stage.innerHTML = `<p class="error" style="grid-column:1/-1;">
         キャラクター一覧の読み込みに失敗しました(${e.message})。

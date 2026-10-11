@@ -1,4 +1,4 @@
-// 一覧(index.html)・キャラ別ページ(c/…/index.html)・ページ生成スクリプト(scripts/build-character-pages.js)で共有する処理。
+// 一覧(index.html とその複製のキャラ別ページ c/…/index.html)と、ページ生成スクリプト(scripts/build-character-pages.js)で共有する処理。
 // ブラウザでは通常の<script>として読み込み、ここで定義した関数をグローバルに使う。
 // Node.js からは require して文字列を作る関数だけを使う(DOM・mermaid に触る関数は呼ばない)。
 
@@ -29,8 +29,7 @@ const MERMAID_THEME_VARS = {
   },
 };
 
-// サイトのルート(index.html のある場所)。このファイルの場所から求めるので、
-// キャラ別ページ(c/…/)からでも data/… を正しく読み込める
+// サイトのルート(index.html のある場所)。このファイルの場所から求める
 const SITE_ROOT =
   typeof document !== "undefined" && document.currentScript
     ? new URL("../", document.currentScript.src).href
@@ -122,19 +121,45 @@ function characterPath(c) {
   return m ? `c/${m[1]}/${m[2]}/` : null;
 }
 
-// キャラ別ページのURLをクリップボードにコピーし、押したボタンの表示で知らせる
-function copyCharacterLink(c, button) {
-  const url = new URL(characterPath(c), SITE_ROOT).href;
-  track("copy_link", { character: characterLabel(c) });
-  const label = button.textContent;
-  const done = (text) => {
-    button.textContent = text;
-    setTimeout(() => (button.textContent = label), 1500);
-  };
-  navigator.clipboard
-    .writeText(url)
-    .then(() => done("コピーしました"))
-    .catch(() => window.prompt("このURLをコピーしてください", url));
+const SITE_NAME = "乃木フラ スキルフローチャート図鑑";
+
+// キャラ別ページ(詳細を開いた状態)のタイトル
+function characterPageTitle(c) {
+  return `${c.name}「${c.costume || c.title || ""}」のスキル | ${SITE_NAME}`;
+}
+
+// 詳細画面のタブ(アクティブスキル→パッシブ)
+function viewerTabDefs(c) {
+  const tabs = [...(c.skills || [])];
+  if (c.passive && c.passive.length > 0) {
+    tabs.push({ type: "passive", label: "パッシブ", data: c.passive });
+  }
+  return tabs;
+}
+
+function viewerTabsHtml(tabs) {
+  if (tabs.length < 2) return "";
+  return tabs
+    .map(
+      (t, i) =>
+        `<button type="button" class="tab-btn${i === 0 ? " active" : ""}" data-index="${i}">${escapeHtml(t.label)}</button>`,
+    )
+    .join("");
+}
+
+// タブごとの原文・パッシブ表。表示するのは選んだタブの分だけだが、
+// 検索エンジンに全文が読まれるよう、全タブの分をHTMLに置いておく
+function viewerPanelsHtml(tabs) {
+  return tabs
+    .map((t, i) => {
+      const hidden = i === 0 ? "" : " hidden";
+      if (t.type === "passive") {
+        return `<div class="diagram-wrap" data-tab="${i}"${hidden}>${passiveTableHtml(t.data || [])}</div>`;
+      }
+      if (!t.text) return `<div data-tab="${i}"${hidden}></div>`;
+      return `<details class="original-text" data-tab="${i}"${hidden}><summary>原文を見る</summary><div class="original-text-body">${escapeHtml(t.text)}</div></details>`;
+    })
+    .join("");
 }
 
 // 4期と新4期生、6期の春組・夏組はそれぞれ同一の期として扱う(括弧書きの補足を無視)
@@ -169,7 +194,7 @@ function genBadge(generation) {
   return `<span class="gen-badge ${cls}">${escapeHtml(g)}</span>`;
 }
 
-// フローチャートのズーム範囲(詳細画面・比較画面・キャラ別ページ共通)
+// フローチャートのズーム範囲(詳細画面・比較画面共通)
 const ZOOM_MIN = 50;
 const ZOOM_MAX = 400;
 const ZOOM_STEP = 25;
@@ -248,9 +273,14 @@ function passiveTableHtml(rows) {
 
 if (typeof module !== "undefined" && module.exports) {
   module.exports = {
+    SITE_NAME,
     escapeHtml,
     characterLabel,
     characterPath,
+    characterPageTitle,
+    viewerTabDefs,
+    viewerTabsHtml,
+    viewerPanelsHtml,
     normalizeGeneration,
     attrBadge,
     genBadge,
