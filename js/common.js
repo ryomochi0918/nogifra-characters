@@ -147,6 +147,15 @@ function viewerTabsHtml(tabs) {
     .join("");
 }
 
+// 原文は [①][②]… の番号ごと、および改行ごとに段落を分けて表示する
+function originalTextBodyHtml(text) {
+  return String(text)
+    .split(/\n|(?=\[[①-⑳]\])/)
+    .filter((line) => line.trim() !== "")
+    .map((line) => `<p>${escapeHtml(line)}</p>`)
+    .join("");
+}
+
 // タブごとの原文・パッシブ表。表示するのは選んだタブの分だけだが、
 // 検索エンジンに全文が読まれるよう、全タブの分をHTMLに置いておく
 function viewerPanelsHtml(tabs) {
@@ -157,7 +166,7 @@ function viewerPanelsHtml(tabs) {
         return `<div class="diagram-wrap" data-tab="${i}"${hidden}>${passiveTableHtml(t.data || [])}</div>`;
       }
       if (!t.text) return `<div data-tab="${i}"${hidden}></div>`;
-      return `<details class="original-text" data-tab="${i}"${hidden}><summary>原文を見る</summary><div class="original-text-body">${escapeHtml(t.text)}</div></details>`;
+      return `<details class="original-text" data-tab="${i}"${hidden}><summary>原文を見る</summary><div class="original-text-body">${originalTextBodyHtml(t.text)}</div></details>`;
     })
     .join("");
 }
@@ -281,6 +290,7 @@ if (typeof module !== "undefined" && module.exports) {
     viewerTabDefs,
     viewerTabsHtml,
     viewerPanelsHtml,
+    originalTextBodyHtml,
     normalizeGeneration,
     attrBadge,
     genBadge,

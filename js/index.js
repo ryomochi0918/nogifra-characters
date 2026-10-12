@@ -588,7 +588,7 @@
         ${skill.text ? '<details class="original-text"><summary>原文を見る</summary><div class="original-text-body"></div></details>' : ""}
       `;
           if (skill.text) {
-            body.querySelector(".original-text-body").textContent = skill.text;
+            body.querySelector(".original-text-body").innerHTML = originalTextBodyHtml(skill.text);
           }
           const target = body.querySelector(".diagram-wrap > div");
           renderMermaidInto(target, skill.file).then((ok) => {
