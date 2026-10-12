@@ -1,0 +1,14 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> e1["①実行:このスキル中、<br/>自身のサゲ効果耐性貫通を<br/>+30%する"]:::effect --> e2["②実行:残りHP割合が最も高い<br/>ライバル3名を100%の確率で<br/>1ターンの間「落胆」状態にする<br/>※落胆:行動ができなくなる"]:::effect --> a3
+    a3["③実行:ライバル1名のバフ・アゲ効果を<br/>1つ解除し、自身の残りHPの25%を<br/>固定値として上乗せした<br/>1500%のアピールを行う"]:::action --> c4{"④:③のアピールで<br/>ライバルがリタイア<br/>しなかったか"}:::cond
+    c4 -->|"Yes"| r4{"④の再実行回数が<br/>3回未満か<br/>(再実行は最大3回まで)"}:::cond
+    r4 -->|"Yes、再度③を実行"| a3
+    r4 -->|"No"| c6
+    c4 -->|"No"| c6{"⑥:⑤の各効果前、<br/>このスキルでライバルが<br/>リタイアしたか"}:::cond
+    c6 -->|"Yes"| e6["⑤による「防音」状態の<br/>効果倍率が2倍になる"]:::effect --> e5
+    c6 -->|"No"| e5["⑤実行:残りHP割合が最も低い<br/>味方2名のデバフ・サゲ効果を<br/>2つ解除し、3ターンの間<br/>「防音」状態にする<br/>※防音:会心アピール耐性を<br/>+40〜80%し、受けるアピールが<br/>40〜80%低下する"]:::effect --> finish(("終了")):::startend
