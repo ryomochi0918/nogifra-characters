@@ -850,13 +850,53 @@ footer {
   text-align: center;
   padding: 32px 24px 120px;
   color: var(--ink-dim);
-  font-size: 10.5px;
-  line-height: 1.7;
-  opacity: 0.75;
+  font-size: 12px;
 }
 
 footer a {
   color: inherit;
+}
+
+/* GAの告知はこのページに出しているので、リンクは控えめにする */
+footer .footer-policy {
+  display: block;
+  margin-top: 14px;
+  font-size: 10.5px;
+  opacity: 0.75;
+}
+
+/* Privacy policy page */
+.policy {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 32px 20px 80px;
+  font-size: 14px;
+  line-height: 1.9;
+}
+
+.policy h1 {
+  font-family: var(--serif);
+  font-size: 24px;
+  margin: 16px 0 24px;
+}
+
+.policy h2 {
+  font-size: 16px;
+  margin: 32px 0 8px;
+}
+
+.policy p {
+  margin: 0 0 12px;
+}
+
+.policy a {
+  color: var(--accent);
+}
+
+.policy .policy-back,
+.policy .policy-date {
+  font-size: 13px;
+  color: var(--ink-dim);
 }
 
 /* Theme toggle */

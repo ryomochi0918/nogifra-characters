@@ -69,6 +69,7 @@ python3 -m http.server 8000
 ```
 ./
 ├── index.html                              # カード一覧+ビューアのHTML(<head>にOGP/twitter:cardのメタタグを含む)
+├── privacy.html                            # プライバシーポリシー(アクセス解析・ブラウザに保存する情報・お問い合わせ先)
 ├── css/
 │   └── styles.css                         # スタイル(ライト/ダークモード切り替え対応)
 ├── js/
