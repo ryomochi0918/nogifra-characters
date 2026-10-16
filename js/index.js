@@ -217,12 +217,172 @@
       });
 
       const searchInput = document.getElementById("searchInput");
-      const memberFilter = document.getElementById("memberFilter");
+      const memberCombo = document.getElementById("memberCombo");
+      const memberInput = document.getElementById("memberInput");
+      const memberList = document.getElementById("memberList");
+      const memberClear = document.getElementById("memberClear");
       const genFilter = document.getElementById("genFilter");
       const gradFilter = document.getElementById("gradFilter");
       const attrButtons = document.querySelectorAll(".attr-btn");
       const activeAttrs = new Set();
       let allCharacters = [];
+      let selectedMember = ""; // キャラの絞り込み(空ならすべて)
+
+      // カタカナ・全角英数の違いを無視して比べる(「いけだ」「イケダ」どちらでも池田瑛紗に当たるように)
+      function normalizeForMatch(s) {
+        return String(s || "")
+          .normalize("NFKC")
+          .toLowerCase()
+          .replace(/[ァ-ヶ]/g, (ch) => String.fromCharCode(ch.charCodeAt(0) - 0x60));
+      }
+
+      // 詳細絞り込みのタグ。スキル・パッシブの文面から機械的に拾う(characters.json には持たせない)。
+      // 値は「e:状態名」(スキルでかける効果)・「p:能力名」(パッシブ)の形にする
+      const GRANT_RE = /((?:「[^」]+」(?:状態)?(?:と|または|、))*「[^」]+」)状態に(?:し|する|変更)/g;
+      const OTHER_EFFECTS = [
+        ["HP回復", /HPを[^[\]]*?回復/],
+        ["デバフ・サゲ効果の解除", /デバフ・サゲ効果を[^、[\]]{0,8}解除/],
+        ["バフ・アゲ効果の解除", /(?:^|[^デ])バフ・アゲ効果(?:・特殊状態)?を[^、[\]]{0,8}解除/],
+      ];
+      const PASSIVE_SPECIALS = [
+        ["アドバンススキル", /アドバンススキルが発動/],
+        ["アンコールスキル", /アンコールスキルの発動条件/],
+        ["リタイア時にHP回復", /リタイアした時に/],
+        ["ライブ開始時に状態付与", /^ライブ開始時、.*状態に(?:し|する)/],
+        ["状態のターン数延長", /ターン数を[+＋]\d/],
+      ];
+      const PASSIVE_STAT_RE =
+        /^(?:自身の)?([^をが、「」+＋]+?)(?:を|が)?(?:C\.Rank×[\d.]+アップ|[+＋]?[\d.]+%?アップ|[+＋][\d.]+%?)$/;
+      // パッシブの能力は主要なものを先に並べ、残りは該当数の多い順
+      const MAIN_STATS = ["アピール力", "HP上限", "スマイル", "エフォート", "サンクス", "バイタリティ", "ディフェンス"];
+
+      // 文字起こしで「力」が「カ」になっているものを揃える
+      function fixOcr(s) {
+        return s.replace(/アピールカ(?=ダウン|アップ|$)/g, "アピール力");
+      }
+
+      function passiveLines(c) {
+        const lines = [];
+        (c.passive || []).forEach((p) => lines.push(...[].concat(p.effect || [])));
+        return lines;
+      }
+
+      // 状態名 → ライバルにかけた回数・自身/味方にかけた回数。
+      // ライバルにかける効果は「100%の確率で」と書かれるので、その有無で見分ける
+      function extractGrants(c) {
+        const grants = new Map();
+        const texts = (c.skills || []).map((s) => s.text || "").concat(passiveLines(c));
+        texts.forEach((t) => {
+          for (const m of t.matchAll(GRANT_RE)) {
+            const rival = t.slice(Math.max(0, m.index - 30), m.index).includes("確率で");
+            for (const [, raw] of m[1].matchAll(/「([^」]+)」/g)) {
+              const name = fixOcr(raw);
+              const g = grants.get(name) || { rival: 0, ally: 0 };
+              g[rival ? "rival" : "ally"]++;
+              grants.set(name, g);
+            }
+          }
+        });
+        return grants;
+      }
+
+      function extractPassiveTags(c) {
+        const stats = new Set();
+        const specials = new Set();
+        passiveLines(c).forEach((line) => {
+          PASSIVE_SPECIALS.forEach(([label, re]) => {
+            if (re.test(line)) specials.add(label);
+          });
+          if (line.startsWith("※")) return;
+          const m = line.match(PASSIVE_STAT_RE);
+          if (!m) return;
+          let name = fixOcr(m[1].replace(/^センターと自身の/, ""));
+          // 「転倒&落胆&嫉妬耐性」は状態ごとの耐性に分ける
+          if (name.includes("&")) {
+            name
+              .replace(/耐性$/, "")
+              .split("&")
+              .forEach((n) => stats.add(n + "耐性"));
+          } else {
+            stats.add(name);
+          }
+        });
+        return { stats, specials };
+      }
+
+      // 各キャラに _tags を付け、詳細絞り込みの選択肢(グループ・並び順)を作る
+      let effectOptions = [];
+      let passiveOptions = [];
+      function buildAdvancedTags(list) {
+        const grantTotals = new Map();
+        const otherCount = new Map();
+        const statCount = new Map();
+        const specialCount = new Map();
+        const bump = (map, key, n = 1) => map.set(key, (map.get(key) || 0) + n);
+
+        list.forEach((c) => {
+          const tags = new Set();
+          extractGrants(c).forEach((g, name) => {
+            tags.add("e:" + name);
+            const t = grantTotals.get(name) || { rival: 0, ally: 0, chars: 0 };
+            t.rival += g.rival;
+            t.ally += g.ally;
+            t.chars++;
+            grantTotals.set(name, t);
+          });
+          const skillText = (c.skills || []).map((s) => s.text || "").join("\n");
+          OTHER_EFFECTS.forEach(([label, re]) => {
+            if (re.test(skillText)) {
+              tags.add("e:" + label);
+              bump(otherCount, label);
+            }
+          });
+          const { stats, specials } = extractPassiveTags(c);
+          stats.forEach((s) => {
+            tags.add("p:" + s);
+            bump(statCount, s);
+          });
+          specials.forEach((s) => {
+            tags.add("p:" + s);
+            bump(specialCount, s);
+          });
+          c._tags = tags;
+        });
+
+        const byCount = (a, b) => b.total - a.total || a.label.localeCompare(b.label, "ja");
+        const grantOpts = [...grantTotals].map(([name, t]) => ({
+          value: "e:" + name,
+          label: name,
+          // かけた回数の多い方の相手に分類する
+          group: t.rival > t.ally ? "ライバルにかける効果" : "自身・味方にかける効果",
+          total: t.chars,
+        }));
+        effectOptions = [
+          ...grantOpts.filter((o) => o.group === "自身・味方にかける効果").sort(byCount),
+          ...grantOpts.filter((o) => o.group === "ライバルにかける効果").sort(byCount),
+          ...OTHER_EFFECTS.filter(([label]) => otherCount.has(label)).map(([label]) => ({
+            value: "e:" + label,
+            label,
+            group: "その他",
+            total: otherCount.get(label),
+          })),
+        ];
+        const mainRank = (label) => {
+          const i = MAIN_STATS.indexOf(label);
+          return i === -1 ? MAIN_STATS.length : i;
+        };
+        passiveOptions = [
+          ...[...statCount]
+            .map(([label, total]) => ({ value: "p:" + label, label, group: "上がる能力", total }))
+            .sort((a, b) => mainRank(a.label) - mainRank(b.label) || byCount(a, b)),
+          ...PASSIVE_SPECIALS.filter(([label]) => specialCount.has(label)).map(([label]) => ({
+            value: "p:" + label,
+            label,
+            group: "特殊な効果",
+            total: specialCount.get(label),
+          })),
+        ];
+      }
 
       function buildSearchBlob(c) {
         // 期は「◯期」だけを検索対象にする(新4期生・春組/夏組などの括弧書きは含めない)
@@ -655,7 +815,9 @@
             );
           }
         }
-        renderCards(sortCharacters(filterByMemberAndAttr(filtered)));
+        const base = filterByMemberAndAttr(filtered);
+        renderAdvancedOptions(base);
+        renderCards(sortCharacters(filterByAdvanced(base)));
         saveSearchState();
       }
 
@@ -680,9 +842,12 @@
             SEARCH_STATE_KEY,
             JSON.stringify({
               query: searchInput.value,
-              member: memberFilter.value,
+              member: selectedMember,
               gen: genFilter.value,
               attrs: [...activeAttrs],
+              adv: [...advSelected],
+              advMode,
+              advOpen: !advPanel.hidden,
               compareMode,
               compareSelected: [...compareSelected],
             }),
@@ -696,9 +861,13 @@
         searchInput.value = state.query || "";
         const hasOption = (select, v) =>
           [...select.options].some((o) => o.value === v);
-        if (state.member && hasOption(memberFilter, state.member)) {
-          memberFilter.value = state.member;
+        if (state.member && memberOptions.some((o) => o.name === state.member)) {
+          setMember(state.member);
         }
+        const advValues = new Set([...effectOptions, ...passiveOptions].map((o) => o.value));
+        (state.adv || []).filter((v) => advValues.has(v)).forEach((v) => advSelected.add(v));
+        setAdvMode(state.advMode === "any" ? "any" : "all");
+        setAdvOpen(Boolean(state.advOpen));
         if (state.gen && hasOption(genFilter, state.gen)) {
           genFilter.value = state.gen;
         }
@@ -718,11 +887,12 @@
 
       function filterByMemberAndAttr(list) {
         let result = list;
-        if (!gradFilter.checked) {
+        // キャラを名指しで選んだときは、卒業済みでも表示する
+        if (!gradFilter.checked && !selectedMember) {
           result = result.filter((c) => !c._graduated);
         }
-        if (memberFilter.value) {
-          result = result.filter((c) => c.name === memberFilter.value);
+        if (selectedMember) {
+          result = result.filter((c) => c.name === selectedMember);
         }
         if (genFilter.value) {
           result = result.filter(
@@ -735,9 +905,250 @@
         return result;
       }
 
+      // 詳細絞り込み
+      const advToggle = document.getElementById("advToggle");
+      const advCount = document.getElementById("advCount");
+      const advPanel = document.getElementById("advPanel");
+      const advSelectedBox = document.getElementById("advSelected");
+      const advModeButtons = document.querySelectorAll(".adv-mode-btn");
+      const effectSearch = document.getElementById("effectSearch");
+      const passiveSearch = document.getElementById("passiveSearch");
+      const effectOptionsBox = document.getElementById("effectOptions");
+      const passiveOptionsBox = document.getElementById("passiveOptions");
+      const toolbar = document.querySelector(".toolbar");
+      const advSelected = new Set();
+      let advMode = "all"; // all: すべて満たす / any: どれか1つ
+
+      function hasAdvanced(c, mode, values) {
+        return mode === "any"
+          ? values.some((v) => c._tags.has(v))
+          : values.every((v) => c._tags.has(v));
+      }
+
+      function filterByAdvanced(list) {
+        if (advSelected.size === 0) return list;
+        const values = [...advSelected];
+        return list.filter((c) => hasAdvanced(c, advMode, values));
+      }
+
+      function advLabel(value) {
+        return value.slice(2);
+      }
+
+      // 選択肢の横の数字は、今の条件にその選択肢を足したときの件数
+      // (「すべて満たす」なら選択中の条件との重なり、「どれか1つ」ならその選択肢単独の件数)
+      function renderOptionList(box, options, query, base) {
+        const q = normalizeForMatch(query.trim());
+        const selectedValues = [...advSelected];
+        const narrowed =
+          advMode === "all" && selectedValues.length > 0
+            ? base.filter((c) => hasAdvanced(c, "all", selectedValues))
+            : base;
+        let html = "";
+        let group = null;
+        let shown = 0;
+        options.forEach((o) => {
+          if (q && !normalizeForMatch(o.label).includes(q)) return;
+          if (o.group !== group) {
+            group = o.group;
+            html += `<p class="adv-group">${escapeHtml(group)}</p>`;
+          }
+          const on = advSelected.has(o.value);
+          const count = narrowed.filter((c) => c._tags.has(o.value)).length;
+          html += `<button type="button" class="adv-option${on ? " active" : ""}${count === 0 && !on ? " empty" : ""}" data-value="${escapeHtml(o.value)}" aria-pressed="${on}">${escapeHtml(o.label)}<span class="adv-option-count">${count}</span></button>`;
+          shown++;
+        });
+        box.innerHTML = shown > 0 ? html : '<p class="adv-none">該当する候補がありません。</p>';
+      }
+
+      let lastAdvBase = [];
+      function renderAdvancedOptions(base) {
+        lastAdvBase = base;
+        advCount.hidden = advSelected.size === 0;
+        advCount.textContent = advSelected.size;
+        advToggle.classList.toggle("has-selection", advSelected.size > 0);
+        advSelectedBox.innerHTML = [...advSelected]
+          .map(
+            (v) =>
+              `<button type="button" class="adv-chip" data-value="${escapeHtml(v)}" aria-label="${escapeHtml(advLabel(v))}の条件を外す">${escapeHtml(advLabel(v))}<span aria-hidden="true">×</span></button>`,
+          )
+          .join("");
+        advSelectedBox.hidden = advSelected.size === 0;
+        if (advPanel.hidden) return; // 閉じている間は選択肢を描かない
+        renderOptionList(effectOptionsBox, effectOptions, effectSearch.value, base);
+        renderOptionList(passiveOptionsBox, passiveOptions, passiveSearch.value, base);
+      }
+
+      function toggleAdvanced(value) {
+        if (advSelected.has(value)) {
+          advSelected.delete(value);
+        } else {
+          advSelected.add(value);
+          track("advanced_filter", { filter_value: advLabel(value) });
+        }
+        applyFilter();
+      }
+
+      function setAdvMode(mode) {
+        advMode = mode;
+        advModeButtons.forEach((b) => b.classList.toggle("active", b.dataset.mode === mode));
+      }
+
+      function setAdvOpen(open) {
+        advPanel.hidden = !open;
+        advToggle.setAttribute("aria-expanded", String(open));
+        advToggle.classList.toggle("open", open);
+        toolbar.classList.toggle("adv-open", open);
+      }
+
+      advToggle.addEventListener("click", () => {
+        setAdvOpen(advPanel.hidden);
+        applyFilter();
+      });
+      document.getElementById("advClose").addEventListener("click", () => {
+        setAdvOpen(false);
+        saveSearchState();
+        advToggle.focus();
+      });
+      document.getElementById("advReset").addEventListener("click", () => {
+        advSelected.clear();
+        effectSearch.value = "";
+        passiveSearch.value = "";
+        applyFilter();
+      });
+      advModeButtons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          setAdvMode(btn.dataset.mode);
+          applyFilter();
+        });
+      });
+      [effectOptionsBox, passiveOptionsBox, advSelectedBox].forEach((box) => {
+        box.addEventListener("click", (e) => {
+          const btn = e.target.closest("[data-value]");
+          if (btn) toggleAdvanced(btn.dataset.value);
+        });
+      });
+      effectSearch.addEventListener("input", () =>
+        renderOptionList(effectOptionsBox, effectOptions, effectSearch.value, lastAdvBase),
+      );
+      passiveSearch.addEventListener("input", () =>
+        renderOptionList(passiveOptionsBox, passiveOptions, passiveSearch.value, lastAdvBase),
+      );
+
+      // キャラの絞り込み: 入力欄に名前(ひらがな・カタカナの読みでも可)を打つと候補が絞られるプルダウン
+      let memberOptions = []; // { name, reading }
+      let memberMatches = [];
+      let memberActive = -1;
+
+      function setMember(name) {
+        selectedMember = name;
+        memberInput.value = name;
+        memberClear.hidden = !name;
+        memberCombo.classList.toggle("has-value", Boolean(name));
+      }
+
+      function renderMemberList(query) {
+        const q = normalizeForMatch(query.trim());
+        memberMatches = [{ name: "", reading: "" }].concat(
+          memberOptions.filter(
+            (o) =>
+              !q ||
+              normalizeForMatch(o.name).includes(q) ||
+              normalizeForMatch(o.reading).includes(q),
+          ),
+        );
+        // 入力中は最初の候補(「すべて」の次)を選んだ状態にして、Enterで決められるようにする
+        memberActive = q && memberMatches.length > 1 ? 1 : -1;
+        paintMemberList();
+      }
+
+      function paintMemberList() {
+        memberList.innerHTML =
+          memberMatches
+            .map((o, i) => {
+              const label = o.name || "すべて";
+              const selected = o.name === selectedMember;
+              const grad = o.graduated ? '<span class="combo-note">卒業</span>' : "";
+              return `<li class="combo-option${i === memberActive ? " active" : ""}${selected ? " selected" : ""}" id="memberOpt${i}" role="option" aria-selected="${selected}" data-index="${i}">${escapeHtml(label)}${grad}</li>`;
+            })
+            .join("") +
+          (memberMatches.length === 1 ? '<li class="combo-empty">該当するキャラがいません</li>' : "");
+        if (memberActive >= 0) {
+          memberInput.setAttribute("aria-activedescendant", "memberOpt" + memberActive);
+          const el = memberList.children[memberActive];
+          if (el) el.scrollIntoView({ block: "nearest" });
+        } else {
+          memberInput.removeAttribute("aria-activedescendant");
+        }
+      }
+
+      function openMemberList() {
+        if (!memberList.hidden) return;
+        memberList.hidden = false;
+        memberInput.setAttribute("aria-expanded", "true");
+        renderMemberList(""); // 開いた直後は全員を出す
+      }
+
+      function closeMemberList() {
+        if (memberList.hidden) return;
+        memberList.hidden = true;
+        memberInput.setAttribute("aria-expanded", "false");
+        memberInput.removeAttribute("aria-activedescendant");
+        memberInput.value = selectedMember; // 決めずに離れたら、選択中の名前に戻す
+      }
+
+      function pickMember(index) {
+        const o = memberMatches[index];
+        if (!o) return;
+        setMember(o.name);
+        closeMemberList();
+        applyFilter();
+      }
+
+      memberInput.addEventListener("focus", () => {
+        openMemberList();
+        memberInput.select();
+      });
+      memberInput.addEventListener("click", openMemberList);
+      memberInput.addEventListener("input", () => {
+        openMemberList();
+        renderMemberList(memberInput.value);
+      });
+      memberInput.addEventListener("keydown", (e) => {
+        if (e.isComposing || e.keyCode === 229) return; // 日本語入力の変換中のEnter等は無視する
+        if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+          e.preventDefault();
+          openMemberList();
+          const step = e.key === "ArrowDown" ? 1 : -1;
+          memberActive = Math.max(0, Math.min(memberMatches.length - 1, memberActive + step));
+          paintMemberList();
+        } else if (e.key === "Enter") {
+          if (memberList.hidden) return;
+          e.preventDefault();
+          if (memberActive >= 0) pickMember(memberActive);
+        } else if (e.key === "Escape") {
+          if (memberList.hidden) return;
+          e.stopPropagation();
+          closeMemberList();
+        } else if (e.key === "Tab") {
+          closeMemberList();
+        }
+      });
+      // 候補を押したときに入力欄のフォーカスが外れて一覧が閉じないよう、mousedownでは何もしない
+      memberList.addEventListener("mousedown", (e) => e.preventDefault());
+      memberList.addEventListener("click", (e) => {
+        const li = e.target.closest(".combo-option");
+        if (li) pickMember(Number(li.dataset.index));
+      });
+      memberInput.addEventListener("blur", closeMemberList);
+      memberClear.addEventListener("click", () => {
+        setMember("");
+        closeMemberList();
+        applyFilter();
+      });
+
       searchInput.addEventListener("input", applyFilter);
       searchInput.addEventListener("input", trackSearch);
-      memberFilter.addEventListener("change", applyFilter);
       genFilter.addEventListener("change", applyFilter);
       gradFilter.checked = storageGet(GRAD_STORAGE_KEY) === "1";
       gradFilter.addEventListener("change", () => {
@@ -763,17 +1174,13 @@
         list.forEach((c) => {
           if (!seen.has(c.name)) seen.set(c.name, c.nameReading || c.name);
         });
-        const members = [...seen.entries()].sort((a, b) =>
-          a[1].localeCompare(b[1], "ja"),
-        );
-        memberFilter.innerHTML =
-          '<option value="">キャラ: すべて</option>' +
-          members
-            .map(
-              ([name]) =>
-                `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`,
-            )
-            .join("");
+        memberOptions = [...seen.entries()]
+          .sort((a, b) => a[1].localeCompare(b[1], "ja"))
+          .map(([name, reading]) => ({
+            name,
+            reading,
+            graduated: list.some((c) => c.name === name && c._graduated),
+          }));
       }
 
       function populateGenFilter(list) {
@@ -821,6 +1228,7 @@
             _graduated: graduatedNames.has(c.name),
           }));
 
+          buildAdvancedTags(allCharacters);
           populateMemberFilter(allCharacters);
           populateGenFilter(allCharacters);
           restoreSearchState();
