@@ -310,6 +310,16 @@
         return { stats, specials };
       }
 
+      // ゲーム内ヘルプの状態一覧(区分の見出し)。並びもヘルプの順
+      const STATUS_GROUP_LABEL = {
+        バフ: "バフ",
+        デバフ: "デバフ",
+        アゲ: "アゲ効果",
+        サゲ: "サゲ効果",
+        特殊効果: "特殊効果",
+      };
+      let statusEffects = []; // data/status_effects.json の effects
+
       // 各キャラに _tags を付け、詳細絞り込みの選択肢(グループ・並び順)を作る
       let effectOptions = [];
       let passiveOptions = [];
@@ -350,16 +360,30 @@
         });
 
         const byCount = (a, b) => b.total - a.total || a.label.localeCompare(b.label, "ja");
-        const grantOpts = [...grantTotals].map(([name, t]) => ({
-          value: "e:" + name,
-          label: name,
-          // かけた回数の多い方の相手に分類する
-          group: t.rival > t.ally ? "ライバルにかける効果" : "自身・味方にかける効果",
-          total: t.chars,
-        }));
+        // 区分はゲーム内ヘルプの一覧(data/status_effects.json)に従う。
+        // ヘルプに無い名前(と、一覧を読み込めなかったとき)は、かけた回数の多い方の相手で分ける
+        const helpByName = new Map(statusEffects.map((e) => [e.name, e]));
+        const grantOpts = [...grantTotals].map(([name, t]) => {
+          const help = helpByName.get(name);
+          return {
+            value: "e:" + name,
+            label: name,
+            group: help
+              ? STATUS_GROUP_LABEL[help.category] || help.category
+              : t.rival > t.ally
+                ? "ライバルにかける効果"
+                : "自身・味方にかける効果",
+            total: t.chars,
+            alias: help ? help.alias || "" : "",
+            description: help ? help.description : "",
+          };
+        });
+        const groupOrder = [...Object.values(STATUS_GROUP_LABEL), "自身・味方にかける効果", "ライバルにかける効果"];
+        grantOpts.forEach((o) => {
+          if (!groupOrder.includes(o.group)) groupOrder.push(o.group); // ヘルプに新しい区分が増えたとき
+        });
         effectOptions = [
-          ...grantOpts.filter((o) => o.group === "自身・味方にかける効果").sort(byCount),
-          ...grantOpts.filter((o) => o.group === "ライバルにかける効果").sort(byCount),
+          ...groupOrder.flatMap((g) => grantOpts.filter((o) => o.group === g).sort(byCount)),
           ...OTHER_EFFECTS.filter(([label]) => otherCount.has(label)).map(([label]) => ({
             value: "e:" + label,
             label,
@@ -948,14 +972,16 @@
         let group = null;
         let shown = 0;
         options.forEach((o) => {
-          if (q && !normalizeForMatch(o.label).includes(q)) return;
+          // 「リフレイン」のようなヘルプのカタカナ名でも探せるようにする
+          if (q && !normalizeForMatch(o.label + " " + (o.alias || "")).includes(q)) return;
           if (o.group !== group) {
             group = o.group;
             html += `<p class="adv-group">${escapeHtml(group)}</p>`;
           }
           const on = advSelected.has(o.value);
           const count = narrowed.filter((c) => c._tags.has(o.value)).length;
-          html += `<button type="button" class="adv-option${on ? " active" : ""}${count === 0 && !on ? " empty" : ""}" data-value="${escapeHtml(o.value)}" aria-pressed="${on}">${escapeHtml(o.label)}<span class="adv-option-count">${count}</span></button>`;
+          const tip = o.description ? ` title="${escapeHtml((o.alias ? `${o.label}(${o.alias})\n` : "") + o.description)}"` : "";
+          html += `<button type="button" class="adv-option${on ? " active" : ""}${count === 0 && !on ? " empty" : ""}" data-value="${escapeHtml(o.value)}" aria-pressed="${on}"${tip}>${escapeHtml(o.label)}<span class="adv-option-count">${count}</span></button>`;
           shown++;
         });
         box.innerHTML = shown > 0 ? html : '<p class="adv-none">該当する候補がありません。</p>';
@@ -1204,10 +1230,16 @@
 
       async function init() {
         try {
-          const [charRes, readingRes] = await Promise.all([
+          // 状態一覧は詳細絞り込みの区分分けにだけ使う。読めなくても従来の判定で動くので、失敗は握りつぶす
+          const statusPromise = fetch("data/status_effects.json")
+            .then((r) => (r.ok ? r.json() : null))
+            .catch(() => null);
+          const [charRes, readingRes, statusData] = await Promise.all([
             fetch("data/characters.json"),
             fetch("data/nogizaka46_members_reading.json"),
+            statusPromise,
           ]);
+          statusEffects = (statusData && statusData.effects) || [];
           if (!charRes.ok) throw new Error("HTTP " + charRes.status);
           const characters = await charRes.json();
 
