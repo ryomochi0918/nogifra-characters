@@ -237,19 +237,12 @@
       }
 
       // 詳細絞り込みのタグ。スキル・パッシブの文面から機械的に拾う(characters.json には持たせない)。
-      // 値は「e:状態名」(スキルでかける効果)・「p:能力名」(パッシブ)の形にする
+      // 値は「e:状態名」(効果一覧)・「p:能力名」(パッシブ)の形にする
       const GRANT_RE = /((?:「[^」]+」(?:状態)?(?:と|または|、))*「[^」]+」)状態に(?:し|する|変更)/g;
       const OTHER_EFFECTS = [
         ["HP回復", /HPを[^[\]]*?回復/],
         ["デバフ・サゲ効果の解除", /デバフ・サゲ効果を[^、[\]]{0,8}解除/],
         ["バフ・アゲ効果の解除", /(?:^|[^デ])バフ・アゲ効果(?:・特殊状態)?を[^、[\]]{0,8}解除/],
-      ];
-      const PASSIVE_SPECIALS = [
-        ["アドバンススキル", /アドバンススキルが発動/],
-        ["アンコールスキル", /アンコールスキルの発動条件/],
-        ["リタイア時にHP回復", /リタイアした時に/],
-        ["ライブ開始時に状態付与", /^ライブ開始時、.*状態に(?:し|する)/],
-        ["状態のターン数延長", /ターン数を[+＋]\d/],
       ];
       const PASSIVE_STAT_RE =
         /^(?:自身の)?([^をが、「」+＋]+?)(?:を|が)?(?:C\.Rank×[\d.]+アップ|[+＋]?[\d.]+%?アップ|[+＋][\d.]+%?)$/;
@@ -286,13 +279,10 @@
         return grants;
       }
 
-      function extractPassiveTags(c) {
+      // パッシブで上がる能力の名前
+      function extractPassiveStats(c) {
         const stats = new Set();
-        const specials = new Set();
         passiveLines(c).forEach((line) => {
-          PASSIVE_SPECIALS.forEach(([label, re]) => {
-            if (re.test(line)) specials.add(label);
-          });
           if (line.startsWith("※")) return;
           const m = line.match(PASSIVE_STAT_RE);
           if (!m) return;
@@ -307,7 +297,7 @@
             stats.add(name);
           }
         });
-        return { stats, specials };
+        return stats;
       }
 
       // ゲーム内ヘルプの状態一覧(区分の見出し)。並びもヘルプの順
@@ -327,7 +317,6 @@
         const grantTotals = new Map();
         const otherCount = new Map();
         const statCount = new Map();
-        const specialCount = new Map();
         const bump = (map, key, n = 1) => map.set(key, (map.get(key) || 0) + n);
 
         list.forEach((c) => {
@@ -347,14 +336,9 @@
               bump(otherCount, label);
             }
           });
-          const { stats, specials } = extractPassiveTags(c);
-          stats.forEach((s) => {
+          extractPassiveStats(c).forEach((s) => {
             tags.add("p:" + s);
             bump(statCount, s);
-          });
-          specials.forEach((s) => {
-            tags.add("p:" + s);
-            bump(specialCount, s);
           });
           c._tags = tags;
         });
@@ -395,17 +379,9 @@
           const i = MAIN_STATS.indexOf(label);
           return i === -1 ? MAIN_STATS.length : i;
         };
-        passiveOptions = [
-          ...[...statCount]
-            .map(([label, total]) => ({ value: "p:" + label, label, group: "上がる能力", total }))
-            .sort((a, b) => mainRank(a.label) - mainRank(b.label) || byCount(a, b)),
-          ...PASSIVE_SPECIALS.filter(([label]) => specialCount.has(label)).map(([label]) => ({
-            value: "p:" + label,
-            label,
-            group: "特殊な効果",
-            total: specialCount.get(label),
-          })),
-        ];
+        passiveOptions = [...statCount]
+          .map(([label, total]) => ({ value: "p:" + label, label, group: "上がる能力", total }))
+          .sort((a, b) => mainRank(a.label) - mainRank(b.label) || byCount(a, b));
       }
 
       function buildSearchBlob(c) {
