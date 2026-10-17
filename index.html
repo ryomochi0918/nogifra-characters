@@ -68,7 +68,7 @@
       href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="css/styles.css?v=20261017" />
+    <link rel="stylesheet" href="css/styles.css?v=20261017-2" />
   </head>
 
   <body>
@@ -150,62 +150,73 @@
           type="button"
           class="tab-btn adv-toggle"
           id="advToggle"
+          aria-haspopup="dialog"
           aria-expanded="false"
           aria-controls="advPanel"
         >
           詳細絞り込み<span class="adv-count" id="advCount" hidden></span>
-          <span class="adv-caret" aria-hidden="true">▾</span>
         </button>
       </div>
+    </div>
 
-      <div class="adv-panel" id="advPanel" hidden>
-        <div class="adv-inner">
-          <div class="adv-head">
-            <div class="adv-mode" role="group" aria-label="条件の組み合わせ">
-              <span>選んだ条件を</span>
-              <button type="button" class="tab-btn adv-mode-btn active" data-mode="all">
-                すべて満たす
-              </button>
-              <button type="button" class="tab-btn adv-mode-btn" data-mode="any">
-                どれか1つ
-              </button>
-            </div>
-            <button type="button" class="adv-reset" id="advReset">条件をクリア</button>
+    <!-- 詳細絞り込み(ボタンで開くオーバーレイ) -->
+    <div class="adv-overlay" id="advPanel" hidden>
+      <div
+        class="adv-inner"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="advTitle"
+        tabindex="-1"
+      >
+        <div class="adv-title-row">
+          <h2 id="advTitle">詳細絞り込み</h2>
+          <button type="button" class="adv-x" id="advX" aria-label="閉じる">✕</button>
+        </div>
+        <div class="adv-head">
+          <div class="adv-mode" role="group" aria-label="条件の組み合わせ">
+            <span>選んだ条件を</span>
+            <button type="button" class="tab-btn adv-mode-btn active" data-mode="all">
+              すべて満たす
+            </button>
+            <button type="button" class="tab-btn adv-mode-btn" data-mode="any">
+              どれか1つ
+            </button>
           </div>
-          <div class="adv-selected" id="advSelected"></div>
-          <div class="adv-grid">
-            <section class="adv-section">
-              <h3>効果一覧</h3>
-              <p class="adv-note">
-                アクティブスキル・パッシブで「◯◯」状態にするキャラ
-              </p>
-              <input
-                type="text"
-                class="adv-search"
-                id="effectSearch"
-                placeholder="効果名で絞り込み(例: 心労、ダウン)"
-                autocomplete="off"
-                aria-label="効果名で候補を絞り込み"
-              />
-              <div class="adv-options" id="effectOptions"></div>
-            </section>
-            <section class="adv-section">
-              <h3>パッシブ</h3>
-              <p class="adv-note">パッシブで上がる能力</p>
-              <input
-                type="text"
-                class="adv-search"
-                id="passiveSearch"
-                placeholder="能力名で絞り込み(例: スマイル)"
-                autocomplete="off"
-                aria-label="パッシブの能力名で候補を絞り込み"
-              />
-              <div class="adv-options" id="passiveOptions"></div>
-            </section>
-          </div>
-          <div class="adv-foot">
-            <button type="button" class="adv-close" id="advClose">閉じる ▴</button>
-          </div>
+          <button type="button" class="adv-reset" id="advReset">条件をクリア</button>
+        </div>
+        <div class="adv-selected" id="advSelected"></div>
+        <div class="adv-grid">
+          <section class="adv-section">
+            <h3>効果一覧</h3>
+            <p class="adv-note">
+              アクティブスキル・パッシブで「◯◯」状態にするキャラ
+            </p>
+            <input
+              type="text"
+              class="adv-search"
+              id="effectSearch"
+              placeholder="効果名で絞り込み(例: 心労、ダウン)"
+              autocomplete="off"
+              aria-label="効果名で候補を絞り込み"
+            />
+            <div class="adv-options" id="effectOptions"></div>
+          </section>
+          <section class="adv-section">
+            <h3>パッシブ</h3>
+            <p class="adv-note">パッシブで上がる能力</p>
+            <input
+              type="text"
+              class="adv-search"
+              id="passiveSearch"
+              placeholder="能力名で絞り込み(例: スマイル)"
+              autocomplete="off"
+              aria-label="パッシブの能力名で候補を絞り込み"
+            />
+            <div class="adv-options" id="passiveOptions"></div>
+          </section>
+        </div>
+        <div class="adv-foot">
+          <button type="button" class="adv-apply" id="advClose">結果を見る</button>
         </div>
       </div>
     </div>
@@ -376,7 +387,7 @@
     </button>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js"></script>
-    <script src="js/common.js?v=20261017"></script>
-    <script src="js/index.js?v=20261017"></script>
+    <script src="js/common.js?v=20261017-2"></script>
+    <script src="js/index.js?v=20261017-2"></script>
   </body>
 </html>

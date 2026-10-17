@@ -847,7 +847,6 @@
               attrs: [...activeAttrs],
               adv: [...advSelected],
               advMode,
-              advOpen: !advPanel.hidden,
               compareMode,
               compareSelected: [...compareSelected],
             }),
@@ -867,7 +866,6 @@
         const advValues = new Set([...effectOptions, ...passiveOptions].map((o) => o.value));
         (state.adv || []).filter((v) => advValues.has(v)).forEach((v) => advSelected.add(v));
         setAdvMode(state.advMode === "any" ? "any" : "all");
-        setAdvOpen(Boolean(state.advOpen));
         if (state.gen && hasOption(genFilter, state.gen)) {
           genFilter.value = state.gen;
         }
@@ -915,7 +913,8 @@
       const passiveSearch = document.getElementById("passiveSearch");
       const effectOptionsBox = document.getElementById("effectOptions");
       const passiveOptionsBox = document.getElementById("passiveOptions");
-      const toolbar = document.querySelector(".toolbar");
+      const advInner = advPanel.querySelector(".adv-inner");
+      const advApply = document.getElementById("advClose");
       const advSelected = new Set();
       let advMode = "all"; // all: すべて満たす / any: どれか1つ
 
@@ -977,6 +976,7 @@
           .join("");
         advSelectedBox.hidden = advSelected.size === 0;
         if (advPanel.hidden) return; // 閉じている間は選択肢を描かない
+        advApply.textContent = `${filterByAdvanced(base).length}件を表示`;
         renderOptionList(effectOptionsBox, effectOptions, effectSearch.value, base);
         renderOptionList(passiveOptionsBox, passiveOptions, passiveSearch.value, base);
       }
@@ -996,22 +996,37 @@
         advModeButtons.forEach((b) => b.classList.toggle("active", b.dataset.mode === mode));
       }
 
+      // 詳細絞り込みは一覧の上に重ねて開く。開いている間は後ろの一覧をスクロールさせない
       function setAdvOpen(open) {
         advPanel.hidden = !open;
         advToggle.setAttribute("aria-expanded", String(open));
         advToggle.classList.toggle("open", open);
-        toolbar.classList.toggle("adv-open", open);
+        document.body.classList.toggle("adv-locked", open);
+        if (open) {
+          applyFilter(); // 閉じている間は描いていない選択肢を描く
+          advInner.scrollTop = 0;
+          advInner.focus({ preventScroll: true }); // スマホでキーボードが出ないよう、入力欄ではなく枠にフォーカスする
+        } else {
+          advToggle.focus({ preventScroll: true });
+        }
       }
 
-      advToggle.addEventListener("click", () => {
-        setAdvOpen(advPanel.hidden);
-        applyFilter();
+      advToggle.addEventListener("click", () => setAdvOpen(true));
+      advApply.addEventListener("click", () => setAdvOpen(false));
+      document.getElementById("advX").addEventListener("click", () => setAdvOpen(false));
+      advPanel.addEventListener("click", (e) => {
+        if (e.target === advPanel) setAdvOpen(false); // 枠の外(背景)を押したら閉じる
       });
-      document.getElementById("advClose").addEventListener("click", () => {
-        setAdvOpen(false);
-        saveSearchState();
-        advToggle.focus();
-      });
+      // ほかの画面より先にEscを受け取って、詳細絞り込みだけを閉じる
+      document.addEventListener(
+        "keydown",
+        (e) => {
+          if (e.key !== "Escape" || advPanel.hidden) return;
+          e.stopPropagation();
+          setAdvOpen(false);
+        },
+        true,
+      );
       document.getElementById("advReset").addEventListener("click", () => {
         advSelected.clear();
         effectSearch.value = "";
