@@ -45,7 +45,22 @@
       function gtag() {
         dataLayer.push(arguments);
       }
-      if (location.hostname === "ryomochi0918.github.io") {
+      // 運営者の端末は ?notrack=1 を1回開くとこの端末では計測しない(?notrack=0 で元に戻す)
+      let gaOptOut = false;
+      try {
+        const params = new URLSearchParams(location.search);
+        const notrack = params.get("notrack");
+        if (notrack === "1") localStorage.setItem("nogifra-notrack", "1");
+        if (notrack === "0") localStorage.removeItem("nogifra-notrack");
+        if (notrack !== null) {
+          params.delete("notrack");
+          const query = params.toString();
+          history.replaceState(history.state, "", location.pathname + (query ? "?" + query : "") + location.hash);
+          alert(notrack === "1" ? "この端末ではアクセス解析を止めました。" : "この端末でのアクセス解析を元に戻しました。");
+        }
+        gaOptOut = localStorage.getItem("nogifra-notrack") === "1";
+      } catch (e) {}
+      if (location.hostname === "ryomochi0918.github.io" && !gaOptOut) {
         const gaScript = document.createElement("script");
         gaScript.async = true;
         gaScript.src = "https://www.googletagmanager.com/gtag/js?id=G-F8JG65PHR5";
