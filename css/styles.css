@@ -768,6 +768,51 @@ body.adv-locked {
   margin: 0 0 12px;
 }
 
+/* カード上端の属性色の帯(角丸はcardのoverflow: hiddenで切り抜く) */
+.card::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--card-attr, transparent);
+  pointer-events: none;
+}
+
+.card[data-attr="努力"] {
+  --card-attr: var(--attr-doryoku);
+}
+
+.card[data-attr="感謝"] {
+  --card-attr: var(--attr-kansha);
+}
+
+.card[data-attr="笑顔"] {
+  --card-attr: var(--attr-egao);
+}
+
+.card-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.card-title {
+  min-width: 0;
+}
+
+/* ペンライトカラー2色を斜めに塗り分けた丸アイコン */
+.penlight-icon {
+  flex: none;
+  width: 38px;
+  height: 38px;
+  margin-bottom: 12px;
+  border-radius: 50%;
+  border: 1px solid var(--card-line);
+  background: linear-gradient(135deg, var(--pl-1) 50%, var(--pl-2) 50%);
+}
+
 @media (max-width: 600px) {
   .toolbar {
     padding-top: 10px;
@@ -844,6 +889,16 @@ body.adv-locked {
   .card .subtitle {
     font-size: 11px;
     margin: 0 0 8px;
+  }
+
+  .card-head {
+    gap: 8px;
+  }
+
+  .penlight-icon {
+    width: 28px;
+    height: 28px;
+    margin-bottom: 8px;
   }
 
   .tier {

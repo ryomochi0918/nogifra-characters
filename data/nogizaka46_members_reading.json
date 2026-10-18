@@ -6,251 +6,299 @@
     {
       "name": "伊藤理々杏",
       "reading": "いとうりりあ",
-      "generation": "3期"
+      "generation": "3期",
+      "penlight": ["紫", "赤"]
     },
     {
       "name": "岩本蓮加",
       "reading": "いわもとれんか",
-      "generation": "3期"
+      "generation": "3期",
+      "penlight": ["赤", "ピンク"]
     },
     {
       "name": "遠藤さくら",
       "reading": "えんどうさくら",
-      "generation": "4期"
+      "generation": "4期",
+      "penlight": ["ピンク", "白"]
     },
     {
       "name": "賀喜遥香",
       "reading": "かきはるか",
-      "generation": "4期"
+      "generation": "4期",
+      "penlight": ["オレンジ", "緑"]
     },
     {
       "name": "金川紗耶",
       "reading": "かながわさや",
-      "generation": "4期"
+      "generation": "4期",
+      "penlight": ["水色", "赤"]
     },
     {
       "name": "黒見明香",
       "reading": "くろみはるか",
-      "generation": "4期(新4期生)"
+      "generation": "4期(新4期生)",
+      "penlight": ["紫", "緑"]
     },
     {
       "name": "柴田柚菜",
       "reading": "しばたゆな",
-      "generation": "4期"
+      "generation": "4期",
+      "penlight": ["青", "黄緑"]
     },
     {
       "name": "田村真佑",
       "reading": "たむらまゆ",
-      "generation": "4期"
+      "generation": "4期",
+      "penlight": ["紫", "水色"]
     },
     {
       "name": "筒井あやめ",
       "reading": "つついあやめ",
-      "generation": "4期"
+      "generation": "4期",
+      "penlight": ["紫", "紫"]
     },
     {
       "name": "林瑠奈",
       "reading": "はやしるな",
-      "generation": "4期(新4期生)"
+      "generation": "4期(新4期生)",
+      "penlight": ["ピンク", "ピンク"]
     },
     {
       "name": "弓木奈於",
       "reading": "ゆみきなお",
-      "generation": "4期(新4期生)"
+      "generation": "4期(新4期生)",
+      "penlight": ["赤", "黄緑"]
     },
     {
       "name": "五百城茉央",
       "reading": "いおきまお",
-      "generation": "5期"
+      "generation": "5期",
+      "penlight": ["ターコイズ", "青"]
     },
     {
       "name": "池田瑛紗",
       "reading": "いけだてれさ",
-      "generation": "5期"
+      "generation": "5期",
+      "penlight": ["緑", "白"]
     },
     {
       "name": "一ノ瀬美空",
       "reading": "いちのせみく",
-      "generation": "5期"
+      "generation": "5期",
+      "penlight": ["水色", "水色"]
     },
     {
       "name": "井上和",
       "reading": "いのうえなぎ",
-      "generation": "5期"
+      "generation": "5期",
+      "penlight": ["赤", "白"]
     },
     {
       "name": "岡本姫奈",
       "reading": "おかもとひな",
-      "generation": "5期"
+      "generation": "5期",
+      "penlight": ["紫", "青"]
     },
     {
       "name": "小川彩",
       "reading": "おがわあや",
-      "generation": "5期"
+      "generation": "5期",
+      "penlight": ["白", "白"]
     },
     {
       "name": "奥田いろは",
       "reading": "おくだいろは",
-      "generation": "5期"
+      "generation": "5期",
+      "penlight": ["黄緑", "ピンク"]
     },
     {
       "name": "川﨑桜",
       "reading": "かわさきさくら",
-      "generation": "5期"
+      "generation": "5期",
+      "penlight": ["ピンク", "緑"]
     },
     {
       "name": "菅原咲月",
       "reading": "すがわらさつき",
-      "generation": "5期"
+      "generation": "5期",
+      "penlight": ["ピンク", "水色"]
     },
     {
       "name": "冨里奈央",
       "reading": "とみさとなお",
-      "generation": "5期"
+      "generation": "5期",
+      "penlight": ["ターコイズ", "ターコイズ"]
     },
     {
       "name": "中西アルノ",
       "reading": "なかにしあるの",
-      "generation": "5期"
+      "generation": "5期",
+      "penlight": ["水色", "ターコイズ"]
     },
     {
       "name": "愛宕心響",
       "reading": "あたごここね",
-      "generation": "6期(夏組)"
+      "generation": "6期(夏組)",
+      "penlight": ["ピンク", "青"]
     },
     {
       "name": "大越ひなの",
       "reading": "おおこしひなの",
-      "generation": "6期(夏組)"
+      "generation": "6期(夏組)",
+      "penlight": ["白", "黄"]
     },
     {
       "name": "小津玲奈",
       "reading": "おづれいな",
-      "generation": "6期(夏組)"
+      "generation": "6期(夏組)",
+      "penlight": ["紫", "ターコイズ"]
     },
     {
       "name": "海邉朱莉",
       "reading": "かいべあかり",
-      "generation": "6期(春組)"
+      "generation": "6期(春組)",
+      "penlight": ["青", "赤"]
     },
     {
       "name": "川端晃菜",
       "reading": "かわばたひな",
-      "generation": "6期(春組)"
+      "generation": "6期(春組)",
+      "penlight": ["水色", "緑"]
     },
     {
       "name": "鈴木佑捺",
       "reading": "すずきゆうな",
-      "generation": "6期(夏組)"
+      "generation": "6期(夏組)",
+      "penlight": ["水色", "白"]
     },
     {
       "name": "瀬戸口心月",
       "reading": "せとぐちみつき",
-      "generation": "6期(春組)"
+      "generation": "6期(春組)",
+      "penlight": ["青", "黄"]
     },
     {
       "name": "長嶋凛桜",
       "reading": "ながしまりお",
-      "generation": "6期(春組)"
+      "generation": "6期(春組)",
+      "penlight": ["ピンク", "オレンジ"]
     },
     {
       "name": "増田三莉音",
       "reading": "ますだみりね",
-      "generation": "6期(夏組)"
+      "generation": "6期(夏組)",
+      "penlight": ["青", "青"]
     },
     {
       "name": "森平麗心",
       "reading": "もりひらうるみ",
-      "generation": "6期(夏組)"
+      "generation": "6期(夏組)",
+      "penlight": ["黄", "黄"]
     },
     {
       "name": "矢田萌華",
       "reading": "やだもえか",
-      "generation": "6期(春組)"
+      "generation": "6期(春組)",
+      "penlight": ["白", "紫"]
     },
     {
       "name": "山下美月",
       "reading": "やましたみづき",
       "generation": "3期",
-      "status": "卒業(2024-05-12)"
+      "status": "卒業(2024-05-12)",
+      "penlight": ["青", "黄"]
     },
     {
       "name": "阪口珠美",
       "reading": "さかぐちたまみ",
       "generation": "3期",
-      "status": "卒業(2024-07-15)"
+      "status": "卒業(2024-07-15)",
+      "penlight": ["黄", "紫"]
     },
     {
       "name": "清宮レイ",
       "reading": "せいみやれい",
       "generation": "4期",
-      "status": "卒業(2024-07-17)"
+      "status": "卒業(2024-07-17)",
+      "penlight": ["オレンジ", "オレンジ"]
     },
     {
       "name": "掛橋沙耶香",
       "reading": "かけはしさやか",
       "generation": "4期",
-      "status": "卒業(2024-08-19)。URのままLR相当のステータス更新がされている例外"
+      "status": "卒業(2024-08-19)。URのままLR相当のステータス更新がされている例外",
+      "penlight": ["オレンジ", "ピンク"]
     },
     {
       "name": "向井葉月",
       "reading": "むかいはづき",
       "generation": "3期",
-      "status": "卒業(2024-12-31)"
+      "status": "卒業(2024-12-31)",
+      "penlight": ["黄", "黄"]
     },
     {
       "name": "与田祐希",
       "reading": "よだゆうき",
       "generation": "3期",
-      "status": "卒業(2025-02-23)"
+      "status": "卒業(2025-02-23)",
+      "penlight": ["緑", "赤"]
     },
     {
       "name": "佐藤楓",
       "reading": "さとうかえで",
       "generation": "3期",
-      "status": "卒業(2025-05-06)"
+      "status": "卒業(2025-05-06)",
+      "penlight": ["赤", "赤"]
     },
     {
       "name": "中村麗乃",
       "reading": "なかむられの",
       "generation": "3期",
-      "status": "卒業(2025-06-26)"
+      "status": "卒業(2025-06-26)",
+      "penlight": ["白", "青"]
     },
     {
       "name": "久保史緒里",
       "reading": "くぼしおり",
       "generation": "3期",
-      "status": "卒業(2025-11-27)"
+      "status": "卒業(2025-11-27)",
+      "penlight": ["黄", "水色"]
     },
     {
       "name": "松尾美佑",
       "reading": "まつおみゆ",
       "generation": "4期(新4期生)",
-      "status": "卒業(2025-12-31)"
+      "status": "卒業(2025-12-31)",
+      "penlight": ["ターコイズ", "白"]
     },
     {
       "name": "矢久保美緒",
       "reading": "やくぼみお",
       "generation": "4期(新4期生)",
-      "status": "卒業(2025-12-31)"
+      "status": "卒業(2025-12-31)",
+      "penlight": ["ピンク", "黄"]
     },
     {
       "name": "佐藤璃果",
       "reading": "さとうりか",
       "generation": "4期(新4期生)",
-      "status": "卒業(2026-04-08)"
+      "status": "卒業(2026-04-08)",
+      "penlight": ["ピンク", "ターコイズ"]
     },
     {
       "name": "梅澤美波",
       "reading": "うめざわみなみ",
       "generation": "3期",
-      "status": "卒業(2026-05-02)"
+      "status": "卒業(2026-05-02)",
+      "penlight": ["青", "水色"]
     },
     {
       "name": "吉田綾乃クリスティー",
       "reading": "よしだあやのくりすてぃー",
       "generation": "3期",
-      "status": "卒業(2026-08-09)"
+      "status": "卒業(2026-08-09)",
+      "penlight": ["ピンク", "紫"]
     }
-  ]
+  ],
+  "penlight_source": "penlight はペンライトカラー(1色目, 2色目)。nogisnap46.com の表記順で、sakurazaka46cheer.com と色の組が一致することを確認(2026-10-17)"
 }

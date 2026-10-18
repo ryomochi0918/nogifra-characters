@@ -203,6 +203,30 @@ function genBadge(generation) {
   return `<span class="gen-badge ${cls}">${escapeHtml(g)}</span>`;
 }
 
+// ペンライトカラーの色名→表示色(一覧カードのアイコンに使う)
+const PENLIGHT_HEX = {
+  白: "#ffffff",
+  黄: "#ffe14a",
+  黄緑: "#a6e22e",
+  緑: "#2ecc71",
+  ターコイズ: "#1fc8b4",
+  水色: "#7fd6f5",
+  青: "#2f6fe0",
+  紫: "#9b4dde",
+  ピンク: "#ff7fbf",
+  赤: "#e8333a",
+  オレンジ: "#ff8c1a",
+};
+
+// ペンライトカラー2色を斜めに塗り分けた丸アイコン。色が分からないメンバーは何も出さない
+function penlightIcon(colors) {
+  if (!Array.isArray(colors) || colors.length !== 2) return "";
+  const [a, b] = colors.map((c) => PENLIGHT_HEX[c]);
+  if (!a || !b) return "";
+  const label = "ペンライトカラー: " + colors.join("×");
+  return `<span class="penlight-icon" style="--pl-1:${a};--pl-2:${b}" title="${escapeHtml(label)}" aria-hidden="true"></span>`;
+}
+
 // フローチャートのズーム範囲(詳細画面・比較画面共通)
 const ZOOM_MIN = 50;
 const ZOOM_MAX = 400;

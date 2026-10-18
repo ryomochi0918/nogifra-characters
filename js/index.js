@@ -426,11 +426,16 @@
         stage.innerHTML = list
           .map(
             (c) => `
-      <a class="card${compareSelected.has(c._key) ? " selected" : ""}" href="${escapeHtml(characterPath(c) || "#")}" data-key="${escapeHtml(c._key)}">
+      <a class="card${compareSelected.has(c._key) ? " selected" : ""}" href="${escapeHtml(characterPath(c) || "#")}" data-key="${escapeHtml(c._key)}" data-attr="${escapeHtml(c.attribute || "")}">
         <span class="compare-check" aria-hidden="true"></span>
         <span class="tier">${escapeHtml(c.tier || "SKILL")}</span>${attrBadge(c.attribute)}
-        <h2>${escapeHtml(c.name)}${genBadge(c.generation)}${graduatedBadge(c)}</h2>
-        <p class="subtitle">${escapeHtml(c.title || "")}</p>
+        <div class="card-head">
+          ${penlightIcon(c._penlight)}
+          <div class="card-title">
+            <h2>${escapeHtml(c.name)}${genBadge(c.generation)}${graduatedBadge(c)}</h2>
+            <p class="subtitle">${escapeHtml(c.title || "")}</p>
+          </div>
+        </div>
       </a>
     `,
           )
@@ -1235,12 +1240,14 @@
           const characters = await charRes.json();
 
           const graduatedNames = new Set();
+          const penlightByName = new Map();
           if (readingRes.ok) {
             const reading = await readingRes.json();
             (reading.members || []).forEach((m) => {
               if (m.status && m.status.startsWith("卒業")) {
                 graduatedNames.add(m.name);
               }
+              if (m.penlight) penlightByName.set(m.name, m.penlight);
             });
           }
 
@@ -1249,6 +1256,7 @@
             _key: c.name + "__" + (c.costume || c.title || i),
             _blob: buildSearchBlob(c),
             _graduated: graduatedNames.has(c.name),
+            _penlight: penlightByName.get(c.name),
           }));
 
           buildAdvancedTags(allCharacters);
