@@ -1,0 +1,17 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> c2{"②:自身の残りHP割合が<br/>50%以上か"}:::cond
+    c2 -->|"Yes"| e2["①のアピール対象が1名増加<br/>(増加人数は最大で2名まで)"]:::effect --> c3
+    c2 -->|"No"| c3{"③:このスキルが発動する前の<br/>味方チームのフロント人数が<br/>ライバルチームのフロント人数より多いか"}:::cond
+    c3 -->|"Yes"| e3["①による「空腹」状態の<br/>効果倍率が15%増加"]:::effect --> a1
+    c3 -->|"No"| a1["①実行:<br/>最大アピールが最も高いライバルへ<br/>100%の確率で3ターンの間「空腹」状態にし、<br/>基本800%+固定値 自身のスマイル×3"]:::action
+    a1 --> lc1{"①のアピール対象全員分<br/>(3名+②による増加分)<br/>すべて完了?"}:::cond
+    lc1 -->|"No、次の回へ"| c2
+    lc1 -->|"Yes"| c5{"⑤:ライバルチームの<br/>フロント人数が5名以下か<br/>(④の各効果前に判定)"}:::cond
+    c5 -->|"Yes"| e5["④による「回避率ダウン」状態の<br/>効果倍率が10%増加"]:::effect --> a4
+    c5 -->|"No"| a4["④実行:<br/>「空腹」状態のライバル全員を<br/>100%の確率で3ターンの間<br/>「回避率ダウン」状態にする"]:::action
+    a4 --> finish(("終了")):::startend
