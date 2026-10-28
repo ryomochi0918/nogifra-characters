@@ -1666,7 +1666,7 @@ footer .footer-policy {
 .viewer-compare-btn {
   position: absolute;
   top: 20px;
-  right: 62px;
+  right: 104px;
   height: 34px;
   font-family: inherit;
   font-size: 12px;
@@ -1680,11 +1680,80 @@ footer .footer-policy {
 
 /* 見出しがボタンの下に潜り込まないようにする */
 #viewerTitle {
-  padding-right: 110px;
+  padding-right: 152px;
 }
 
 .viewer-compare-btn:hover {
   background: var(--spotlight-soft);
+}
+
+/* お気に入り(気になるキャラの目印)。カード右上と、詳細画面の閉じるボタンの隣の☆ */
+.fav-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 1;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  line-height: 1;
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition:
+    color 0.2s ease,
+    background 0.2s ease;
+}
+
+.fav-btn:hover,
+.fav-btn:focus-visible {
+  color: var(--spotlight-text);
+  background: var(--spotlight-soft);
+}
+
+.fav-btn.on {
+  color: var(--spotlight-text);
+}
+
+/* 比較モードではカードを押すと選択になるので、☆は隠して右上をチェックに譲る */
+.compare-mode .fav-btn {
+  display: none;
+}
+
+.fav-toggle.active {
+  color: var(--on-spotlight);
+  background: var(--spotlight-fill);
+  border-color: var(--spotlight);
+  font-weight: 700;
+}
+
+.viewer-fav-btn {
+  position: absolute;
+  top: 20px;
+  right: 62px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: none;
+  border: 1px solid var(--card-line);
+  color: var(--ink-dim);
+  font-family: inherit;
+  font-size: 17px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.viewer-fav-btn:hover,
+.viewer-fav-btn.on {
+  color: var(--spotlight-text);
+  border-color: var(--spotlight);
+}
+
+.viewer-fav-btn[hidden] {
+  display: none;
 }
 
 .compare-go,

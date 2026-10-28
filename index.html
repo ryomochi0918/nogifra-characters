@@ -83,7 +83,7 @@
       href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="css/styles.css?v=20261017-2" />
+    <link rel="stylesheet" href="css/styles.css?v=20261029" />
   </head>
 
   <body>
@@ -153,6 +153,14 @@
           <input type="checkbox" id="gradFilter" />
           卒業済みメンバーも表示
         </label>
+        <button
+          type="button"
+          class="tab-btn fav-toggle"
+          id="favToggle"
+          aria-pressed="false"
+        >
+          ★ お気に入り<span class="adv-count" id="favCount" hidden></span>
+        </button>
         <button
           type="button"
           class="tab-btn compare-toggle"
@@ -249,6 +257,16 @@
           aria-label="閉じる"
         >
           ✕
+        </button>
+        <button
+          type="button"
+          class="viewer-fav-btn"
+          id="viewerFav"
+          aria-pressed="false"
+          aria-label="お気に入りに登録"
+          title="お気に入りに登録"
+        >
+          ☆
         </button>
         <button
           type="button"
@@ -402,7 +420,7 @@
     </button>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js"></script>
-    <script src="js/common.js?v=20261017-2"></script>
-    <script src="js/index.js?v=20261017-2"></script>
+    <script src="js/common.js?v=20261029"></script>
+    <script src="js/index.js?v=20261029"></script>
   </body>
 </html>

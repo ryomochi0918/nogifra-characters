@@ -1,4 +1,5 @@
       const GRAD_STORAGE_KEY = "nogifra-show-graduated";
+      const FAV_STORAGE_KEY = "nogifra-favorites";
 
       const stage = document.getElementById("stage");
       const resultCount = document.getElementById("resultCount");
@@ -124,6 +125,7 @@
         });
         viewerTitle.textContent = chara.name;
         viewerSubtitle.textContent = chara.title || "";
+        syncViewerFav();
         viewerTabList = viewerTabDefs(chara);
         viewerTabs.innerHTML = viewerTabsHtml(viewerTabList);
         viewerTabs.style.display = viewerTabList.length > 1 ? "flex" : "none";
@@ -202,6 +204,117 @@
       });
       viewer.addEventListener("click", (e) => {
         if (e.target === viewer) closeViewer();
+      });
+
+      // お気に入り(気になるキャラの目印)。ブラウザに保存し、次回も引き継ぐ。
+      // キャラ別URLのスラッグ(例: ikeda_teresa/11thbasura5kisei)で持つので、キャラの追加・並べ替えでずれない
+      const favToggle = document.getElementById("favToggle");
+      const favCount = document.getElementById("favCount");
+      const viewerFav = document.getElementById("viewerFav");
+      const favorites = new Set();
+      let favOnly = false; // お気に入りだけを表示する
+
+      function loadFavorites() {
+        favorites.clear();
+        try {
+          const list = JSON.parse(storageGet(FAV_STORAGE_KEY));
+          if (Array.isArray(list)) list.forEach((k) => favorites.add(k));
+        } catch (e) {}
+      }
+
+      function favKey(c) {
+        const path = characterPath(c);
+        return path ? path.slice(2, -1) : null;
+      }
+
+      function isFavorite(c) {
+        const key = favKey(c);
+        return Boolean(key) && favorites.has(key);
+      }
+
+      function favButtonState(on) {
+        return {
+          text: on ? "★" : "☆",
+          label: on ? "お気に入りから外す" : "お気に入りに登録",
+        };
+      }
+
+      function toggleFavorite(c) {
+        const key = favKey(c);
+        if (!key) return;
+        if (favorites.has(key)) {
+          favorites.delete(key);
+        } else {
+          favorites.add(key);
+          track("favorite_character", {
+            member: c.name,
+            character: characterLabel(c),
+          });
+        }
+        storageSet(FAV_STORAGE_KEY, JSON.stringify([...favorites]));
+        syncFavorites();
+      }
+
+      function syncViewerFav() {
+        const on = Boolean(viewerChara) && isFavorite(viewerChara);
+        const s = favButtonState(on);
+        viewerFav.hidden = !viewerChara || !favKey(viewerChara);
+        viewerFav.textContent = s.text;
+        viewerFav.classList.toggle("on", on);
+        viewerFav.setAttribute("aria-pressed", String(on));
+        viewerFav.setAttribute("aria-label", s.label);
+        viewerFav.title = s.label;
+      }
+
+      function syncFavorites() {
+        favCount.hidden = favorites.size === 0;
+        favCount.textContent = favorites.size;
+        syncViewerFav();
+        // お気に入りだけを表示しているときは、外したカードを一覧から消す
+        if (favOnly) {
+          applyFilter();
+          return;
+        }
+        stage.querySelectorAll(".card").forEach((card) => {
+          const c = findCharacter(card.dataset.key);
+          const btn = card.querySelector(".fav-btn");
+          if (!c || !btn) return;
+          const on = isFavorite(c);
+          const s = favButtonState(on);
+          btn.textContent = s.text;
+          btn.classList.toggle("on", on);
+          btn.setAttribute("aria-pressed", String(on));
+          btn.setAttribute("aria-label", s.label);
+          btn.title = s.label;
+        });
+      }
+
+      function setFavOnly(on) {
+        favOnly = on;
+        favToggle.classList.toggle("active", on);
+        favToggle.setAttribute("aria-pressed", String(on));
+      }
+
+      favToggle.addEventListener("click", () => {
+        setFavOnly(!favOnly);
+        applyFilter();
+      });
+      viewerFav.addEventListener("click", () => {
+        if (viewerChara) toggleFavorite(viewerChara);
+      });
+      // 別のタブで登録・解除したときも表示を合わせる
+      window.addEventListener("storage", (e) => {
+        if (e.key !== FAV_STORAGE_KEY) return;
+        loadFavorites();
+        syncFavorites();
+      });
+      // カードの中の☆はリンクの中にあるので、キーボード操作(Enter・Space)は自前で受ける
+      stage.addEventListener("keydown", (e) => {
+        const btn = e.target.closest(".fav-btn");
+        if (!btn || (e.key !== "Enter" && e.key !== " ")) return;
+        e.preventDefault();
+        const c = findCharacter(btn.closest(".card").dataset.key);
+        if (c) toggleFavorite(c);
       });
       document.addEventListener("keydown", (e) => {
         if (e.key !== "Escape") return;
@@ -420,14 +533,23 @@
         resultCount.textContent = list.length + "件";
         if (list.length === 0) {
           stage.innerHTML =
-            '<p class="no-results">該当するキャラクターが見つかりませんでした。</p>';
+            favOnly && favorites.size === 0
+              ? '<p class="no-results">お気に入りはまだありません。カードの☆を押すと登録できます。</p>'
+              : '<p class="no-results">該当するキャラクターが見つかりませんでした。</p>';
           return;
         }
+        const favHtml = (c) => {
+          if (!favKey(c)) return "";
+          const on = isFavorite(c);
+          const s = favButtonState(on);
+          return `<span class="fav-btn${on ? " on" : ""}" role="button" tabindex="0" aria-pressed="${on}" aria-label="${s.label}" title="${s.label}">${s.text}</span>`;
+        };
         stage.innerHTML = list
           .map(
             (c) => `
       <a class="card${compareSelected.has(c._key) ? " selected" : ""}" href="${escapeHtml(characterPath(c) || "#")}" data-key="${escapeHtml(c._key)}" data-attr="${escapeHtml(c.attribute || "")}">
         <span class="compare-check" aria-hidden="true"></span>
+        ${favHtml(c)}
         <span class="tier">${escapeHtml(c.tier || "SKILL")}</span>${attrBadge(c.attribute)}
         <div class="card-head">
           ${penlightIcon(c._penlight)}
@@ -443,6 +565,12 @@
 
         stage.querySelectorAll(".card").forEach((btn) => {
           btn.addEventListener("click", (e) => {
+            if (e.target.closest(".fav-btn")) {
+              e.preventDefault();
+              const c = findCharacter(btn.dataset.key);
+              if (c) toggleFavorite(c);
+              return;
+            }
             // Ctrl/Shift+クリックなどはブラウザに任せて、キャラ別ページを新しいタブで開けるようにする
             if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;
             e.preventDefault();
@@ -852,6 +980,7 @@
               attrs: [...activeAttrs],
               adv: [...advSelected],
               advMode,
+              favOnly,
               compareMode,
               compareSelected: [...compareSelected],
             }),
@@ -878,6 +1007,7 @@
         attrButtons.forEach((btn) => {
           btn.classList.toggle("active", activeAttrs.has(btn.dataset.attr));
         });
+        setFavOnly(Boolean(state.favOnly));
         if (state.compareMode) {
           (state.compareSelected || [])
             .filter((key) => findCharacter(key))
@@ -890,9 +1020,12 @@
 
       function filterByMemberAndAttr(list) {
         let result = list;
-        // キャラを名指しで選んだときは、卒業済みでも表示する
-        if (!gradFilter.checked && !selectedMember) {
+        // キャラを名指しで選んだとき・お気に入りだけを表示するときは、卒業済みでも表示する
+        if (!gradFilter.checked && !selectedMember && !favOnly) {
           result = result.filter((c) => !c._graduated);
+        }
+        if (favOnly) {
+          result = result.filter(isFavorite);
         }
         if (selectedMember) {
           result = result.filter((c) => c.name === selectedMember);
@@ -1260,6 +1393,8 @@
           }));
 
           buildAdvancedTags(allCharacters);
+          loadFavorites();
+          syncFavorites();
           populateMemberFilter(allCharacters);
           populateGenFilter(allCharacters);
           restoreSearchState();
