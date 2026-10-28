@@ -1,0 +1,14 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> a1["①実行:<br/>ライバルへ基本600%+<br/>固定値 対象の残りHPの1%分"]:::action
+    a1 --> lc1{"①のアピール<br/>4回すべて完了?"}:::cond
+    lc1 -->|"No、次の回へ"| a1
+    lc1 -->|"Yes"| a2["②実行:<br/>最大アピールが最も高いライバル1名に<br/>①で行った合計アピールの30%分のアピール<br/>(ディフェンス、フィジカルを無視する)"]:::action
+    a2 --> c4{"④:①のアピールで<br/>ライバルがリタイアしたか"}:::cond
+    c4 -->|"Yes"| e4["③の回復倍率が2倍に"]:::effect --> e3
+    c4 -->|"No"| e3["③実行:自身のHPを<br/>自身のHP上限の15%分回復"]:::effect
+    e3 --> finish(("終了")):::startend

@@ -1,0 +1,15 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> e1["①実行:自身を3ターンの間<br/>「賢明」状態にする"]:::effect
+    e1 --> e3["③:②のアピールに<br/>「ライブ中に発動した自身のスキル1<br/>「ギャル俳句」の回数×<br/>アピール対象のHP上限0.1%分」を<br/>固定値として上乗せ<br/>(②と③の固定値の上乗せは合計で<br/>アピール対象のHP上限の1.5%まで)"]:::effect
+    e3 --> c4{"④:自身の残りHP割合が<br/>②のアピール対象の<br/>残りHP割合以上か"}:::cond
+    c4 -->|"Yes"| e4["②のアピール倍率と<br/>固定値倍率が2倍に"]:::effect --> a2
+    c4 -->|"No"| a2["②実行:<br/>ライバルへ基本700%+<br/>固定値 対象HP上限の0.9%分<br/>(初回スキル発動時の②の固定値は<br/>HP上限1%分)"]:::action
+    a2 --> lc2{"②のアピール<br/>4回すべて完了?"}:::cond
+    lc2 -->|"No、次の回へ"| e3
+    lc2 -->|"Yes"| a5["⑤実行:<br/>ライバル1名に②で行った<br/>合計アピールの30%分のアピール<br/>(ディフェンス、フィジカルを無視する)"]:::action
+    a5 --> finish(("終了")):::startend
