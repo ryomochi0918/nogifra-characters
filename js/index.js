@@ -550,7 +550,7 @@
       <a class="card${compareSelected.has(c._key) ? " selected" : ""}" href="${escapeHtml(characterPath(c) || "#")}" data-key="${escapeHtml(c._key)}" data-attr="${escapeHtml(c.attribute || "")}">
         <span class="compare-check" aria-hidden="true"></span>
         ${favHtml(c)}
-        <span class="tier">${escapeHtml(c.tier || "SKILL")}</span>${attrBadge(c.attribute)}
+        <span class="tier${c.tier === "UR" ? " tier-ur" : ""}">${escapeHtml(c.tier || "SKILL")}</span>${attrBadge(c.attribute)}
         <div class="card-head">
           ${penlightIcon(c._penlight)}
           <div class="card-title">

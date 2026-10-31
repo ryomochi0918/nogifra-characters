@@ -747,6 +747,19 @@ body.adv-locked {
   animation: tier-shine 2.6s ease-in-out infinite;
 }
 
+/* UR(掛橋沙耶香のみ)。ゲーム内の UR のバッジに合わせた薄紫 */
+.tier.tier-ur {
+  background-image: linear-gradient(
+    100deg,
+    #c9a6ee 0%,
+    #c9a6ee 35%,
+    #f6eefe 50%,
+    #c9a6ee 65%,
+    #c9a6ee 100%
+  );
+  box-shadow: 0 0 8px rgba(201, 166, 238, 0.5);
+}
+
 @keyframes tier-shine {
   0% {
     background-position: 200% 50%;
