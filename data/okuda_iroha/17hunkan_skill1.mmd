@@ -11,6 +11,9 @@ flowchart TD
     c3{"③:対象が「緊張」<br/>状態か"}:::cond
     c3 -->|"Yes"| e3["②の「緊張」状態の<br/>効果倍率が1.5倍になる"]:::effect --> e2
     c3 -->|"No"| e2["対象を100%の確率で<br/>3ターンの間「緊張」状態にする"]:::effect --> a1
-    loop1{"①を対象3名×2回<br/>実行したか"}:::cond
-    loop1 -->|"No、次の回へ"| c2
-    loop1 -->|"Yes"| e4["④効果:自身のHPをこのスキルで<br/>行った合計アピールの<br/>50%分回復する"]:::effect --> finish(("終了")):::startend
+    loop1{"①のアピール<br/>ライバル3名すべて完了?"}:::cond
+    loop1 -->|"No、次の対象へ"| c2
+    loop1 -->|"Yes"| loop1b
+    loop1b{"①のアピール<br/>2回すべて完了?"}:::cond
+    loop1b -->|"No、次の回へ"| c2
+    loop1b -->|"Yes"| e4["④効果:自身のHPをこのスキルで<br/>行った合計アピールの<br/>50%分回復する"]:::effect --> finish(("終了")):::startend

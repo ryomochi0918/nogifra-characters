@@ -4,11 +4,11 @@ flowchart TD
     classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
     classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
 
-    start(("開始")):::startend --> c2{"②:自身のサンクスが①のアピール対象の<br/>サンクス以上か"}:::cond
-    c2 -->|"No"| a1["①実行:<br/>フィジカルが最も高いライバル5名に<br/>600%のアピールを行う<br/>(対象ごとに判定)"]:::action
-    c2 -->|"Yes"| c3{"③:①のアピール対象が既に<br/>「弱音」状態か"}:::cond
-    c3 -->|"Yes"| e3["①のアピール対象を<br/>2ターンの間「緊張」状態にする"]:::effect --> a1
+    start(("開始")):::startend --> c2{"②:自身のサンクスが①の<br/>アピール対象のサンクス以上か<br/>(①の各アピール前)"}:::cond
+    c2 -->|"No"| a1["①実行:<br/>フィジカルが最も高いライバル5名に<br/>600%のアピールを行う"]:::action
+    c2 -->|"Yes"| c3{"③:②の効果対象が<br/>「弱音」状態か<br/>(②の各効果前)"}:::cond
+    c3 -->|"Yes"| e3["②による「弱音」状態を<br/>「緊張」状態に変更する"]:::effect --> a1
     c3 -->|"No"| e2["①のアピール対象を100%の確率で<br/>2ターンの間「弱音」状態にする"]:::effect --> a1
-    a1 --> lc{"①のアピール<br/>5回すべて完了?"}:::cond
-    lc -->|"No、次の対象へ"| c2
-    lc -->|"Yes"| finish(("終了")):::startend
+    a1 --> lc1{"①のアピール<br/>ライバル5名すべて完了?"}:::cond
+    lc1 -->|"No、次の対象へ"| c2
+    lc1 -->|"Yes"| finish(("終了")):::startend
