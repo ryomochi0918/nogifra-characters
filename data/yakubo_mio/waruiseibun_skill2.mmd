@@ -5,7 +5,7 @@ flowchart TD
     classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
 
     start(("開始")):::startend --> a1["①実行:<br/>ライバル6名へ、自身の残りSPの60倍を<br/>上乗せした730%のアピールを行う"]:::action --> lc
-    lc{"①のアピール<br/>6回すべて完了?"}:::cond
+    lc{"①のアピール<br/>ライバル6名すべて完了?"}:::cond
     lc -->|"No、次の対象へ"| a1
     lc -->|"Yes"| c2
     c2{"②:①のアピールでリタイアしたライバルが<br/>2名以下か(かつ再実行がまだの場合)"}:::cond

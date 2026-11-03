@@ -11,5 +11,5 @@ flowchart TD
     lc1{"①のアピール2回<br/>すべて完了?"}:::cond
     lc1 -->|"No、次の回へ"| c2
     lc1 -->|"Yes"| c4{"④:このスキルでライバルが<br/>リタイアしなかったか"}:::cond
-    c4 -->|"Yes"| a4["再度①からスキルを実行する<br/>(再実行は最大2回まで)"]:::action --> finish(("終了")):::startend
-    c4 -->|"No"| finish
+    c4 -->|"Yes(再実行は最大2回まで)"| c2
+    c4 -->|"No"| finish(("終了")):::startend

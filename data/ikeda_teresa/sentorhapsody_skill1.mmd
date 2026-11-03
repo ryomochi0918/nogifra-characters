@@ -13,5 +13,5 @@ flowchart TD
     a3 --> c5{"⑤:③のアピールで<br/>会心アピールが発生したか"}:::cond
     c5 -->|"Yes"| e5["対象のバフ・アゲ効果を<br/>2つ解除"]:::effect --> lc
     c5 -->|"No"| lc{"③のアピール<br/>5回すべて完了?"}:::cond
-    lc -->|"No、次の対象へ"| c4
+    lc -->|"No、次の回へ"| c4
     lc -->|"Yes"| finish(("終了")):::startend

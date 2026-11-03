@@ -17,5 +17,5 @@ flowchart TD
     c6 -->|"Yes"| e6["⑤の固定値倍率が<br/>3倍になる"]:::effect --> a5
     c6 -->|"No"| a5["⑤実行:ライバルへ4回、自身の<br/>スマイルを固定値として<br/>上乗せした400%のアピール"]:::action --> loop2
     loop2{"4回すべて完了?"}:::cond
-    loop2 -->|"No、次の対象へ"| c6
+    loop2 -->|"No、次の回へ"| c6
     loop2 -->|"Yes"| finish(("終了")):::startend

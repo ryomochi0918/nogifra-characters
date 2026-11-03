@@ -10,5 +10,5 @@ flowchart TD
     c4{"④:対象が「執着」状態<br/>ではないか"}:::cond
     c4 -->|"Yes"| e4["対象を100%の確率で<br/>2ターンの間「執着」状態にする"]:::effect --> loop1
     c4 -->|"No"| loop1{"5回すべて完了?"}:::cond
-    loop1 -->|"No、次の対象へ"| c3
+    loop1 -->|"No、次の回へ"| c3
     loop1 -->|"Yes"| finish(("終了")):::startend

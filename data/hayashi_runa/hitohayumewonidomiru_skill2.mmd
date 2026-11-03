@@ -15,5 +15,5 @@ flowchart TD
     a2 --> lc{"②のアピール<br/>5回すべて完了?"}:::cond
     lc -->|"No、次の回へ"| c3
     lc -->|"Yes"| c6{"⑥:②のアピールでデバフ・<br/>サゲ効果状態のライバルに<br/>アピールした回数が3回以上か"}:::cond
-    c6 -->|"Yes"| a6["再度②からスキルを実行<br/>(再実行は最大1回まで)"]:::action --> finish(("終了")):::startend
-    c6 -->|"No"| finish
+    c6 -->|"Yes(再実行は最大1回まで)"| c3
+    c6 -->|"No"| finish(("終了")):::startend

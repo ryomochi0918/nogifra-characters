@@ -8,5 +8,5 @@ flowchart TD
     c3{"③:②の解除に成功したか"}:::cond
     c3 -->|"Yes"| e3["解除成功回数に応じたアゲ効果状態を<br/>自身に2ターン付与する<br/>(1回目:全開/2回目:興奮/<br/>3回目:集中/4回目:神気)"]:::effect --> loop1
     c3 -->|"No"| loop1{"6回すべて完了?"}:::cond
-    loop1 -->|"No、次の対象へ"| e2
+    loop1 -->|"No、次の回へ"| e2
     loop1 -->|"Yes"| finish(("終了")):::startend
