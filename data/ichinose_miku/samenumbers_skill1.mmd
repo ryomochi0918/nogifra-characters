@@ -1,0 +1,16 @@
+flowchart TD
+    classDef startend fill:#FFD93D,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef cond fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#ffffff;
+    classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
+    classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
+
+    start(("開始")):::startend --> e1["①:自身を1ターンの間「強運」状態にし、<br/>このスキル中、自身の命中率を+20%する<br/>※強運:アピール力が30%上昇し、<br/>会心率が30%上昇する"]:::effect
+    e1 --> c3{"③:自身のエフォートが②のアピール対象の<br/>エフォート以上か(②の各アピール前)"}:::cond
+    c3 -->|"Yes"| e3["②のアピール倍率と<br/>固定値倍率が2倍になる"]:::effect --> a2
+    c3 -->|"No"| a2["②実行:<br/>ライバル4名に自身のエフォートの3.5倍を<br/>固定値として上乗せした400%のアピールを行う"]:::action
+    a2 --> lc2{"②のアピール<br/>ライバル4名すべて完了?"}:::cond
+    lc2 -->|"No、次の対象へ"| c3
+    lc2 -->|"Yes"| e4["④:自身のHPを②で行った<br/>合計アピールの15%分回復する"]:::effect
+    e4 --> a5["⑤実行:<br/>残りHP割合が最も低いライバル1名に<br/>②で行った合計アピールの50%分のアピールを行う<br/>(ディフェンス、フィジカルを無視する)"]:::action
+    a5 --> e6["⑥:自身の「強運」状態を解除し、<br/>自身を2ターンの間「情熱」状態にする<br/>※情熱:アピール力が60%上昇し、<br/>会心アピール+120%、<br/>行動毎に残りHP15%分を失う"]:::effect
+    e6 --> finish(("終了")):::startend
