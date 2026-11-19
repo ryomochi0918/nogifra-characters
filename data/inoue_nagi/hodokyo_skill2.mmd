@@ -11,5 +11,5 @@ flowchart TD
     c1 -->|"No"| a2["②実行(通常):自身のエフォートの<br/>3倍を固定値として上乗せした<br/>1000%のアピールを行う"]:::action --> loop1
     loop1 -->|"No、次の回へ"| c1
     loop1 -->|"Yes"| c2{"④:②のアピールで<br/>ライバルがリタイア<br/>しなかったか"}:::cond
-    c2 -->|"Yes"| a3["再度②を実行する<br/>(再実行は最大3回まで)"]:::action --> finish(("終了")):::startend
-    c2 -->|"No"| finish
+    c2 -->|"Yes(再実行は最大3回まで)"| c1
+    c2 -->|"No"| finish(("終了")):::startend
