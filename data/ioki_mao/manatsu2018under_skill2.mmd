@@ -4,9 +4,9 @@ flowchart TD
     classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
     classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
 
-    start(("開始")):::startend --> a1["①実行:<br/>ライバル6名へ基本660%+<br/>固定値 自身の残りSP×80"]:::action
-    a1 --> e2["②実行:<br/>味方1名のデバフ・サゲ効果を2つ解除、<br/>HPを自身のHP上限の50%分回復"]:::effect
-    e2 --> e3["③:対象を4ターンの間<br/>「勇気」状態にする"]:::effect
-    e3 --> lc{"②の対象<br/>6名すべて完了?"}:::cond
-    lc -->|"No、次の対象へ"| e2
-    lc -->|"Yes"| finish(("終了")):::startend
+    start(("開始")):::startend --> a1["①実行:ライバル6名に自身の<br/>残りSPの80倍を上乗せした660%の<br/>アピールを行う"]:::action
+    a1 --> e2["②:味方6名のデバフ・サゲ効果を<br/>2つ解除し、HPを自身のHP上限の<br/>50%分回復する"]:::effect
+    e2 --> e3["③:②の対象を4ターンの間「勇気」<br/>状態にする<br/>(②の各効果後)"]:::effect
+    e3 --> lc2{"②の効果<br/>対象6名すべて完了?"}:::cond
+    lc2 -->|"Yes"| finish(("終了")):::startend
+    lc2 -->|"No、次の対象へ"| e2

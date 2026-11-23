@@ -4,9 +4,10 @@ flowchart TD
     classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
     classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
 
-    start(("開始")):::startend --> c1{"①:自身の残りHP割合が<br/>70%以上か"}:::cond
-    c1 -->|"Yes"| e1["自身を2ターンの間<br/>「熱血」状態にする"]:::effect --> a2
-    c1 -->|"No"| a2["②実行:<br/>ライバル4名に650%のアピールを行う<br/>(①未達成でも必ず発動)"]:::action
-    a2 --> e3["③:自身を2ターンの間<br/>「熱血」状態にする"]:::effect
-    e3 --> a4["④実行:<br/>ライバル2名に1000%のアピールを行う"]:::action
+    start(("開始")):::startend --> c1{"①:自身の残りHP割合が70%以上か"}:::cond
+    c1 -->|"Yes"| e1["自身を2ターンの間「熱血」<br/>状態にする"]:::effect
+    c1 -->|"No"| a2["②実行:ライバル4名に650%の<br/>アピールを行う"]:::action
+    e1 --> a2
+    a2 --> e3["③:自身を2ターンの間「熱血」<br/>状態にする"]:::effect
+    e3 --> a4["④実行:ライバル2名に1000%の<br/>アピールを行う"]:::action
     a4 --> finish(("終了")):::startend

@@ -4,10 +4,14 @@ flowchart TD
     classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
     classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
 
-    start(("開始")):::startend --> a1["①実行:ライバルへ2回、<br/>1500%のアピール"]:::action --> c3
-    c3{"③:味方チームのフロント人数が<br/>5名以下か"}:::cond
-    c3 -->|"Yes"| e3["②の「決心」状態の<br/>ターン数を+1する"]:::effect --> e2
-    c3 -->|"No"| e2["②実行:自身を3ターンの間<br/>「決心」状態にする"]:::effect --> c4
-    c4{"④:自身が「声援」<br/>状態か"}:::cond
-    c4 -->|"No(⑤)"| e5["自身を6ターンの間<br/>「声援」状態にする"]:::effect --> finish(("終了")):::startend
-    c4 -->|"Yes(⑥)"| e6["自身と自身以外の最大アピールが<br/>最も高い味方1名のデバフ・サゲ効果を<br/>2つ解除し、4ターンの間<br/>「堅忍」状態にする"]:::effect --> finish
+    start(("開始")):::startend --> a1["①実行:ライバルに2回、1500%の<br/>アピールを行う"]:::action
+    a1 --> c3{"③:味方チームのフロント人数が<br/>5名以下か"}:::cond
+    c3 -->|"Yes"| e3["②による「決心」状態の<br/>ターン数を+1する"]:::effect
+    c3 -->|"No"| e2["②:自身を3ターンの間「決心」<br/>状態にする"]:::effect
+    e3 --> e2
+    e2 --> e4["④:自身の状態に応じて⑤か⑥の<br/>効果を適用する"]:::effect
+    e4 --> c5{"⑤/⑥:自身が「声援」状態ではないか"}:::cond
+    c5 -->|"Yes"| e5["⑤:自身を6ターンの間「声援」<br/>状態にする"]:::effect
+    c5 -->|"No"| e6["⑥:自身と自身以外の最大アピールが<br/>最も高い味方1名のデバフ・サゲ効果を<br/>2つ解除し、4ターンの間「堅忍」<br/>状態にする"]:::effect
+    e5 --> finish(("終了")):::startend
+    e6 --> finish

@@ -4,6 +4,10 @@ flowchart TD
     classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
     classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
 
-    start(("開始")):::startend --> c2{"②:①の効果前、自身の<br/>残りHP割合が50%以上か"}:::cond
-    c2 -->|"Yes"| e2["②効果:このスキル中のみ<br/>自身の命中率を+20%する"]:::effect --> e1
-    c2 -->|"No"| e1["①:自身を3ターンの間<br/>「全開」状態にする"]:::effect --> a3["③実行:残りHP割合が最も高い<br/>ライバル1名へ2000%のアピール"]:::action --> a4["④実行:ライバル4名へ、③で行った<br/>合計アピールの10%分のアピール<br/>(ディフェンス、フィジカルを無視する)"]:::action --> finish(("終了")):::startend
+    start(("開始")):::startend --> c2{"②:自身の残りHP割合が50%以上か"}:::cond
+    c2 -->|"Yes"| e2["このスキル中のみ自身の<br/>命中率を+20%する"]:::effect
+    c2 -->|"No"| e1["①:自身を3ターンの間「全開」<br/>状態にする"]:::effect
+    e2 --> e1
+    e1 --> a3["③実行:残りHP割合が最も高い<br/>ライバル1名に2000%のアピールを行う"]:::action
+    a3 --> a4["④実行:ライバル4名に③で<br/>行った合計アピールの10%分の<br/>アピールを行う(ディフェンス、<br/>フィジカルを無視する)"]:::action
+    a4 --> finish(("終了")):::startend

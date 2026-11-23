@@ -4,8 +4,10 @@ flowchart TD
     classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
     classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
 
-    start(("開始")):::startend --> a1["①実行:<br/>ライバル2名へ2000%のアピール"]:::action
-    a1 --> c34{"③/④:自身の残りHP割合が<br/>50%以上か"}:::cond
-    c34 -->|"Yes(③)"| e3["自身を4ターンの間<br/>「威圧」状態にする"]:::effect --> e2
-    c34 -->|"No(④)"| e4["自身のデバフ・サゲ効果を2つ解除し、<br/>HPをHP上限の30%分回復"]:::effect --> e2
-    e2["②:自身を4ターンの間<br/>「聖域」と「魅了」状態にする"]:::effect --> finish(("終了")):::startend
+    start(("開始")):::startend --> a1["①実行:ライバル2名に2000%の<br/>アピールを行う"]:::action
+    a1 --> c3{"③/④:自身の残りHP割合が50%以上か"}:::cond
+    c3 -->|"Yes"| e3["③:自身を4ターンの間「威圧」<br/>状態にする"]:::effect
+    c3 -->|"No"| e4["④:自身のデバフ・サゲ効果を<br/>2つ解除しHPを自身のHP上限の<br/>30%分回復する"]:::effect
+    e3 --> e2["②:自身を4ターンの間「聖域」と<br/>「魅了」状態にする"]:::effect
+    e4 --> e2
+    e2 --> finish(("終了")):::startend

@@ -4,10 +4,11 @@ flowchart TD
     classDef effect fill:#6EC6E8,stroke:#333,stroke-width:2px,color:#1a1220;
     classDef action fill:#7ED957,stroke:#333,stroke-width:2px,color:#1a1220;
 
-    start(("開始")):::startend --> a1["①実行:<br/>味方1名のHPを自身のアピール力の120%分回復<br/>(会心率に応じて会心回復)<br/>2ターンの間「回避率アップ」状態"]:::action
-    a1 --> c2{"②:回復対象の残りHP割合が<br/>50%以上か"}:::cond
-    c2 -->|"Yes"| e2["「回避率アップ」の<br/>効果倍率が1.5倍に"]:::effect --> lc
-    c2 -->|"No"| lc{"①の対象<br/>6名すべて完了?"}:::cond
-    lc -->|"No、次の対象へ"| a1
-    lc -->|"Yes"| a3["③実行:<br/>ライバル4名へ100%のアピール<br/>(Def・Phy無視)"]:::action
+    start(("開始")):::startend --> e1["①:味方6名のHPを自身の<br/>アピール力の120%分回復し(会心率に<br/>応じて会心回復が発生)、2ターンの<br/>間「回避率アップ」状態にする"]:::effect
+    e1 --> c2{"②:①の回復対象の<br/>残りHP割合が50%以上か<br/>(①の各回復後)"}:::cond
+    c2 -->|"Yes"| e2["①による「回避率アップ」状態の<br/>効果倍率が1.5倍になる"]:::effect
+    c2 -->|"No"| lc1{"①の効果<br/>対象6名すべて完了?"}:::cond
+    e2 --> lc1
+    lc1 -->|"Yes"| a3["③実行:ライバル4名に100%の<br/>アピールを行う(ディフェンス、<br/>フィジカルを無視する)"]:::action
+    lc1 -->|"No、次の対象へ"| e1
     a3 --> finish(("終了")):::startend
