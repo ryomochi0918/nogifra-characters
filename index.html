@@ -83,7 +83,7 @@
       href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="css/styles.css?v=20261029" />
+    <link rel="stylesheet" href="css/styles.css?v=20261124" />
   </head>
 
   <body>
@@ -278,7 +278,25 @@
           ⇄ 比較
         </button>
         <h2 id="viewerTitle"></h2>
-        <p class="subtitle" id="viewerSubtitle"></p>
+        <div class="subtitle-row">
+          <p class="subtitle" id="viewerSubtitle"></p>
+          <div class="share">
+            <button
+              type="button"
+              class="share-btn"
+              id="viewerShare"
+              aria-expanded="false"
+              aria-controls="viewerShareMenu"
+              aria-label="共有"
+              title="共有"
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 15V4M8 7.5 12 3.5l4 4M6 11H5v9h14v-9h-1" />
+              </svg>
+            </button>
+            <div class="share-menu" id="viewerShareMenu" hidden></div>
+          </div>
+        </div>
         <div class="tabs" id="viewerTabs"></div>
         <div class="diagram-section" id="diagramSection">
           <div class="zoom-bar" id="zoomBar">
@@ -368,7 +386,25 @@
           ✕
         </button>
         <h2>キャラ比較</h2>
-        <p class="subtitle" id="compareSubtitle"></p>
+        <div class="subtitle-row">
+          <p class="subtitle" id="compareSubtitle"></p>
+          <div class="share">
+            <button
+              type="button"
+              class="share-btn"
+              id="compareShare"
+              aria-expanded="false"
+              aria-controls="compareShareMenu"
+              aria-label="共有"
+              title="共有"
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 15V4M8 7.5 12 3.5l4 4M6 11H5v9h14v-9h-1" />
+              </svg>
+            </button>
+            <div class="share-menu" id="compareShareMenu" hidden></div>
+          </div>
+        </div>
         <div class="compare-head">
           <div class="tabs compare-tabs" id="compareTabs"></div>
           <div class="compare-nav" id="compareNav"></div>
@@ -421,6 +457,6 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js"></script>
     <script src="js/common.js?v=20261029"></script>
-    <script src="js/index.js?v=20261029"></script>
+    <script src="js/index.js?v=20261124"></script>
   </body>
 </html>

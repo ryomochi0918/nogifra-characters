@@ -155,6 +155,7 @@
       }
 
       function hideViewer() {
+        closeShareMenus();
         viewer.classList.remove("open");
         collapseExpanded();
         document.title = INDEX_TITLE;
@@ -318,6 +319,7 @@
       });
       document.addEventListener("keydown", (e) => {
         if (e.key !== "Escape") return;
+        if (closeShareMenus()) return;
         if (!compareList.hidden) {
           closeCompareList();
         } else if (compareViewer.classList.contains("open")) {
@@ -908,6 +910,7 @@
       });
 
       function hideCompare() {
+        closeShareMenus();
         compareViewer.classList.remove("open");
       }
 
@@ -925,6 +928,96 @@
       compareViewer.addEventListener("click", (e) => {
         if (e.target === compareViewer) closeCompare();
       });
+
+      // 共有ボタン(詳細画面・比較画面)。
+      // スマホなどでは端末の共有シートを開き、使えない環境とPCでは小さいメニューを出す。
+      // GA4: ボタンを押したら share_open、共有先を選んだら share(method は x / line / copy / native)
+      function closeShareMenus() {
+        const opened = [...document.querySelectorAll(".share-menu:not([hidden])")];
+        opened.forEach((menu) => {
+          menu.hidden = true;
+          menu.parentElement.querySelector(".share-btn").setAttribute("aria-expanded", "false");
+        });
+        return opened.length > 0;
+      }
+
+      async function copyShareUrl(url) {
+        try {
+          await navigator.clipboard.writeText(url);
+          return true;
+        } catch (e) {
+          window.prompt("このURLをコピーしてください", url);
+          return false;
+        }
+      }
+
+      // getShare: 共有する { url, text, params(GA4に送る内容) } を返す
+      function setupShare(btn, menu, getShare) {
+        if (!btn || !menu) return; // ブラウザに残った古いHTMLと組み合わさったとき
+        btn.addEventListener("click", async () => {
+          if (closeShareMenus()) return;
+          const { url, text, params } = getShare();
+          track("share_open", params);
+
+          if (navigator.share && window.matchMedia("(pointer: coarse)").matches) {
+            try {
+              await navigator.share({ title: text, text, url });
+              track("share", { ...params, method: "native" });
+              return;
+            } catch (e) {
+              if (e.name === "AbortError") return; // 共有シートを閉じた
+            }
+          }
+
+          const x = "https://x.com/intent/post?" + new URLSearchParams({ text, url });
+          const line = "https://social-plugins.line.me/lineit/share?" + new URLSearchParams({ url, text });
+          menu.innerHTML = `
+            <a class="share-item" data-method="x" href="${escapeHtml(x)}" target="_blank" rel="noopener">Xでポスト</a>
+            <a class="share-item" data-method="line" href="${escapeHtml(line)}" target="_blank" rel="noopener">LINEで送る</a>
+            <button type="button" class="share-item" data-method="copy">リンクをコピー</button>`;
+          menu.onclick = async (e) => {
+            const item = e.target.closest(".share-item");
+            if (!item) return;
+            const method = item.dataset.method;
+            track("share", { ...params, method });
+            if (method === "copy" && (await copyShareUrl(url))) {
+              item.textContent = "コピーしました";
+              setTimeout(() => item.isConnected && closeShareMenus(), 1200);
+              return;
+            }
+            closeShareMenus();
+          };
+          menu.hidden = false;
+          btn.setAttribute("aria-expanded", "true");
+        });
+      }
+
+      document.addEventListener("click", (e) => {
+        if (!e.target.closest(".share")) closeShareMenus();
+      });
+
+      setupShare(
+        document.getElementById("viewerShare"),
+        document.getElementById("viewerShareMenu"),
+        () => ({
+          url: new URL(characterPath(viewerChara) || "", SITE_ROOT).href,
+          text: characterPageTitle(viewerChara),
+          params: {
+            content_type: "character",
+            member: viewerChara.name,
+            character: characterLabel(viewerChara),
+          },
+        }),
+      );
+      setupShare(
+        document.getElementById("compareShare"),
+        document.getElementById("compareShareMenu"),
+        () => ({
+          url: compareUrl(compareCharas),
+          text: `${compareCharas.map((c) => compareLabel(c, compareCharas)).join("・")}のスキル比較 | ${SITE_NAME}`,
+          params: { content_type: "compare", character_count: compareCharas.length },
+        }),
+      );
 
       function applyFilter() {
         const query = searchInput.value.trim();

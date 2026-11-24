@@ -981,6 +981,92 @@ body.adv-locked {
   color: var(--accent);
 }
 
+/* 衣装名の行。右端に共有ボタンを控えめに置く */
+.subtitle-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.viewer-panel .subtitle-row .subtitle {
+  margin: 0;
+}
+
+.share {
+  position: relative;
+  flex: none;
+}
+
+.share-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 30px;
+  margin: -6px -8px -6px 0; /* 右上の閉じるボタンと中心をそろえる */
+  padding: 0;
+  background: none;
+  border: none;
+  color: var(--ink-dim);
+  cursor: pointer;
+}
+
+.share-btn svg {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.share-btn:hover,
+.share-btn[aria-expanded="true"] {
+  color: var(--spotlight-text);
+}
+
+.share-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 15;
+  min-width: 150px;
+  padding: 4px;
+  background: var(--bg-1);
+  border: 1px solid var(--card-line);
+  border-radius: 10px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+.share-menu[hidden] {
+  display: none;
+}
+
+.share-item {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 8px 12px;
+  background: none;
+  border: none;
+  border-radius: 7px;
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 12.5px;
+  text-align: left;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.share-item:hover,
+.share-item:focus-visible {
+  background: var(--spotlight-soft);
+}
+
 .tabs {
   display: flex;
   gap: 8px;
