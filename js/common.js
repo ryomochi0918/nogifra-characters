@@ -171,6 +171,139 @@ function viewerPanelsHtml(tabs) {
     .join("");
 }
 
+// 「◯◯」状態にする効果を、スキル・パッシブの文面から拾う(詳細絞り込みと「効果が似ているキャラ」で使う)
+const GRANT_RE = /((?:「[^」]+」(?:状態)?(?:と|または|、))*「[^」]+」)状態に(?:し|する|変更)/g;
+const OTHER_EFFECTS = [
+  ["HP回復", /HPを[^[\]]*?回復/],
+  ["デバフ・サゲ効果の解除", /デバフ・サゲ効果を[^、[\]]{0,8}解除/],
+  ["バフ・アゲ効果の解除", /(?:^|[^デ])バフ・アゲ効果(?:・特殊状態)?を[^、[\]]{0,8}解除/],
+];
+
+// 文字起こしで「力」が「カ」になっているものを揃える
+function fixOcr(s) {
+  return s.replace(/アピールカ(?=ダウン|アップ|$)/g, "アピール力");
+}
+
+function passiveLines(c) {
+  const lines = [];
+  (c.passive || []).forEach((p) => lines.push(...[].concat(p.effect || [])));
+  return lines;
+}
+
+// 状態名 → ライバルにかけた回数・自身/味方にかけた回数。
+// ライバルにかける効果は「100%の確率で」と書かれるので、その有無で見分ける
+function extractGrants(c) {
+  const grants = new Map();
+  const texts = (c.skills || []).map((s) => s.text || "").concat(passiveLines(c));
+  texts.forEach((t) => {
+    for (const m of t.matchAll(GRANT_RE)) {
+      const rival = t.slice(Math.max(0, m.index - 30), m.index).includes("確率で");
+      for (const [, raw] of m[1].matchAll(/「([^」]+)」/g)) {
+        const name = fixOcr(raw);
+        const g = grants.get(name) || { rival: 0, ally: 0 };
+        g[rival ? "rival" : "ally"]++;
+        grants.set(name, g);
+      }
+    }
+  });
+  return grants;
+}
+
+// 詳細画面の下に出す関連キャラ。
+// 効果が似ているかは、かける状態(相手にかけるか自身・味方にかけるかも区別)と OTHER_EFFECTS の重なりで測る。
+// 持っているキャラが少ない効果ほど重く数える(重み付きのジャカード係数)
+const RELATED_MAX = 5;
+const RELATED_MIN = 0.2; // これ未満は似ているとみなさない
+
+function effectKeys(c) {
+  const keys = new Map(); // 区別用のキー → 表示名
+  extractGrants(c).forEach((g, name) => {
+    if (g.rival) keys.set("rival:" + name, name);
+    if (g.ally) keys.set("ally:" + name, name);
+  });
+  const text = skillText(c);
+  OTHER_EFFECTS.forEach(([label, re]) => {
+    if (re.test(text)) keys.set("other:" + label, label);
+  });
+  return keys;
+}
+
+function skillText(c) {
+  return (c.skills || []).map((s) => s.text || "").join("\n");
+}
+
+// 全キャラの一覧から、キャラ → 関連キャラ を返す関数を作る
+function relatedFinder(list) {
+  const keysOf = new Map(list.map((c) => [c, effectKeys(c)]));
+  const count = new Map();
+  keysOf.forEach((keys) => keys.forEach((_, k) => count.set(k, (count.get(k) || 0) + 1)));
+  const weight = (k) => Math.log(list.length / count.get(k));
+
+  return (c) => {
+    const mine = keysOf.get(c);
+    const member = list
+      .filter((x) => x !== c && x.name === c.name && characterPath(x))
+      .sort((a, b) =>
+        (a.costumeReading || a.costume || "").localeCompare(b.costumeReading || b.costume || "", "ja"),
+      );
+
+    const scored = [];
+    list.forEach((x) => {
+      if (x.name === c.name || !characterPath(x)) return;
+      const keys = keysOf.get(x);
+      let shared = 0;
+      let total = 0;
+      const common = [];
+      mine.forEach((label, k) => {
+        total += weight(k);
+        if (!keys.has(k)) return;
+        shared += weight(k);
+        common.push([k, label]);
+      });
+      keys.forEach((_, k) => {
+        if (!mine.has(k)) total += weight(k);
+      });
+      // HP回復や解除だけが重なっているものは、似ているとみなさない
+      if (!common.some(([k]) => !k.startsWith("other:"))) return;
+      const score = total > 0 ? shared / total : 0;
+      if (score >= RELATED_MIN) scored.push({ chara: x, score, common: [...new Set(common.map(([, l]) => l))] });
+    });
+    scored.sort((a, b) => b.score - a.score);
+    // スキルの文面が同じもの(11thバスラなど)は1枚だけ出す
+    const seen = new Set();
+    const similar = scored
+      .filter(({ chara }) => {
+        const text = skillText(chara);
+        if (seen.has(text)) return false;
+        seen.add(text);
+        return true;
+      })
+      .slice(0, RELATED_MAX);
+    return { member, similar };
+  };
+}
+
+function relatedHtml({ member, similar }) {
+  let html = "";
+  if (member.length > 0) {
+    html += `<h3>同じメンバーの他の衣装</h3><ul class="related-member">${member
+      .map(
+        (c) =>
+          `<li><a class="related-link" data-related="member" href="${escapeHtml(characterPath(c))}">${escapeHtml(c.costume || c.title || "")}</a></li>`,
+      )
+      .join("")}</ul>`;
+  }
+  if (similar.length > 0) {
+    html += `<h3>効果が似ているキャラ</h3><ul class="related-similar">${similar
+      .map(
+        ({ chara, common }) =>
+          `<li><a class="related-link" data-related="similar" href="${escapeHtml(characterPath(chara))}"><span class="related-name">${escapeHtml(chara.name)}「${escapeHtml(chara.costume || chara.title || "")}」</span><span class="related-common">共通: ${escapeHtml(common.join("・"))}</span></a></li>`,
+      )
+      .join("")}</ul>`;
+  }
+  return html;
+}
+
 // 4期と新4期生、6期の春組・夏組はそれぞれ同一の期として扱う(括弧書きの補足を無視)
 function normalizeGeneration(g) {
   if (!g) return "";
@@ -314,6 +447,8 @@ if (typeof module !== "undefined" && module.exports) {
     viewerTabDefs,
     viewerTabsHtml,
     viewerPanelsHtml,
+    relatedFinder,
+    relatedHtml,
     originalTextBodyHtml,
     normalizeGeneration,
     attrBadge,

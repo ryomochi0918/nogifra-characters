@@ -19,6 +19,7 @@
       const zoomLabel = document.getElementById("zoomLabel");
       const expandToggle = document.getElementById("expandToggle");
       const viewerPanels = document.getElementById("viewerPanels");
+      const viewerRelated = document.getElementById("viewerRelated");
       // 詳細を閉じたときに戻すタイトル(キャラ別ページでは生成スクリプトが data-index-title に入れている)
       const INDEX_TITLE = document.documentElement.dataset.indexTitle || document.title;
 
@@ -117,6 +118,7 @@
       });
 
       let viewerChara = null;
+      let findRelated = null; // キャラ → 関連キャラ(一覧を読み込んだあとに作る)
       function openViewer(chara) {
         viewerChara = chara;
         track("view_character", {
@@ -130,15 +132,19 @@
         viewerTabs.innerHTML = viewerTabsHtml(viewerTabList);
         viewerTabs.style.display = viewerTabList.length > 1 ? "flex" : "none";
         viewerPanels.innerHTML = viewerPanelsHtml(viewerTabList);
+        viewerRelated.innerHTML = relatedHtml(findRelated(chara));
         document.title = characterPageTitle(chara);
         viewer.classList.add("open");
+        viewer.scrollTop = 0;
         if (viewerTabList.length > 0) showTab(0);
       }
 
       // 詳細を開いている間は、URLをそのキャラのページ(c/…/)にする。
       // 一覧から開いたときは履歴に積むので、ブラウザの「戻る」で閉じられる。
-      // キャラのURLを直接開いたときは履歴に積まず、閉じたらURLを一覧に置き換える
-      let viewerInHistory = false;
+      // キャラのURLを直接開いたときは履歴に積まず、閉じたらURLを一覧に置き換える。
+      // 関連キャラへ移ったときも1つずつ積むので、「戻る」で前のキャラに戻り、✕では積んだ分をまとめて戻って閉じる
+      let viewerDepth = 0; // 詳細のために積んだ履歴の数
+      let viewerClosing = false; // ✕で閉じるために履歴を戻している途中
 
       function characterFromLocation() {
         const rel = location.href.split(/[?#]/)[0].slice(SITE_ROOT.length);
@@ -150,8 +156,8 @@
         openViewer(chara);
         const path = characterPath(chara);
         if (!path) return;
-        history.pushState({ chara: chara._key }, "", new URL(path, SITE_ROOT));
-        viewerInHistory = true;
+        viewerDepth++;
+        history.pushState({ chara: chara._key, depth: viewerDepth }, "", new URL(path, SITE_ROOT));
       }
 
       function hideViewer() {
@@ -163,9 +169,10 @@
 
       function closeViewer() {
         if (!viewer.classList.contains("open")) return;
-        if (viewerInHistory) {
-          viewerInHistory = false;
-          history.back(); // popstate で閉じる
+        if (viewerDepth > 0) {
+          viewerClosing = true;
+          history.go(-viewerDepth); // popstate で閉じる
+          viewerDepth = 0;
         } else {
           hideViewer();
           if (characterFromLocation()) history.replaceState(null, "", SITE_ROOT);
@@ -174,13 +181,18 @@
 
       window.addEventListener("popstate", () => {
         const c = characterFromLocation();
-        if (c) {
+        if (c && viewerClosing) {
+          // 直接開いたキャラから関連キャラへ移ったあとに閉じた
+          hideViewer();
+          history.replaceState(null, "", SITE_ROOT);
+        } else if (c) {
           openViewer(c);
-          viewerInHistory = Boolean(history.state && history.state.chara);
+          viewerDepth = (history.state && history.state.depth) || 0;
         } else {
           hideViewer();
-          viewerInHistory = false;
+          viewerDepth = 0;
         }
+        viewerClosing = false;
 
         const charas = compareFromLocation();
         if (charas) {
@@ -193,6 +205,23 @@
         }
       });
       viewerClose.addEventListener("click", closeViewer);
+
+      // 関連キャラへのリンク。詳細を開いたまま中身を切り替える
+      viewerRelated.addEventListener("click", (e) => {
+        const link = e.target.closest(".related-link");
+        if (!link || e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;
+        const c = allCharacters.find((x) => characterPath(x) === link.getAttribute("href"));
+        if (!c) return;
+        e.preventDefault();
+        track("open_related", {
+          content_type: link.dataset.related,
+          member: c.name,
+          character: characterLabel(c),
+        });
+        closeShareMenus();
+        collapseExpanded();
+        openViewerFromList(c);
+      });
 
       // 詳細画面から、このキャラを選んだ状態で比較モードに入る
       document.getElementById("viewerCompare").addEventListener("click", () => {
@@ -353,46 +382,10 @@
 
       // 詳細絞り込みのタグ。スキル・パッシブの文面から機械的に拾う(characters.json には持たせない)。
       // 値は「e:状態名」(効果一覧)・「p:能力名」(パッシブ)の形にする
-      const GRANT_RE = /((?:「[^」]+」(?:状態)?(?:と|または|、))*「[^」]+」)状態に(?:し|する|変更)/g;
-      const OTHER_EFFECTS = [
-        ["HP回復", /HPを[^[\]]*?回復/],
-        ["デバフ・サゲ効果の解除", /デバフ・サゲ効果を[^、[\]]{0,8}解除/],
-        ["バフ・アゲ効果の解除", /(?:^|[^デ])バフ・アゲ効果(?:・特殊状態)?を[^、[\]]{0,8}解除/],
-      ];
       const PASSIVE_STAT_RE =
         /^(?:自身の)?([^をが、「」+＋]+?)(?:を|が)?(?:C\.Rank×[\d.]+アップ|[+＋]?[\d.]+%?アップ|[+＋][\d.]+%?)$/;
       // パッシブの能力は主要なものを先に並べ、残りは該当数の多い順
       const MAIN_STATS = ["アピール力", "HP上限", "スマイル", "エフォート", "サンクス", "バイタリティ", "ディフェンス"];
-
-      // 文字起こしで「力」が「カ」になっているものを揃える
-      function fixOcr(s) {
-        return s.replace(/アピールカ(?=ダウン|アップ|$)/g, "アピール力");
-      }
-
-      function passiveLines(c) {
-        const lines = [];
-        (c.passive || []).forEach((p) => lines.push(...[].concat(p.effect || [])));
-        return lines;
-      }
-
-      // 状態名 → ライバルにかけた回数・自身/味方にかけた回数。
-      // ライバルにかける効果は「100%の確率で」と書かれるので、その有無で見分ける
-      function extractGrants(c) {
-        const grants = new Map();
-        const texts = (c.skills || []).map((s) => s.text || "").concat(passiveLines(c));
-        texts.forEach((t) => {
-          for (const m of t.matchAll(GRANT_RE)) {
-            const rival = t.slice(Math.max(0, m.index - 30), m.index).includes("確率で");
-            for (const [, raw] of m[1].matchAll(/「([^」]+)」/g)) {
-              const name = fixOcr(raw);
-              const g = grants.get(name) || { rival: 0, ally: 0 };
-              g[rival ? "rival" : "ally"]++;
-              grants.set(name, g);
-            }
-          }
-        });
-        return grants;
-      }
 
       // パッシブで上がる能力の名前
       function extractPassiveStats(c) {
@@ -444,9 +437,9 @@
             t.chars++;
             grantTotals.set(name, t);
           });
-          const skillText = (c.skills || []).map((s) => s.text || "").join("\n");
+          const text = skillText(c);
           OTHER_EFFECTS.forEach(([label, re]) => {
-            if (re.test(skillText)) {
+            if (re.test(text)) {
               tags.add("e:" + label);
               bump(otherCount, label);
             }
@@ -1486,6 +1479,7 @@
           }));
 
           buildAdvancedTags(allCharacters);
+          findRelated = relatedFinder(allCharacters);
           loadFavorites();
           syncFavorites();
           populateMemberFilter(allCharacters);

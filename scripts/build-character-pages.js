@@ -4,7 +4,7 @@
 // ローカルで確認するときは site/ で `node scripts/build-character-pages.js` を実行する。
 //
 // キャラ別ページは index.html の複製で、そのキャラの詳細を開いた状態にしたもの。
-// 検索エンジン向けにタイトル・説明文・詳細の中身(原文・パッシブ表)をHTMLに書き込み、
+// 検索エンジン向けにタイトル・説明文・詳細の中身(原文・パッシブ表・関連キャラへのリンク)をHTMLに書き込み、
 // 動きは一覧と同じ js/index.js が担う(URLからキャラを判定して詳細を開く)。
 
 const fs = require("fs");
@@ -18,6 +18,8 @@ const {
   viewerTabDefs,
   viewerTabsHtml,
   viewerPanelsHtml,
+  relatedFinder,
+  relatedHtml,
 } = require("../js/common.js");
 
 const ROOT = path.resolve(__dirname, "..");
@@ -43,7 +45,7 @@ function replaceOnce(html, re, replacement, what) {
 
 const indexTitle = indexHtml.match(/<title>([^<]*)<\/title>/)[1];
 
-function pageHtml(c, pagePath) {
+function pageHtml(c, pagePath, related) {
   const url = SITE_URL + pagePath;
   const title = characterPageTitle(c);
   const shareTitle = title.replace(` | ${SITE_NAME}`, "");
@@ -76,6 +78,7 @@ function pageHtml(c, pagePath) {
   );
   r(/<div class="tabs" id="viewerTabs"><\/div>/, `<div class="tabs" id="viewerTabs">${viewerTabsHtml(tabs)}</div>`, "詳細のタブ");
   r(/<div id="viewerPanels"><\/div>/, `<div id="viewerPanels">${viewerPanelsHtml(tabs)}</div>`, "詳細の原文・パッシブ");
+  r(/(?<=id="viewerRelated"[^>]*>)(?=<\/nav>)/, relatedHtml(related), "関連キャラ");
   return html;
 }
 
@@ -84,6 +87,7 @@ function main() {
   const outDir = path.join(ROOT, "c");
   fs.rmSync(outDir, { recursive: true, force: true });
 
+  const findRelated = relatedFinder(characters);
   const seen = new Map();
   characters.forEach((c) => {
     const pagePath = characterPath(c);
@@ -95,7 +99,7 @@ function main() {
 
     const file = path.join(ROOT, pagePath, "index.html");
     fs.mkdirSync(path.dirname(file), { recursive: true });
-    fs.writeFileSync(file, pageHtml(c, pagePath));
+    fs.writeFileSync(file, pageHtml(c, pagePath, findRelated(c)));
   });
 
   const urls = [SITE_URL, ...[...seen.keys()].map((p) => SITE_URL + p)];

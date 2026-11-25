@@ -1374,6 +1374,63 @@ body.adv-locked {
   }
 }
 
+/* 詳細画面の下の関連キャラ */
+.related:empty {
+  display: none;
+}
+
+.related {
+  margin-top: 24px;
+  padding-top: 4px;
+  border-top: 1px solid var(--card-line);
+}
+
+.related h3 {
+  margin: 16px 0 8px;
+  color: var(--ink-dim);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.related ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.related-link {
+  display: block;
+  padding: 7px 12px;
+  border: 1px solid var(--card-line);
+  border-radius: 10px;
+  color: var(--ink);
+  font-size: 12.5px;
+  text-decoration: none;
+}
+
+.related-link:hover,
+.related-link:focus-visible {
+  border-color: var(--accent);
+}
+
+.related-similar {
+  flex-direction: column;
+}
+
+.related-name,
+.related-common {
+  display: block;
+}
+
+.related-common {
+  margin-top: 2px;
+  color: var(--ink-dim);
+  font-size: 11.5px;
+}
+
 /* Original text toggle */
 .original-text {
   margin-top: 14px;
