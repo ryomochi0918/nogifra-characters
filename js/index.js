@@ -36,6 +36,9 @@
           "aria-label",
           expanded ? "縮小表示" : "拡大表示",
         );
+        if (expanded && viewerChara) {
+          track("expand_diagram", { ...viewerTrackParams(), tab_label: tabTrackLabel(currentTab) });
+        }
       });
 
       let zoomPct = 100; // 100 = リセット(svg width:100%)
@@ -107,8 +110,24 @@
       }
       viewerTabs.addEventListener("click", (e) => {
         const btn = e.target.closest(".tab-btn");
-        if (btn) showTab(Number(btn.dataset.index));
+        if (!btn) return;
+        const index = Number(btn.dataset.index);
+        if (viewerTabList[index] !== currentTab) {
+          track("select_tab", { ...viewerTrackParams(), tab_label: tabTrackLabel(viewerTabList[index]) });
+        }
+        showTab(index);
       });
+      // 原文(折りたたみ)を開いたとき。toggle は伝わらないので capture で拾う
+      viewerPanels.addEventListener(
+        "toggle",
+        (e) => {
+          const panel = e.target;
+          if (panel.tagName !== "DETAILS" || !panel.open || !viewerChara) return;
+          const tab = viewerTabList[Number(panel.dataset.tab)];
+          track("view_source_text", { ...viewerTrackParams(), tab_label: tabTrackLabel(tab) });
+        },
+        true,
+      );
 
       setupThemeToggle(() => {
         if (viewer.classList.contains("open") && currentTab && currentTab.type !== "passive") {
@@ -119,12 +138,18 @@
 
       let viewerChara = null;
       let findRelated = null; // キャラ → 関連キャラ(一覧を読み込んだあとに作る)
-      function openViewer(chara) {
+      // GAに送るタブ名は「スキル1」「パッシブ」だけにする(スキル名はキャラごとに違うので集計しにくい)
+      function tabTrackLabel(tab) {
+        return tab ? String(tab.label).split(":")[0].trim() : "";
+      }
+      function viewerTrackParams() {
+        return { member: viewerChara.name, character: characterLabel(viewerChara) };
+      }
+      // from: どこから開いたか(list=一覧のカード / related=関連キャラ / graduated=卒業メンバーのリンク /
+      // url=キャラのURLを直接開いた / history=ブラウザの戻る・進む)
+      function openViewer(chara, from) {
         viewerChara = chara;
-        track("view_character", {
-          member: chara.name,
-          character: characterLabel(chara),
-        });
+        track("view_character", { ...viewerTrackParams(), open_from: from });
         viewerTitle.textContent = chara.name;
         viewerSubtitle.textContent = chara.title || "";
         syncViewerFav();
@@ -152,8 +177,8 @@
         return allCharacters.find((c) => characterPath(c) === rel) || null;
       }
 
-      function openViewerFromList(chara) {
-        openViewer(chara);
+      function openViewerFromList(chara, from) {
+        openViewer(chara, from);
         const path = characterPath(chara);
         if (!path) return;
         viewerDepth++;
@@ -186,7 +211,7 @@
           hideViewer();
           history.replaceState(null, "", SITE_ROOT);
         } else if (c) {
-          openViewer(c);
+          openViewer(c, "history");
           viewerDepth = (history.state && history.state.depth) || 0;
         } else {
           hideViewer();
@@ -220,7 +245,7 @@
         });
         closeShareMenus();
         collapseExpanded();
-        openViewerFromList(c);
+        openViewerFromList(c, "related");
       });
 
       // 詳細画面から、このキャラを選んだ状態で比較モードに入る
@@ -574,7 +599,7 @@
               return;
             }
             const c = allCharacters.find((x) => x._key === btn.dataset.key);
-            if (c) openViewerFromList(c);
+            if (c) openViewerFromList(c, "list");
           });
         });
       }
@@ -1012,6 +1037,7 @@
         }),
       );
 
+      let lastResultCount = 0; // 直近の applyFilter で一覧に出た件数(絞り込みも含めて、見えている数)
       function applyFilter() {
         const query = searchInput.value.trim();
         let filtered;
@@ -1036,7 +1062,9 @@
         }
         const base = filterByMemberAndAttr(filtered);
         renderAdvancedOptions(base);
-        renderCards(sortCharacters(filterByAdvanced(base)));
+        const shown = filterByAdvanced(base);
+        lastResultCount = shown.length;
+        renderCards(sortCharacters(shown));
         saveSearchState();
       }
 
@@ -1049,7 +1077,7 @@
           const term = searchInput.value.trim();
           if (term === "" || term === lastTrackedSearch) return;
           lastTrackedSearch = term;
-          track("search", { search_term: term });
+          track("search", { search_term: term, result_count: lastResultCount });
         }, 1500);
       }
 
@@ -1489,7 +1517,7 @@
 
           // キャラのURL(c/…/)で開かれたら、そのキャラの詳細を開いた状態にする
           const initial = characterFromLocation();
-          if (initial) openViewer(initial);
+          if (initial) openViewer(initial, "url");
           else if (viewer.classList.contains("open")) hideViewer();
 
           // 比較画面のURL(?compare=…)で開かれたら、そのキャラを選んで比較画面を開く

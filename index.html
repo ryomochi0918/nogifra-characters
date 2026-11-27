@@ -60,7 +60,14 @@
         }
         gaOptOut = localStorage.getItem("nogifra-notrack") === "1";
       } catch (e) {}
-      if (location.hostname === "ryomochi0918.github.io" && !gaOptOut) {
+      // ほかのサイト(ティアなど)に iframe で埋め込まれたときは計測しない(埋め込み側で数える)
+      let gaEmbedded = false;
+      try {
+        gaEmbedded = window.self !== window.top;
+      } catch (e) {
+        gaEmbedded = true;
+      }
+      if (location.hostname === "ryomochi0918.github.io" && !gaOptOut && !gaEmbedded) {
         const gaScript = document.createElement("script");
         gaScript.async = true;
         gaScript.src = "https://www.googletagmanager.com/gtag/js?id=G-F8JG65PHR5";
@@ -458,6 +465,6 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js"></script>
     <script src="js/common.js?v=20261125"></script>
-    <script src="js/index.js?v=20261125"></script>
+    <script src="js/index.js?v=20261128"></script>
   </body>
 </html>
